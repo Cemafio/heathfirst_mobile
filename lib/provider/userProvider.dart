@@ -44,7 +44,7 @@ class UserProvider extends ChangeNotifier {
   User? user;
   
   Future<void> userInfo()  async{
-    final url = Uri.parse("http://10.37.128.28:8000/api/user");
+    final url = Uri.parse("http://192.168.1.148:8000/api/user");
     final pers = await SharedPreferences.getInstance();
     final token = pers.getString('token');
     final response = await http.get(

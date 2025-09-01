@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'locations.dart' as locations;
 
-
 class MyMap extends StatefulWidget {
   const MyMap({Key? key}) : super(key: key);
 
@@ -42,14 +41,14 @@ class _MyMapState extends State<MyMap> {
 
             children: [
               
-              GoogleMap(
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(0, 0),
-                  zoom: 2,
-                ),
-                markers: _markers.values.toSet(),
-              ),
+              // GoogleMap(
+              //   onMapCreated: _onMapCreated,
+              //   initialCameraPosition: const CameraPosition(
+              //     target: LatLng(0, 0),
+              //     zoom: 2,
+              //   ),
+              //   markers: _markers.values.toSet(),
+              // ),
               Positioned(
                 top: 40,
                 left: 10,

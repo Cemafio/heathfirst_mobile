@@ -12,7 +12,7 @@ import 'package:heathfirst_mobile/page/home/categorie.dart';
 import 'package:heathfirst_mobile/page/home/searchSection.dart';
 import 'package:heathfirst_mobile/page/home/liste_doc_alentour.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
-import 'package:heathfirst_mobile/page/map/openStreetmap.dart';
+import 'package:heathfirst_mobile/page/map/googlemap.dart';
 import 'package:heathfirst_mobile/page/profile/profil.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:http/http.dart' as http;
@@ -176,7 +176,7 @@ class _HomepageState extends State<HomePage> {
                               color: const Color(0xFF81C784),
                             ),
                               image: DecorationImage(
-                                image: NetworkImage('http://10.37.128.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                                image: NetworkImage('http://10.16.101.28:8000/images/photos/${_infoUser['photo_profil']}'),
                                 fit: BoxFit.cover,
                               ),
                           ),
@@ -236,7 +236,7 @@ class _HomepageState extends State<HomePage> {
                       leading: const Icon(Icons.map_outlined),
                       title: const Text("Localisation"),
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const OSMMapPage()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GoogleMapPage()));
                       }
                     ),
                   if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR')?? false)
