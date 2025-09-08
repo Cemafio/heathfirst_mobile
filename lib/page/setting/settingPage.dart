@@ -48,10 +48,6 @@ class _SettingpageState extends State<Settingpage> {
                 padding: const EdgeInsets.all(5),
                 margin: const EdgeInsets.only(top: 30),
 
-                // decoration: BoxDecoration(
-                  // border: Border.all(color :Colors.black38)
-                // ),
-
                 child: Stack(
                   children:[
                     Container(
@@ -135,7 +131,7 @@ class _SettingpageState extends State<Settingpage> {
                                 color: Colors.black26,
                               ),
                               image: DecorationImage(
-                                image: NetworkImage("http://10.16.101.28:8000/images/photos/${_user['photo_profil']}"),
+                                image: NetworkImage("http://10.241.20.28:8000/images/photos/${_user['photo_profil']}"),
                                 fit: BoxFit.cover,
                               ),
                             ),

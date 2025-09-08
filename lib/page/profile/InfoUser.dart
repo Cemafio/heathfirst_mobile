@@ -36,20 +36,22 @@ class _InfoUserState extends State<InfoUser> {
   @override
   void initState(){
     super.initState();
-    _loadUserInfo();
+    // _loadUserInfo();
+    _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
   }
-  Future<void> _loadUserInfo() async {
+  // Future<void> _loadUserInfo() async {
       // setState(() {
-      _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
+      
       // });
+  // }
+  Future<void> _resetAppointmentVerrif() async {
+      setState(() {
+        _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
+      });
   }
   void sendRdv() async{
     await takeAppointment(_apropos['id'], _symptome, _selectedDate!, _time);
     Navigator.pop(context);
-
-    setState(() {
-      isWaiting = true;
-    });
   }
   
 
@@ -177,12 +179,10 @@ class _InfoUserState extends State<InfoUser> {
                             print("📤 Donner envoyer ${_apropos['id']} ,$_symptome, $_selectedDate , $_time ");
                             try {
                               sendRdv();
-                              resetForm();
+                              _resetAppointmentVerrif();
                               setState(() {
                                 _timeSelected = '_ _ : _ _';
                               });
-                              _loadUserInfo();
-
                             } catch (e) {
                               
                               setState(() {
@@ -194,6 +194,7 @@ class _InfoUserState extends State<InfoUser> {
                               setState(() {
                                 isLoaded = false;
                               },);
+                              resetForm();
                             }
 
                           }, 
@@ -229,7 +230,6 @@ class _InfoUserState extends State<InfoUser> {
             future: _etatRdv, 
             builder: (context, snapshot){
               if (snapshot.connectionState == ConnectionState.waiting) {
-                print("En attente");
                 return Container(
                   width: double.infinity,
                   child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
@@ -239,8 +239,8 @@ class _InfoUserState extends State<InfoUser> {
               }
               
               final Map<String, dynamic> _etaRdv = snapshot.data!;
-              isWaiting = _etaRdv['existe'];
               print(_etaRdv);
+              
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: InkWell(
@@ -253,7 +253,7 @@ class _InfoUserState extends State<InfoUser> {
 
                   },
                   child:
-                    (_etaRdv['existe'] == false && _etaRdv['response'] == 'en attente' || _etaRdv['existe'] == false && _etaRdv['response'] != 'en attente')
+                    (_etaRdv['existe'] == false)
                     ? Container(
                         height: 60,
                         width: double.infinity,
@@ -363,7 +363,7 @@ class _InfoUserState extends State<InfoUser> {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage("http://10.16.101.28:8000/images/photos/${_apropos?['photoProfil']}"),
+                            image: NetworkImage("http://10.241.20.28:8000/images/photos/${_apropos['photoProfil']}"),
                             fit: BoxFit.cover,
                           ),
                       ),
@@ -377,7 +377,7 @@ class _InfoUserState extends State<InfoUser> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${_apropos?['lastName']} ${_apropos?['firstName']}',
+                    '${_apropos['lastName']} ${_apropos['firstName']}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -411,35 +411,35 @@ class _InfoUserState extends State<InfoUser> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Specialisation"),
-                          Text("${_apropos?['specialty']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['specialty']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Adress"),
-                          Text("${_apropos?['Address']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['Address']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Adess cabinet"),
-                          Text("${_apropos?['AddressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['AddressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Numero de téléphone"),
-                          Text("${_apropos?['phone']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['phone']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("email"),
-                          Text("${_apropos?['email']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['email']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
 
                         const SizedBox(height: 40,),
