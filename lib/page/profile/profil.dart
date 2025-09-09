@@ -123,7 +123,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                           color: Colors.white,
                           image: DecorationImage(
-                            image: NetworkImage("http://10.241.20.28:8000/images/photos/${infoUser['photo_profil']}"),
+                            image: NetworkImage("http://10.48.199.28:8000/images/photos/${infoUser['photo_profil']}"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -143,7 +143,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                               color: const Color(0xFF81C784),
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://10.241.20.28:8000/images/photos/${infoUser['photo_profil']}"),
+                              image: NetworkImage("http://10.48.199.28:8000/images/photos/${infoUser['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -267,7 +267,6 @@ class _ProfilSectionState extends State<ProfilSection> {
                               future: _listDemd, 
                               builder: (context, snapshot){
                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                  print("En attente");
                                   return Container(
                                     width: double.infinity,
                                     child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
@@ -280,11 +279,10 @@ class _ProfilSectionState extends State<ProfilSection> {
                                 int nbrPatient = 0;
                                 int nbrDemd = 0;
                                 if(rdv!=null){
-                                  print("rdv =>${rdv[0]['reponse']}");
                                   for (var list in rdv) {
-                                    if(list['reponse'] == "accepter"){
+                                    if(list['status'] != "pending"){
                                       nbrPatient++;
-                                    }else if(list['reponse'] != "refuser" && list['reponse'] != "accepter"){
+                                    }else if(list['status'] == "pending"){
                                       nbrDemd++;
                                     }      
                                   }

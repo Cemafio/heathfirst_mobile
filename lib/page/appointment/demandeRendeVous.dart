@@ -97,7 +97,7 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                     ),
                     borderRadius: BorderRadius.circular(100),
                     image: DecorationImage(
-                      image: NetworkImage('http://192.168.1.148:8000/images/photos/${_infoUser['photo_profil']}'),
+                      image: NetworkImage('http://10.48.199.28:8000/images/photos/${_infoUser['photo_profil']}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -200,7 +200,7 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                                       border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(100),
                                       image: DecorationImage(
-                                        image: NetworkImage("http://192.168.1.148:8000/images/photos/${userProfil?['profil']}"),
+                                        image: NetworkImage("http://10.48.199.28:8000/images/photos/${userProfil?['profil']}"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -245,39 +245,41 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  if(demande[index]['reponse'] == 'en attente')
+                                  if(demande[index]['status'] == 'pending')
                                     TextButton(
                                       onPressed: () async {
                                         final docId = demande[index]['doctor']['id'];
                                         final patientId = demande[index]['patient']['id'];
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
-                                        await responseAppointment(docId, patientId, 'refuser', date);
+                                        print("Donner envoyer => ${demande[index]}");
+                                        await responseAppointment(demande[index]['id'], 'refused');
                                         reloadRdv();
                                       },
                                       child: const Text('refuser', style: TextStyle(color: Colors.red)),
                                     ),
                                   // if(demande[index]['reponse'] == 'en attente')
                                     // const SizedBox(width: 6),
-                                  if(demande[index]['reponse'] == 'en attente')
+                                  if(demande[index]['status'] == 'pending')
                                     TextButton(
                                       onPressed: () async {
                                         final docId = demande[index]['doctor']['id'];
                                         final patientId = demande[index]['patient']['id'];
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
-                                        await responseAppointment(docId, patientId, 'accepter', date);
+                                        print("Donner envoyer => ${demande[index]}");
+                                        await responseAppointment(demande[index]['id'], 'accepted');
                                         reloadRdv();
                                       },
                                       child: const Text('accepter'),
                                     ),
-                                  if(demande[index]['reponse'] != 'en attente')
-                                    if(demande[index]['reponse'] == 'accepter')
+                                  if(demande[index]['status'] != 'pending')
+                                    if(demande[index]['status'] == 'accepted')
                                       TextButton(
                                         onPressed: null,
                                         child: Text('accepté', style: const TextStyle(color: Color.fromARGB(255, 170, 211, 172)),),
                                       ),
-                                    if(demande[index]['reponse'] == 'refuser')
+                                    if(demande[index]['status'] == 'refused')
                                       TextButton(
                                         onPressed: null,
                                         child: Text('refusé', style: const TextStyle(color:  Color.fromARGB(255, 216, 178, 176)),),
