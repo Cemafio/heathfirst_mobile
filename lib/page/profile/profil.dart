@@ -185,8 +185,8 @@ class _ProfilSectionState extends State<ProfilSection> {
                           child: Text(
                             '${infoUser['LastName']} ${infoUser['FirstName']}',
                             style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 2.0
                             ),
                           ),

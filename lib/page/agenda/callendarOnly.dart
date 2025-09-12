@@ -159,7 +159,7 @@ class _CallendaronlyState extends State<Callendaronly> {
                     eventLoader: _getEventsForDay,
                   ),
                 ),
-              ],
+            ],
             )
           
         ),

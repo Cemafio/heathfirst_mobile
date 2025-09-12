@@ -157,46 +157,40 @@ class _HomepageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children:[
-                  Stack(
-                    children: [
-                      GestureDetector(
-                        onTap:(){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
-                        },
-
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          margin: const EdgeInsets.only(bottom: 5),
-
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              width: sqrt1_2,
-                              color: const Color(0xFF81C784),
-                            ),
-                              image: DecorationImage(
-                                image: NetworkImage('http://10.158.35.28:8000/images/photos/${_infoUser['photo_profil']}'),
-                                fit: BoxFit.cover,
-                              ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ) ,
                   
-                  const SizedBox(width: 5,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        Text("${_infoUser['LastName']} ${_infoUser['FirstName']}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
-                            ),
-                          )
-                    ],
+                  GestureDetector(
+                    onTap:(){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
+                    },
+
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      margin: const EdgeInsets.only(bottom: 5),
+
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          width: sqrt1_2,
+                          color: const Color(0xFF81C784),
+                        ),
+                          image: DecorationImage(
+                            image: NetworkImage('http://10.158.35.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                            fit: BoxFit.cover,
+                          ),
+                      ),
+                    ),
                   ),
+              
+              
+                  const SizedBox(width: 5,),
+                  Text("${_infoUser['LastName']} ${_infoUser['FirstName']}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14
+                    ),
+                  )
+            
               ]),
             ),
 

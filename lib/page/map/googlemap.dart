@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class GoogleMapPage extends StatefulWidget {
@@ -329,6 +331,23 @@ final PolylinePoints polylinePoints = PolylinePoints();
       debugPrint("Erreur Directions API: ${result.errorMessage}");
     }
   }
+
+  void _goToPlace(double lat, double lng, String description) {
+    setState(() {
+      _markers.clear();
+      _markers.add(
+        Marker(
+          markerId: MarkerId(description),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(title: description),
+        ),
+      );
+    });
+
+    _mapController.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14),
+    );
+  }
    
 
   Widget build(BuildContext context) {
@@ -350,25 +369,100 @@ final PolylinePoints polylinePoints = PolylinePoints();
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
           ),
+
+          // Positioned(
+          //   top: 40,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(8),
+          //     ),
+          //     child: GooglePlaceAutoCompleteTextField(
+          //       textEditingController: TextEditingController(),
+          //       googleAPIKey: googleApiKey,
+          //       inputDecoration: const InputDecoration(
+          //         hintText: "Rechercher un lieu...",
+          //         border: InputBorder.none,
+          //         contentPadding: EdgeInsets.all(10),
+          //       ),
+          //       debounceTime: 800,
+          //       countries: ["mg"], // Limiter aux pays (MG = Madagascar)
+          //       isLatLngRequired: true,
+          //       getPlaceDetailWithLatLng: (prediction) {
+          //         double lat = prediction.lat!;
+          //         double lng = prediction.lng!;
+          //         _goToPlace(lat, lng, prediction.description!);
+          //       },
+          //     ),
+          //   ),
           Positioned(
             top: 40,
-            left: 10,
+            left: 0,
             child: GestureDetector(
               onTap: (){
                 Navigator.pop(context);
               },
               child: Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.only(bottom: 5),
+                width: MediaQuery.of(context).size.width,
+                height: 100,
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      // margin: const EdgeInsets.only(bottom: 5),
 
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  // border: Border.all(),
-                  color: Color.fromARGB(97, 107, 107, 107)
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        // border: Border.all(),
+                        color: Color.fromARGB(97, 107, 107, 107)
+                      ),
+
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
+                    ),
+
+                    GooglePlaceAutoCompleteTextField(
+                      textEditingController: TextEditingController(),
+                      googleAPIKey: googleApiKey,
+                      inputDecoration: const InputDecoration(
+                        hintText: "Rechercher un lieu...",
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(10),
+                      ),
+                      debounceTime: 800,
+                      countries: ["mg"], // Limiter aux pays (MG = Madagascar)
+                      isLatLngRequired: true,
+                      getPlaceDetailWithLatLng: (prediction) {
+                        double lat = prediction.lat!;
+                        double lng = prediction.lng!;
+                        _goToPlace(lat, lng, prediction.description!);
+                      },
+                    ),
+                    // Container(
+                    //   width: 250,
+                    //   height: 45,
+                    //   padding: EdgeInsets.only(bottom: 12, left: 10),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     border: Border.all(color: Colors.black45),
+                    //     borderRadius: BorderRadius.all(Radius.circular(10))
+                    //   ),
+                    //   child: TextFormField(
+                    //     decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       enabledBorder: InputBorder.none,
+                    //       focusedBorder: InputBorder.none,
+                    //       hint: Text('Chercher', style: TextStyle(fontSize: 15),)
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
-
-                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
-              ),
+              ), 
             )
           )
         ],

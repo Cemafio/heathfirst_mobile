@@ -246,8 +246,8 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
   var request = http.MultipartRequest("POST", url);
 
   request.fields['id'] = id.toString();
-  request.fields['firstname'] = nom;
-  request.fields['lastname'] = prenom;  
+  request.fields['firstname'] = prenom;
+  request.fields['lastname'] = nom;  
   request.fields['date'] = date_de_naissance;
   request.fields['sexe'] = sexe;
   request.fields['tel'] = tel;
@@ -288,8 +288,8 @@ Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naiss
   var request = http.MultipartRequest("POST", url);
 
   request.fields['id'] = id.toString();
-  request.fields['firstname'] = nom;
-  request.fields['lastname'] = prenom;  
+  request.fields['firstname'] = prenom;
+  request.fields['lastname'] = nom;  
   request.fields['date'] = date_de_naissance;
   request.fields['sexe'] = sexe;
   request.fields['tel'] = tel;
