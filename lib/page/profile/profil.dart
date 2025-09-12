@@ -123,7 +123,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                           color: Colors.white,
                           image: DecorationImage(
-                            image: NetworkImage("http://10.48.199.28:8000/images/photos/${infoUser['photo_profil']}"),
+                            image: NetworkImage("http://10.158.35.28:8000/images/photos/${infoUser['photo_profil']}"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -143,7 +143,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                               color: const Color(0xFF81C784),
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://10.48.199.28:8000/images/photos/${infoUser['photo_profil']}"),
+                              image: NetworkImage("http://10.158.35.28:8000/images/photos/${infoUser['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -280,7 +280,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                                 int nbrDemd = 0;
                                 if(rdv!=null){
                                   for (var list in rdv) {
-                                    if(list['status'] != "pending"){
+                                    if(list['status'] != "pending" && list['status'] != "refused"){
                                       nbrPatient++;
                                     }else if(list['status'] == "pending"){
                                       nbrDemd++;

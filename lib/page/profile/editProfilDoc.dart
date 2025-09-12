@@ -94,7 +94,7 @@ class _EditprofilDocState extends State<EditprofilDoc> {
     _dateController.text = _infoUser['DateOfBird'];
     _specialityController.text = _infoUser['Specialty'];
     _adrCabinetController.text = _infoUser['AddressCabinet'];
-    _networkImageUrl = "http://10.48.199.28:8000/images/photos/${_infoUser['photo_profil']}";
+    _networkImageUrl = "http://10.158.35.28:8000/images/photos/${_infoUser['photo_profil']}";
     _photo = _infoUser['photo_profil'];
   }
 
@@ -306,20 +306,19 @@ class _EditprofilDocState extends State<EditprofilDoc> {
                           if (isValide) {
                             _formKey.currentState!.save();
                             try {
-                              // print("Donner envoyer: ${_infoUser['id']},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress,$_speciality, $_adress_cabinet");
+                              print("Donner envoyer: ${_infoUser['id']},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress,$_speciality, $_adress_cabinet");
                               await editProfilDoc( _infoUser['id'],_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _adress,_speciality, _adress_cabinet,'doctor');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Profil mis à jour !')),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   SnackBar(content: Text('Profil mis à jour !')),
+                              // );
+                              Navigator.pop(context, true);
                             } catch (e) {
-                            //   ScaffoldMessenger.of(context).showSnackBar(
-                            //     SnackBar(content: Text('Erreur : ${e.toString()}...... (O_o)')),
-                            //   );
+                              print(e);
+
                             }finally{
                               setState(() {
                                 isLoaded = false;
                               });
-                              Navigator.pop(context, true);
                             }
                           }
                         },

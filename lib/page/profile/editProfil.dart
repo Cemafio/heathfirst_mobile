@@ -94,7 +94,7 @@ class _EditprofilState extends State<Editprofil> {
     _medocController.text = _infoUser['MedicationInProgress'];
     _alegieController.text = _infoUser['allergy'];
     _antecMedocController.text= _infoUser['HistoryMedical'];
-    _networkImageUrl = "http://10.48.199.28:8000/images/photos/${_infoUser['photo_profil']}";
+    _networkImageUrl = "http://10.158.35.28:8000/images/photos/${_infoUser['photo_profil']}";
     _photo = _infoUser['photo_profil'];
   }
 
@@ -327,7 +327,9 @@ class _EditprofilState extends State<Editprofil> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Profil mis à jour !')),
                               );
+                              Navigator.pop(context, true);
                             } catch (e) {
+                              print(e);
                             //   ScaffoldMessenger.of(context).showSnackBar(
                             //     SnackBar(content: Text('Erreur : ${e.toString()}...... (O_o)')),
                             //   );
@@ -335,7 +337,6 @@ class _EditprofilState extends State<Editprofil> {
                               setState(() {
                                 isLoaded = false;
                               });
-                              Navigator.pop(context, true);
                             }
                           }
                         },

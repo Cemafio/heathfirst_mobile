@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:project_1/First_Health/screen/mobile/widget/calendar.dart';
@@ -6,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<List<dynamic>> rdvUserData() async{
-  final url = Uri.parse('http://10.48.199.28:8000/api/get_appointment'); // L'URL de votre API
+  final url = Uri.parse('http://10.158.35.28:8000/api/get_appointment'); // L'URL de votre API
   final perfs = await SharedPreferences.getInstance();
   final token = perfs.getString('token');
   final response = await http.get(
@@ -31,7 +32,7 @@ Future<List<dynamic>> rdvUserData() async{
 }  
 
 Future<Map<String, dynamic>> userInfo()  async{
-  final url = Uri.parse("http://10.48.199.28:8000/api/user");
+  final url = Uri.parse("http://10.158.35.28:8000/api/user");
 
   
   final pers = await SharedPreferences.getInstance();
@@ -54,7 +55,7 @@ Future<Map<String, dynamic>> userInfo()  async{
 
 
 Future<Map<String, dynamic>> getProfilUser(id) async {
-    final url = Uri.parse("http://10.48.199.28:8000/api/get_user_id/$id");
+    final url = Uri.parse("http://10.158.35.28:8000/api/get_user_id/$id");
     final pers = await SharedPreferences.getInstance();
       final token = pers.getString('token');
 
@@ -75,7 +76,7 @@ Future<Map<String, dynamic>> getProfilUser(id) async {
 
 // ----------Requette pour recuperer les list des docteurs--------
 Future<List<dynamic>> fetchData() async {
-  final url = Uri.parse('http://10.48.199.28:8000/api/doctors'); // L'URL de votre API
+  final url = Uri.parse('http://10.158.35.28:8000/api/doctors'); // L'URL de votre API
   final response = await http.get(url);
   int status = response.statusCode; 
 
@@ -89,7 +90,7 @@ Future<List<dynamic>> fetchData() async {
 }
 //----------------------------------------------------------------- 
 Future<bool> addDayNoWork(DateTime date,String reason) async {
-  final url = Uri.parse("http://10.48.199.28:8000/api/unavailabledays/add");
+  final url = Uri.parse("http://10.158.35.28:8000/api/unavailabledays/add");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final body = {
@@ -119,7 +120,7 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
   }
 }
 Future<List<dynamic>> getDayNoWork(int id) async {
-  final url = Uri.parse("http://10.48.199.28:8000/api/get_unvailable_days/get/$id");
+  final url = Uri.parse("http://10.158.35.28:8000/api/get_unvailable_days/get/$id");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.get(
@@ -140,7 +141,7 @@ Future<List<dynamic>> getDayNoWork(int id) async {
 Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.48.199.28:8000/api/unavailable_days/delete');
+  final url = Uri.parse('http://10.158.35.28:8000/api/unavailable_days/delete');
   final response = await http.delete(
     url,
     headers: {
@@ -162,7 +163,7 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
 Future<void> responseAppointment(int appointment, String status) async {
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.48.199.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
+  final url = Uri.parse('http://10.158.35.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
   final response = await http.patch(
     url,
     headers: {
@@ -186,7 +187,7 @@ Future<void> responseAppointment(int appointment, String status) async {
 Future<void> takeAppointment(int docId, String symptome, DateTime date,String hour) async{
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.48.199.28:8000/api/validate/get_appointement');
+  final url = Uri.parse('http://10.158.35.28:8000/api/validate/get_appointement');
   // print('Date => ${date.toIso8601String().split(' ')[0]}');
 
   final response = await http.post(
@@ -214,7 +215,7 @@ Future<void> takeAppointment(int docId, String symptome, DateTime date,String ho
   }  
 }
 Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
-  final url = Uri.parse("http://10.48.199.28:8000/api/verrifRdvExist");
+  final url = Uri.parse("http://10.158.35.28:8000/api/verrifRdvExist");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.post(
@@ -238,81 +239,86 @@ Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
     throw Exception("❌ Erreur to verrif this appointment: status ${response.statusCode} ${response.body}  (O_o)");
   }
 }
-Future<Map<String, dynamic>> editProfil(int id, String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles) async {
-  final url = Uri.parse("http://10.48.199.28:8000/api/edit_profil");
+Future<void> editProfil(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles) async {
+  final url = Uri.parse("http://10.158.35.28:8000/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final response = await http.post(
-    url,
-    headers: {
-      'Authorization': 'Bearer $token', 
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "data": {
-        "id": id,
-        "lastname" : nom,
-        "firstname" : prenom,
-        "date" : date_de_naissance,
-        "sexe" : sexe,
-        "tel" : tel,
-        "anteMedoc" : ant_medoc,
-        "allergie" : allergie,
-        "medocProg" : medoc_en_cours,
-        "roles" : roles,
-        "email" : ident,
-        "adress" : adress,
-        "photo_profil" : photo
-      }
-      
-    })
-  );
+  var request = http.MultipartRequest("POST", url);
+
+  request.fields['id'] = id.toString();
+  request.fields['firstname'] = nom;
+  request.fields['lastname'] = prenom;  
+  request.fields['date'] = date_de_naissance;
+  request.fields['sexe'] = sexe;
+  request.fields['tel'] = tel;
+  request.fields['roles'] = roles;
+  request.fields['email'] = ident;
+  request.fields['adress'] = adress;
+  request.fields['anteMedoc'] = ant_medoc;
+  request.fields['allergie'] = allergie;
+  request.fields['medocProg'] = medoc_en_cours;
+
+ if (photo != null && photo.isNotEmpty && File(photo).existsSync()) {
+    request.fields['isChangeProfile'] = 'true';
+    request.files.add(await http.MultipartFile.fromPath(
+      'photo_profil',
+      photo,
+    ));
+  }else{
+    request.fields['isChangeProfile'] = 'false';
+  }
+
+  var response = await request.send();
+  final responseData = await http.Response.fromStream(response);
   
   print("Donner recue: $id,$nom,$prenom, $date_de_naissance, $photo, $sexe, $tel, $ant_medoc, $allergie,$ident, $adress,$medoc_en_cours, $roles");
   if(response.statusCode == 200){
-    final data = jsonDecode(response.body);
+    final data = jsonDecode(responseData.body);
     print("✅ (>_<)  $data");
     return data;
   }else{
-    throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
+    throw Exception("❌ ${response.statusCode} ${responseData.body}  (O_o)");
   }
 }
-Future<Map<String, dynamic>> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles) async {
-  final url = Uri.parse("http://10.48.199.28:8000/api/edit_profil");
+Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles) async {
+  final url = Uri.parse("http://10.158.35.28:8000/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final response = await http.post(
-    url,
-    headers: {
-      'Authorization': 'Bearer $token', 
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "data": {
-        "id": id,
-        "lastname" : nom,
-        "firstname" : prenom,
-        "date" : date_de_naissance,
-        "sexe" : sexe,
-        "tel" : tel,
-        "speciality" : speciality,
-        "adressCabinet" : adressCabinet,
-        "roles" : roles,
-        "email" : ident,
-        "adress" : adress,
-        "photo_profil" : photo
-      }
-      
-    })
-  );
+
+  var request = http.MultipartRequest("POST", url);
+
+  request.fields['id'] = id.toString();
+  request.fields['firstname'] = nom;
+  request.fields['lastname'] = prenom;  
+  request.fields['date'] = date_de_naissance;
+  request.fields['sexe'] = sexe;
+  request.fields['tel'] = tel;
+  request.fields['roles'] = roles;
+  request.fields['email'] = ident;
+  request.fields['adress'] = adress;
+  request.fields['adressCabinet'] = adressCabinet;
+
+  if (photo != null && photo.isNotEmpty && File(photo).existsSync()) {
+    request.fields['isChangeProfile'] = 'true';
+    request.files.add(await http.MultipartFile.fromPath(
+      'photo_profil',
+      photo,
+    ));
+  }else{
+    request.fields['isChangeProfile'] = 'false';
+  }
+  
+  request.fields['speciality'] = speciality;
+  
+  var response = await request.send();
+  final responseData = await http.Response.fromStream(response);
   
   print("Donner recue: $id,$nom,$prenom, $date_de_naissance, $photo, $sexe, $tel, $speciality ,$ident, $adress,$adressCabinet, $roles");
   if(response.statusCode == 200){
-    final data = jsonDecode(response.body);
+    final data = jsonDecode(responseData.body);
     print("✅ (>_<)  $data");
-    return data;
   }else{
-    print("❌ ${response.statusCode} ${response.body}  (O_o)");
-    throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
+    print("❌ ${response.statusCode} ${responseData.body}  (O_o)");
+    throw Exception("❌ ${response.statusCode} ${responseData.body}  (O_o)");
   }
 }
