@@ -205,16 +205,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
     return null;
   }
   void _goToPlace(double lat, double lng, String description) {
-    // setState(() {
-    //   _markers.clear();
-    //   _markers.add(
-    //     Marker(
-    //       markerId: MarkerId(description),
-    //       position: LatLng(lat, lng),
-    //       infoWindow: InfoWindow(title: description),
-    //     ),
-    //   );
-    // });
     print("📍 Aller vers $description ($lat, $lng)");
     _mapController.animateCamera(
       CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14),
@@ -236,7 +226,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
             markers: _markers,
             polylines: _polylines,
             onTap: (pos) {
-              // Quand l'utilisateur clique sur la carte, on place le marqueur
             },
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
@@ -288,17 +277,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
                         countries: ["mg"], // Limiter aux pays (MG = Madagascar)
                         isLatLngRequired: true,
                         getPlaceDetailWithLatLng: (prediction) async {
-                          // if (prediction.lat != null && prediction.lng != null) {
-
-                          //   final lat = double.tryParse(prediction.lat.toString());
-                          //   final lng = double.tryParse(prediction.lng.toString());
-                            
-                          //   if (lat != null && lng != null) {
-                          //     _goToPlace(lat, lng, prediction.description ?? "Lieu");
-                          //     return;
-                          //   }
-                          
-                          // }
 
                           if (prediction.placeId != null) {
                           final details = await getPlaceDetails(prediction.placeId!);
@@ -310,18 +288,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
                               );
                             }
                           }
-
-                          // fallback: récupérer via Place Details API
-                          // final details = await getPlaceDetails(prediction.placeId!);
-                          // if (details != null) {
-                          //   _goToPlace(
-                          //     details["lat"],
-                          //     details["lng"],
-                          //     details["description"],
-                          //   );
-                          // } else {
-                          //   print("❌ Impossible de récupérer les coordonnées du lieu");
-                          // }
                         },
 
                         itemClick: (prediction) async {
