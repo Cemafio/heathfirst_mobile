@@ -15,158 +15,11 @@ class GoogleMapPage extends StatefulWidget {
 }
 
 class _GoogleMapPageState extends State<GoogleMapPage> {
-  // late GoogleMapController mapController;
-  // LatLng? _currentPosition;
-  // Set<Marker> _markers = {};
-  // Set<Polyline> _polylines = {};
-  // PolylinePoints polylinePoints = PolylinePoints();
-
-  // final LatLng _destination = const LatLng(-15.7167, 46.3167);
-  // final String googleApiKey = "AIzaSyA-nvourlwGfRs3VMYVSaxpF4NW8vkIuCM";
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _getCurrentLocation();
-  // }
-  // void _onMapCreated(GoogleMapController controller) {
-  //   mapController = controller;
-  // }
-
-  // Future<void> _getCurrentLocation() async {
-  //   // Vérifier et demander les permissions
-  //   LocationPermission permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       print("erreur");
-  //       return;
-  //     }
-  //   }
-
-    // if (permission == LocationPermission.deniedForever) {
-    //   print("erreur");
-    //   return;
-    // }
-
-    // Obtenir la position actuelle
-    // Position position = await Geolocator.getCurrentPosition(
-    //   desiredAccuracy: LocationAccuracy.high,
-    // );
-
-    // setState(() {
-    //   _currentPosition = LatLng(position.latitude, position.longitude);
-    //    _markers.add(Marker(
-    //     markerId: const MarkerId("start"),
-    //     position: _currentPosition!,
-    //     infoWindow: const InfoWindow(title: "Départ"),
-    //   ));
-
-    //   _markers.add(Marker(
-    //     markerId: const MarkerId("destination"),
-    //     position: _destination,
-    //     infoWindow: const InfoWindow(title: "Destination"),
-    //   ));
-    // });
-
-    // Déplacer la caméra
-    // mapController.animateCamera(
-    //   CameraUpdate.newLatLngZoom(_currentPosition!, 12),
-    // );
-
-    // _getRoute();
-  // }
-
-// Future<void> _getRoute() async {
-//     if (_currentPosition == null) return;
-
-//     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-//       googleApiKey: googleApiKey,
-//       request: PolylineRequest(
-//         origin: PointLatLng(_currentPosition!.latitude, _currentPosition!.longitude), 
-//         destination: PointLatLng(_destination.latitude, _destination.longitude), 
-//         mode: TravelMode.driving // optionnel (driving, walking, bicycling, transit)
-//       ),
-//     );
-//     print("Status: ${result.status}");
-//     print("Error: ${result.errorMessage}");
-//     print("Points trouvés: ${result.points.length}");
-
-//     if (result.points.isNotEmpty) {
-//       List<LatLng> polylineCoordinates = [];
-//       for (var point in result.points) {
-//         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-//       }
-
-//       setState(() {
-//         _polylines.add(
-//           Polyline(
-//             polylineId: const PolylineId("route"),
-//             color: Colors.blue,
-//             width: 5,
-//             points: polylineCoordinates,
-//           ),
-//         );
-//       });
-
-      // mapController.animateCamera(
-      //   CameraUpdate.newLatLngBounds(
-      //     LatLngBounds(
-      //       southwest: LatLng(
-      //         _currentPosition!.latitude <= _destination.latitude
-      //           ? _currentPosition!.latitude
-      //           : _destination.latitude,
-      //         _currentPosition!.longitude <= _destination.longitude
-      //           ? _currentPosition!.longitude
-      //           : _destination.longitude,
-      //       ),
-      //       northeast: LatLng(
-      //         _currentPosition!.latitude > _destination.latitude
-      //           ? _currentPosition!.latitude
-      //           : _destination.latitude,
-      //         _currentPosition!.longitude > _destination.longitude
-      //           ? _currentPosition!.longitude
-      //           : _destination.longitude,
-      //       ),
-      //     ),
-      //     100,
-      //   ),
-      // );
-
-      
-
-//     }
-//   }
-
-  // Widget build(BuildContext context) {
-
-  //   return _currentPosition == null
-  //     ? const Center(child: CircularProgressIndicator())
-  //     : Scaffold(
-  //       backgroundColor: Colors.white,
-  //       body: Stack(
-  //         clipBehavior: Clip.none,
-
-  //       children: [
-  //         // SafeArea(
-  //           // child: 
-  //           GoogleMap(
-  //             onMapCreated: _onMapCreated,
-  //             initialCameraPosition: CameraPosition(
-  //               target: _currentPosition!,
-  //               zoom: 12,
-  //             ),
-  //             markers: _markers,
-  //             polylines: _polylines,
-  //             myLocationEnabled: true, // Activer le bouton localisation
-  //             myLocationButtonEnabled: true,
-              
-  //           ),
-          // ),
-  late GoogleMapController _mapController;
-  final Set<Marker> _markers = {};
-  final Set<Polyline> _polylines = {};
-  List<LatLng> polylineCoordinates = [];
+late GoogleMapController _mapController;
+final Set<Marker> _markers = {};
+final Set<Polyline> _polylines = {};
+List<LatLng> polylineCoordinates = [];
+TextEditingController _searchController = TextEditingController();
 
 final PolylinePoints polylinePoints = PolylinePoints();
   final String googleApiKey = "AIzaSyA-nvourlwGfRs3VMYVSaxpF4NW8vkIuCM";
@@ -331,19 +184,38 @@ final PolylinePoints polylinePoints = PolylinePoints();
       debugPrint("Erreur Directions API: ${result.errorMessage}");
     }
   }
+  Future<Map<String, dynamic>?> getPlaceDetails(String placeId) async {
+    final url = Uri.parse(
+      "https://maps.googleapis.com/maps/api/place/details/json"
+      "?place_id=$placeId&key=$googleApiKey",
+    );
 
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data["status"] == "OK") {
+        final location = data["result"]["geometry"]["location"];
+        return {
+          "lat": location["lat"],
+          "lng": location["lng"],
+          "description": data["result"]["name"],
+        };
+      }
+    }
+    return null;
+  }
   void _goToPlace(double lat, double lng, String description) {
-    setState(() {
-      _markers.clear();
-      _markers.add(
-        Marker(
-          markerId: MarkerId(description),
-          position: LatLng(lat, lng),
-          infoWindow: InfoWindow(title: description),
-        ),
-      );
-    });
-
+    // setState(() {
+    //   _markers.clear();
+    //   _markers.add(
+    //     Marker(
+    //       markerId: MarkerId(description),
+    //       position: LatLng(lat, lng),
+    //       infoWindow: InfoWindow(title: description),
+    //     ),
+    //   );
+    // });
+    print("📍 Aller vers $description ($lat, $lng)");
     _mapController.animateCamera(
       CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14),
     );
@@ -370,33 +242,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
             myLocationEnabled: true,
           ),
 
-          // Positioned(
-          //   top: 40,
-          //   left: 15,
-          //   right: 15,
-          //   child: Container(
-          //     decoration: BoxDecoration(
-          //       color: Colors.white,
-          //       borderRadius: BorderRadius.circular(8),
-          //     ),
-          //     child: GooglePlaceAutoCompleteTextField(
-          //       textEditingController: TextEditingController(),
-          //       googleAPIKey: googleApiKey,
-          //       inputDecoration: const InputDecoration(
-          //         hintText: "Rechercher un lieu...",
-          //         border: InputBorder.none,
-          //         contentPadding: EdgeInsets.all(10),
-          //       ),
-          //       debounceTime: 800,
-          //       countries: ["mg"], // Limiter aux pays (MG = Madagascar)
-          //       isLatLngRequired: true,
-          //       getPlaceDetailWithLatLng: (prediction) {
-          //         double lat = prediction.lat!;
-          //         double lng = prediction.lng!;
-          //         _goToPlace(lat, lng, prediction.description!);
-          //       },
-          //     ),
-          //   ),
           Positioned(
             top: 40,
             left: 0,
@@ -406,7 +251,7 @@ final PolylinePoints polylinePoints = PolylinePoints();
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: 100,
+                // height: 100,
                 padding: EdgeInsets.all(15),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -425,46 +270,82 @@ final PolylinePoints polylinePoints = PolylinePoints();
                       child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
                     ),
 
-                    GooglePlaceAutoCompleteTextField(
-                      textEditingController: TextEditingController(),
-                      googleAPIKey: googleApiKey,
-                      inputDecoration: const InputDecoration(
-                        hintText: "Rechercher un lieu...",
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(10),
+                    Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      debounceTime: 800,
-                      countries: ["mg"], // Limiter aux pays (MG = Madagascar)
-                      isLatLngRequired: true,
-                      getPlaceDetailWithLatLng: (prediction) {
-                        double lat = prediction.lat!;
-                        double lng = prediction.lng!;
-                        _goToPlace(lat, lng, prediction.description!);
+                      child: GooglePlaceAutoCompleteTextField(
+                        textEditingController: _searchController,
+                        googleAPIKey: googleApiKey,
+                        inputDecoration: const InputDecoration(
+                          hintText: "Rechercher un lieu...",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                        ),
+                        debounceTime: 800,
+                        countries: ["mg"], // Limiter aux pays (MG = Madagascar)
+                        isLatLngRequired: true,
+                        getPlaceDetailWithLatLng: (prediction) async {
+                          // if (prediction.lat != null && prediction.lng != null) {
+
+                          //   final lat = double.tryParse(prediction.lat.toString());
+                          //   final lng = double.tryParse(prediction.lng.toString());
+                            
+                          //   if (lat != null && lng != null) {
+                          //     _goToPlace(lat, lng, prediction.description ?? "Lieu");
+                          //     return;
+                          //   }
+                          
+                          // }
+
+                          if (prediction.placeId != null) {
+                          final details = await getPlaceDetails(prediction.placeId!);
+                            if (details != null) {
+                              _goToPlace(
+                                details["lat"],
+                                details["lng"],
+                                details["description"],
+                              );
+                            }
+                          }
+
+                          // fallback: récupérer via Place Details API
+                          // final details = await getPlaceDetails(prediction.placeId!);
+                          // if (details != null) {
+                          //   _goToPlace(
+                          //     details["lat"],
+                          //     details["lng"],
+                          //     details["description"],
+                          //   );
+                          // } else {
+                          //   print("❌ Impossible de récupérer les coordonnées du lieu");
+                          // }
+                        },
+
+                        itemClick: (prediction) async {
+                        // Quand l’utilisateur clique sur un résultat
+                        _searchController.text = prediction.description ?? "";
+
+                        if (prediction.placeId != null) {
+                          final details = await getPlaceDetails(prediction.placeId!);
+                          if (details != null) {
+                            _goToPlace(
+                              details["lat"],
+                              details["lng"],
+                              details["description"],
+                            );
+                          }
+                        }
                       },
-                    ),
-                    // Container(
-                    //   width: 250,
-                    //   height: 45,
-                    //   padding: EdgeInsets.only(bottom: 12, left: 10),
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white,
-                    //     border: Border.all(color: Colors.black45),
-                    //     borderRadius: BorderRadius.all(Radius.circular(10))
-                    //   ),
-                    //   child: TextFormField(
-                    //     decoration: InputDecoration(
-                    //       border: InputBorder.none,
-                    //       enabledBorder: InputBorder.none,
-                    //       focusedBorder: InputBorder.none,
-                    //       hint: Text('Chercher', style: TextStyle(fontSize: 15),)
-                    //     ),
-                    //   ),
-                    // ),
+                      ),
+                    ),                    
                   ],
                 ),
               ), 
             )
-          )
+          ),
         ],
       )
     );

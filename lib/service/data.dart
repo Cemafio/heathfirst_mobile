@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<List<dynamic>> rdvUserData() async{
-  final url = Uri.parse('http://10.158.35.28:8000/api/get_appointment'); // L'URL de votre API
+  final url = Uri.parse('http://10.219.73.28:8000/api/get_appointment'); // L'URL de votre API
   final perfs = await SharedPreferences.getInstance();
   final token = perfs.getString('token');
   final response = await http.get(
@@ -32,7 +32,7 @@ Future<List<dynamic>> rdvUserData() async{
 }  
 
 Future<Map<String, dynamic>> userInfo()  async{
-  final url = Uri.parse("http://10.158.35.28:8000/api/user");
+  final url = Uri.parse("http://10.219.73.28:8000/api/user");
 
   
   final pers = await SharedPreferences.getInstance();
@@ -55,7 +55,7 @@ Future<Map<String, dynamic>> userInfo()  async{
 
 
 Future<Map<String, dynamic>> getProfilUser(id) async {
-    final url = Uri.parse("http://10.158.35.28:8000/api/get_user_id/$id");
+    final url = Uri.parse("http://10.219.73.28:8000/api/get_user_id/$id");
     final pers = await SharedPreferences.getInstance();
       final token = pers.getString('token');
 
@@ -76,7 +76,7 @@ Future<Map<String, dynamic>> getProfilUser(id) async {
 
 // ----------Requette pour recuperer les list des docteurs--------
 Future<List<dynamic>> fetchData() async {
-  final url = Uri.parse('http://10.158.35.28:8000/api/doctors'); // L'URL de votre API
+  final url = Uri.parse('http://10.219.73.28:8000/api/doctors'); // L'URL de votre API
   final response = await http.get(url);
   int status = response.statusCode; 
 
@@ -90,7 +90,7 @@ Future<List<dynamic>> fetchData() async {
 }
 //----------------------------------------------------------------- 
 Future<bool> addDayNoWork(DateTime date,String reason) async {
-  final url = Uri.parse("http://10.158.35.28:8000/api/unavailabledays/add");
+  final url = Uri.parse("http://10.219.73.28:8000/api/unavailabledays/add");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final body = {
@@ -120,7 +120,7 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
   }
 }
 Future<List<dynamic>> getDayNoWork(int id) async {
-  final url = Uri.parse("http://10.158.35.28:8000/api/get_unvailable_days/get/$id");
+  final url = Uri.parse("http://10.219.73.28:8000/api/get_unvailable_days/get/$id");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.get(
@@ -141,7 +141,7 @@ Future<List<dynamic>> getDayNoWork(int id) async {
 Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.158.35.28:8000/api/unavailable_days/delete');
+  final url = Uri.parse('http://10.219.73.28:8000/api/unavailable_days/delete');
   final response = await http.delete(
     url,
     headers: {
@@ -163,7 +163,7 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
 Future<void> responseAppointment(int appointment, String status) async {
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.158.35.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
+  final url = Uri.parse('http://10.219.73.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
   final response = await http.patch(
     url,
     headers: {
@@ -187,7 +187,7 @@ Future<void> responseAppointment(int appointment, String status) async {
 Future<void> takeAppointment(int docId, String symptome, DateTime date,String hour) async{
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
-  final url = Uri.parse('http://10.158.35.28:8000/api/validate/get_appointement');
+  final url = Uri.parse('http://10.219.73.28:8000/api/validate/get_appointement');
   // print('Date => ${date.toIso8601String().split(' ')[0]}');
 
   final response = await http.post(
@@ -215,7 +215,7 @@ Future<void> takeAppointment(int docId, String symptome, DateTime date,String ho
   }  
 }
 Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
-  final url = Uri.parse("http://10.158.35.28:8000/api/verrifRdvExist");
+  final url = Uri.parse("http://10.219.73.28:8000/api/verrifRdvExist");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.post(
@@ -240,7 +240,7 @@ Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
   }
 }
 Future<void> editProfil(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles) async {
-  final url = Uri.parse("http://10.158.35.28:8000/api/edit_profil");
+  final url = Uri.parse("http://10.219.73.28:8000/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   var request = http.MultipartRequest("POST", url);
@@ -281,7 +281,7 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
   }
 }
 Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles) async {
-  final url = Uri.parse("http://10.158.35.28:8000/api/edit_profil");
+  final url = Uri.parse("http://10.219.73.28:8000/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
 

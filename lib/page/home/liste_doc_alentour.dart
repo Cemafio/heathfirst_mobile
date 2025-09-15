@@ -69,7 +69,7 @@ class _ListDocSectionState extends State<ListDocSection> {
 
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: Image.network("http://10.158.35.28:8000/images/photos/${listRdvItem['photoProfil']}", fit: BoxFit.cover,)
+                          child: Image.network("http://10.219.73.28:8000/images/photos/${listRdvItem['photoProfil']}", fit: BoxFit.cover,)
                         ),
                       ),
                       const SizedBox(width: 20,),
