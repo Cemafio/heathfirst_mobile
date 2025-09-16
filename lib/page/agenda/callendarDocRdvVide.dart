@@ -85,13 +85,6 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-        // if(_markedDays.isEmpty)
-        // Container(
-        //     width: double.infinity,
-        //     padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))),
-
-        // if(_markedDays.isNotEmpty)
-
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),

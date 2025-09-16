@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/service/data.dart';
@@ -37,6 +38,14 @@ class _ListDocSectionState extends State<ListDocSection> {
               );
 
             if (snapshot.hasError){
+              if (snapshot.error.toString().contains("unauthorized")) {
+                Future.microtask(() {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginMobile()),
+                  );
+                });
+              }
               return Center(child: Text('Erreur : ${snapshot}'));
             }
             final docList = snapshot.data!;

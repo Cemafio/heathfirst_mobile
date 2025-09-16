@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -36,14 +37,9 @@ class _InfoUserState extends State<InfoUser> {
   @override
   void initState(){
     super.initState();
-    // _loadUserInfo();
     _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
   }
-  // Future<void> _loadUserInfo() async {
-      // setState(() {
-      
-      // });
-  // }
+  
   Future<void> _resetAppointmentVerrif() async {
       setState(() {
         _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
@@ -90,7 +86,7 @@ class _InfoUserState extends State<InfoUser> {
       return StatefulBuilder(
         builder: (context, setState){
           return AlertDialog(
-            title: const Center(child:  Text("Formulaire a remplir", style: TextStyle(fontSize: 20),)),
+            title: const Center(child:  Text("Formulaire a remplir", style: TextStyle(fontSize: 16),)),
             content: Container(
               height: 260,
               width: 300,
@@ -235,11 +231,18 @@ class _InfoUserState extends State<InfoUser> {
                   child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
               }
               if (snapshot.hasError) {
+                if (snapshot.error.toString().contains("unauthorized")) {
+                  Future.microtask(() {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => LoginMobile()),
+                    );
+                  });
+                }
                 return Center(child: Text('Erreur : ${snapshot.error}'));
               }
               
               final Map<String, dynamic> _etaRdv = snapshot.data!;
-              print(_etaRdv);
               
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -249,7 +252,6 @@ class _InfoUserState extends State<InfoUser> {
                     if(!_etaRdv['existe']){
                       popUp();
                     }
-                    // Navigator.of(context).push(MaterialPageRoute(builder:   (context) => FormGetAppointment()));
 
                   },
                   child:
@@ -272,24 +274,62 @@ class _InfoUserState extends State<InfoUser> {
                           ),
                         ),
                       )
-                    : Container(
-                      height: 60,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color.fromARGB(125, 101, 109, 101), width: 2),
-                        borderRadius: BorderRadius.circular(20),
-                        color: const Color.fromARGB(0, 224, 224, 224),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "En attente de la reponse",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(125, 101, 109, 101),
+                    : (_etaRdv['response'] == 'accepted') 
+                      ? Container(
+                          height: 60,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color.fromARGB(0, 101, 109, 101), width: 2),
+                            borderRadius: BorderRadius.circular(20),
+                            color: const Color.fromARGB(0, 224, 224, 224),
                           ),
-                        ),
-                      ),
-                    )
+                          child: const Center(
+                            child: Text(
+                              "Appointment accepted",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 124, 233, 128)
+                              ),
+                            ),
+                          ),
+                        )
+                      : (_etaRdv['response'] == 'refused')
+                        ? Container(
+                            height: 60,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Color.fromARGB(0, 101, 109, 101), width: 2),
+                              borderRadius: BorderRadius.circular(20),
+                              color: const Color.fromARGB(0, 224, 224, 224),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Appointment refused",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(124, 212, 129, 129),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            height: 60,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Color.fromARGB(0, 101, 109, 101), width: 2),
+                              borderRadius: BorderRadius.circular(20),
+                              color: const Color.fromARGB(0, 224, 224, 224),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Appointment pending",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(123, 106, 106, 106),
+                                ),
+                              ),
+                            ),
+                          )
                   ),
                 );
             }

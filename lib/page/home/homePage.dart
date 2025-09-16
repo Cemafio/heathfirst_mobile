@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:heathfirst_mobile/page/agenda/calendar.dart';
+import 'package:heathfirst_mobile/page/agenda/callendarClient.dart';
 import 'package:heathfirst_mobile/page/appointment/demandeRendeVous.dart';
 import 'package:heathfirst_mobile/page/home/acceuilDoc.dart';
 import 'package:heathfirst_mobile/page/home/categorie.dart';
@@ -222,7 +223,7 @@ class _HomepageState extends State<HomePage> {
                     leading: const Icon(Icons.event),
                     title: const Text("Agenda"),
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => CalendarSection(user: _infoUser,)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => (_infoUser['roles'][0] == 'ROLE_DOCTOR') ? CalendarSection(user: _infoUser,) : CallendarClient(user: _infoUser)));
                     }
                   ),
                   if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT')?? false)

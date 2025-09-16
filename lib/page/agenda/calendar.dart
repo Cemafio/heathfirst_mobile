@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,17 +57,26 @@ class _CalendarSectionState extends State<CalendarSection> {
               FutureBuilder<List<dynamic>>(
                 future: _listDemd,
                 builder: (context, snapshot) {
+
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return  Container(padding: EdgeInsets.all(70), child: const CircularProgressIndicator(strokeWidth: 3.0,));
                   }
 
                   if (snapshot.hasError) {
+                    if (snapshot.error.toString().contains("unauthorized")) {
+                      Future.microtask(() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => LoginMobile()),
+                        );
+                      });
+                    }
                     return Center(child: Text('Erreur : ${snapshot.error}'));
                   }
 
                   final rdv = snapshot.data!;
+                  print('ListDemande => $rdv');
                   if (rdv.isEmpty) {
-                    print('rdv vide ....');
                     return CallendardocrdvVide(infoUser: _infoUser, idUser: _infoUser['id'], heigh: 60, page: 'agenda');
                   }
 

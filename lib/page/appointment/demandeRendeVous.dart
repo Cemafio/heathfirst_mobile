@@ -1,6 +1,7 @@
 import 'dart:async';
 // import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'package:flutter/material.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
 class RendezvousSection extends StatefulWidget {
@@ -154,6 +155,14 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                     }
 
                     if (snapshot.hasError) {
+                      if (snapshot.error.toString().contains("unauthorized")) {
+                        Future.microtask(() {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => LoginMobile()),
+                          );
+                        });
+                      }
                       return Center(child: Text('Erreur : ${snapshot.error}'));
                     }
 

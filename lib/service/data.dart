@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:http/http.dart' as http;
 // import 'package:project_1/First_Health/screen/mobile/widget/calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,9 @@ Future<List<dynamic>> rdvUserData() async{
   );
 
   // print('Response body: ${jsonDecode(response.body)['appointments']}');
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(response.statusCode == 200){
     final data = jsonDecode(response.body)['appointments'];
     print('Reussie ..... (>_<)');
@@ -44,6 +48,9 @@ Future<Map<String, dynamic>> userInfo()  async{
       'Authorization': 'Bearer $token', 
     },
   );
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(response.statusCode == 200){
     print('Info user recuperer avec succée ..... (>_<)');
     final data = jsonDecode(response.body);
@@ -65,6 +72,9 @@ Future<Map<String, dynamic>> getProfilUser(id) async {
           'Authorization': 'Bearer $token', 
         },
       );
+      if (response.statusCode == 401) {
+        throw Exception("unauthorized");
+      }
       if(response.statusCode == 200){
         print('Info user id recuperer avec succée ..... (>_<)');
         final data = jsonDecode(response.body);
@@ -79,7 +89,10 @@ Future<List<dynamic>> fetchData() async {
   final url = Uri.parse('http://10.219.73.28:8000/api/doctors'); // L'URL de votre API
   final response = await http.get(url);
   int status = response.statusCode; 
-
+  
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(status == 200 ){
     final doctor = jsonDecode(response.body)['hydra:member'];
     return doctor;
@@ -109,7 +122,10 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
     
     body: jsonEncode(body)
   );
-  
+
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(response.statusCode == 200 || response.statusCode == 201){
     print("✅ unvailable day add   (>_<)");
     print("📬 Corps retour : ${response.body}");
@@ -130,6 +146,10 @@ Future<List<dynamic>> getDayNoWork(int id) async {
     },
   );
   
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
   if(response.statusCode == 200){
     print("✅ unvailable day obtained   (>_<)");
     final data = jsonDecode(response.body);
@@ -154,6 +174,10 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
     })
   );
   
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
   if(response.statusCode == 200 || response.statusCode == 204){
     print("✅ unvailable day $idDoc [$date] deleted   (>_<)");
   }else{
@@ -177,7 +201,10 @@ Future<void> responseAppointment(int appointment, String status) async {
     )
   );
 
-  
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
   if(response.statusCode == 200 || response.statusCode == 204){
     print("✅ Rdv updated  (>_<)");
   }else{
@@ -231,6 +258,10 @@ Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
   );
   print('idDoc: $idDoc, idUser: $patientId');
   
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
   if(response.statusCode == 200){
     final data = jsonDecode(response.body);
     print("✅ (>_<)  $data");
@@ -271,7 +302,10 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
   var response = await request.send();
   final responseData = await http.Response.fromStream(response);
   
-  print("Donner recue: $id,$nom,$prenom, $date_de_naissance, $photo, $sexe, $tel, $ant_medoc, $allergie,$ident, $adress,$medoc_en_cours, $roles");
+  // print("Donner recue: $id,$nom,$prenom, $date_de_naissance, $photo, $sexe, $tel, $ant_medoc, $allergie,$ident, $adress,$medoc_en_cours, $roles");
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(response.statusCode == 200){
     final data = jsonDecode(responseData.body);
     print("✅ (>_<)  $data");
@@ -314,11 +348,43 @@ Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naiss
   final responseData = await http.Response.fromStream(response);
   
   print("Donner recue: $id,$nom,$prenom, $date_de_naissance, $photo, $sexe, $tel, $speciality ,$ident, $adress,$adressCabinet, $roles");
+  
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
   if(response.statusCode == 200){
     final data = jsonDecode(responseData.body);
     print("✅ (>_<)  $data");
   }else{
     print("❌ ${response.statusCode} ${responseData.body}  (O_o)");
     throw Exception("❌ ${response.statusCode} ${responseData.body}  (O_o)");
+  }
+}
+
+Future<List<dynamic>> seeStatusClientRdv(int patientId) async {
+  final url = Uri.parse("http://10.219.73.28:8000/api/see_status_client_rdv");
+  final pers = await SharedPreferences.getInstance();
+  final token = pers.getString('token');
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token', 
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'idUser': patientId
+    })
+  );
+  
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
+  if(response.statusCode == 200){
+    final data = jsonDecode(response.body);
+    print("✅ (>_<) ");
+    return data;
+  }else{
+    throw Exception("❌ Erreur to see status appointment client: status ${response.statusCode} ${response.body}  (O_o)");
   }
 }

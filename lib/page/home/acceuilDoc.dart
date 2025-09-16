@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/appointment/demandeRendeVous.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -76,7 +77,7 @@ class _AcceuildocState extends State<Acceuildoc> {
                       ],
                     ),
                   ),
-                  if(_listDemd != [] && _infoUser != null)
+                  if(_listDemd != [])
                   FutureBuilder<List<dynamic>>(
                     future: _listDemd,
                     builder: (context, snapshot) {
@@ -87,6 +88,14 @@ class _AcceuildocState extends State<Acceuildoc> {
                       }
 
                       if (snapshot.hasError) {
+                        if (snapshot.error.toString().contains("unauthorized")) {
+                          Future.microtask(() {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => LoginMobile()),
+                            );
+                          });
+                        }
                         return Center(child: Text('Erreur : ${snapshot.error}'));
                       }
 
@@ -190,6 +199,14 @@ class _AcceuildocState extends State<Acceuildoc> {
                                     }
 
                                     if (snapshot.hasError) {
+                                      if (snapshot.error.toString().contains("unauthorized")) {
+                                        Future.microtask(() {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(builder: (_) => LoginMobile()),
+                                          );
+                                        });
+                                      }
                                       return Positioned(
                                         top: -10,
                                         right: -5,

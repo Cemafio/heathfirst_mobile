@@ -83,8 +83,6 @@ class _EditprofilState extends State<Editprofil> {
   }
 
   void _setInitialValue () {
-    
-
     _nameController.text = _infoUser['LastName']; 
     _firstNameController.text = _infoUser['FirstName'];
     _emailController.text = _infoUser['email'];
@@ -321,7 +319,6 @@ class _EditprofilState extends State<Editprofil> {
                           if (isValide) {
                             _formKey.currentState!.save();
                             try {
-                              // print("Donner envoyer: ${_infoUser['id']},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_ant_medoc, $_allergie,$_identifiant, $_adress,$_medoc_en_cours");
                               await editProfil( _infoUser['id'],_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client');
                               
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -330,9 +327,6 @@ class _EditprofilState extends State<Editprofil> {
                               Navigator.pop(context, true);
                             } catch (e) {
                               print(e);
-                            //   ScaffoldMessenger.of(context).showSnackBar(
-                            //     SnackBar(content: Text('Erreur : ${e.toString()}...... (O_o)')),
-                            //   );
                             }finally{
                               setState(() {
                                 isLoaded = false;

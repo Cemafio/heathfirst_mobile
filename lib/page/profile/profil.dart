@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/editProfil.dart';
 import 'package:heathfirst_mobile/page/profile/editProfilDoc.dart';
 import 'package:heathfirst_mobile/page/setting/settingPage.dart';
@@ -104,6 +105,14 @@ class _ProfilSectionState extends State<ProfilSection> {
                 child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)))) ;
             }
             if (snapshot.hasError) {
+              if (snapshot.error.toString().contains("unauthorized")) {
+                Future.microtask(() {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginMobile()),
+                  );
+                });
+              }
               return Center(child: Text('Erreur : ${snapshot.error}'));
             }
 
@@ -272,6 +281,14 @@ class _ProfilSectionState extends State<ProfilSection> {
                                     child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
                                 }
                                 if (snapshot.hasError) {
+                                  if (snapshot.error.toString().contains("unauthorized")) {
+                                    Future.microtask(() {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (_) => LoginMobile()),
+                                      );
+                                    });
+                                  }
                                   return Center(child: Text('Erreur : ${snapshot.error}'));
                                 }
 

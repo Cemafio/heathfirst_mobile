@@ -20,6 +20,7 @@ final Set<Marker> _markers = {};
 final Set<Polyline> _polylines = {};
 List<LatLng> polylineCoordinates = [];
 TextEditingController _searchController = TextEditingController();
+MapType _currentMapType = MapType.normal;
 
 final PolylinePoints polylinePoints = PolylinePoints();
   final String googleApiKey = "AIzaSyA-nvourlwGfRs3VMYVSaxpF4NW8vkIuCM";
@@ -36,17 +37,18 @@ final PolylinePoints polylinePoints = PolylinePoints();
     _placeMarkerAtCurrentLocation();
   }
 
-  void _placeSingleMarker(LatLng pos, LatLng dest, {String title = 'Marqueur'}) {
+  void _placeSingleMarker(LatLng pos,{String title = 'Marqueur'}) {
     setState(() {
+      _markers.clear();
       _markers.add(Marker(
         markerId: const MarkerId('Destination'),
-        position: dest,
+        position: pos,
         infoWindow: InfoWindow(title: title),
       ));
     });
 
     // recentrer la caméra dessus
-    _mapController.animateCamera(CameraUpdate.newLatLngZoom(pos, 14));
+    _mapController.animateCamera(CameraUpdate.newLatLngZoom(pos, 15));
   }
 
   Future<void> _placeMarkerAtCurrentLocation() async {
@@ -61,7 +63,7 @@ final PolylinePoints polylinePoints = PolylinePoints();
     final origin = LatLng(pos.latitude, pos.longitude);
     final destination = LatLng(-15.7167, 46.3167);
     // -15.7167, 46.3167
-    _placeSingleMarker(origin, destination, title: 'Ma position');
+    _placeSingleMarker(destination,title: 'Ma position');
     _drawRoute(origin,destination);
   }
 
@@ -133,6 +135,7 @@ final PolylinePoints polylinePoints = PolylinePoints();
 
     return poly;
   }
+  
   void _getPolyline(LatLng dest, LatLng local) async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: googleApiKey,
@@ -204,13 +207,31 @@ final PolylinePoints polylinePoints = PolylinePoints();
     }
     return null;
   }
+
   void _goToPlace(double lat, double lng, String description) {
     print("📍 Aller vers $description ($lat, $lng)");
     _mapController.animateCamera(
       CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14),
     );
   }
+
+  void _toggleMapType() {
+    setState(() {
+      _currentMapType = _currentMapType == MapType.normal ? MapType.hybrid : MapType.normal;
+    });
+  }
    
+  void _goToCurrentPosition() async{
+    LocationPermission p = await Geolocator.checkPermission();
+    if (p == LocationPermission.denied) {
+      p = await Geolocator.requestPermission();
+      if (p == LocationPermission.denied) return;
+    }
+    if (p == LocationPermission.deniedForever) return;
+
+    Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    _goToPlace(pos.latitude, pos.longitude, 'Votre position');
+  }
 
   Widget build(BuildContext context) {
 
@@ -226,9 +247,13 @@ final PolylinePoints polylinePoints = PolylinePoints();
             markers: _markers,
             polylines: _polylines,
             onTap: (pos) {
+              _placeSingleMarker(pos);
             },
-            myLocationButtonEnabled: true,
+            
+            
+            myLocationButtonEnabled: false,
             myLocationEnabled: true,
+            mapType: _currentMapType,
           ),
 
           Positioned(
@@ -248,7 +273,6 @@ final PolylinePoints polylinePoints = PolylinePoints();
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      // margin: const EdgeInsets.only(bottom: 5),
 
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
@@ -311,6 +335,24 @@ final PolylinePoints polylinePoints = PolylinePoints();
                 ),
               ), 
             )
+          ),
+          
+          Positioned(
+            bottom: 90,
+            left: 10,
+            child: FloatingActionButton(
+              onPressed: _goToCurrentPosition,
+              child: Icon(Icons.location_on_outlined),
+            ),
+          ),
+          
+          Positioned(
+            bottom: 20,
+            left: 10,
+            child: FloatingActionButton(
+              onPressed: _toggleMapType,
+              child: Icon(Icons.map_rounded),
+            ),
           ),
         ],
       )
