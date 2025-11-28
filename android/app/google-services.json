@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "875957972199",
+    "project_id": "healthfirst-d2404",
+    "storage_bucket": "healthfirst-d2404.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875957972199:android:f9acddf31034916e9e0642",
+        "android_client_info": {
+          "package_name": "com.example.heathfirst_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOfA7DTwmMC56U-fVUbTU0zm1KVCoDGDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -125,7 +125,7 @@ class _CallendaronlyState extends State<Callendaronly> {
                               margin: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.red.withOpacity(0.5),
+                                color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
                               ),
                               child: Center(
                                 child: Text(

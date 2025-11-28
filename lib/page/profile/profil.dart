@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/page/map/addCabinet.dart';
 import 'package:heathfirst_mobile/page/profile/editProfil.dart';
 import 'package:heathfirst_mobile/page/profile/editProfilDoc.dart';
 import 'package:heathfirst_mobile/page/setting/settingPage.dart';
@@ -132,7 +133,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                           color: Colors.white,
                           image: DecorationImage(
-                            image: NetworkImage("http://10.219.73.28:8000/images/photos/${infoUser['photo_profil']}"),
+                            image: NetworkImage("http://10.244.91.28:8000/images/photos/${infoUser['photo_profil']}"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -152,7 +153,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                               color: const Color(0xFF81C784),
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://10.219.73.28:8000/images/photos/${infoUser['photo_profil']}"),
+                              image: NetworkImage("http://10.244.91.28:8000/images/photos/${infoUser['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -212,6 +213,22 @@ class _ProfilSectionState extends State<ProfilSection> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            GestureDetector(
+                              onTap: (){
+                                _navigation(AjouterCabinetPage(user: infoUser,));
+                              },
+                              child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    // color: const Color.fromARGB(255, 241, 241, 241),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: Colors.black26)
+                                  ),
+
+                                  child: Center(child: Icon(Icons.location_searching_sharp),),
+                                ),
+                            ),
                             Material(
                               color: Colors.transparent,
                               child: InkWell(

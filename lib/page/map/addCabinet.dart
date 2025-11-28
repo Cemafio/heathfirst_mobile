@@ -2,18 +2,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:heathfirst_mobile/service/data.dart';
 // import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 
 class AjouterCabinetPage extends StatefulWidget {
-  @override
+  final Map<String, dynamic> user;
+
+  AjouterCabinetPage({super.key, required this.user});
+  @override 
   _AjouterCabinetPageState createState() => _AjouterCabinetPageState();
 }
 
 class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
   GoogleMapController? _mapController;
   LatLng? _selectedPosition;
+  String? _cabinetName;
   String _address = "Pas encore sélectionné";
+  Map<String, dynamic> get  user => widget.user;
   final TextEditingController _nameController = TextEditingController();
 
   // 1) Récupérer la position actuelle
@@ -63,38 +69,19 @@ class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
   // }
 
   // 3) Envoyer au backend
-  // Future<void> _saveCabinet() async {
-  //   if (_selectedPosition == null) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Veuillez sélectionner un emplacement")),
-  //     );
-  //     return;
-  //   }
+  Future<void> _saveCabinet() async {
+    if (_selectedPosition == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Veuillez sélectionner un emplacement")),
+      );
+      return;
+    }
 
-  //   final url = Uri.parse("http://10.0.2.2:8000/api/doctor_office"); // adapte l’URL
-  //   final response = await http.post(
-  //     url,
-  //     headers: {"Content-Type": "application/json"},
-  //     body: jsonEncode({
-  //       "doctor_id": 123, // à remplacer par l’ID réel du docteur
-  //       "name": _nameController.text,
-  //       "latitude": _selectedPosition!.latitude,
-  //       "longitude": _selectedPosition!.longitude,
-  //       "address": _address,
-  //     }),
-  //   );
-
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("✅ Cabinet enregistré avec succès")),
-  //     );
-  //     Navigator.pop(context);
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("❌ Erreur: ${response.body}")),
-  //     );
-  //   }
-  // }
+    await editLocation(user['id'], _selectedPosition!.latitude.toString(), _selectedPosition!.longitude.toString(), user['roles'][0]);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Localisation ajouter avec succée")),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,18 +89,6 @@ class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
       appBar: AppBar(title: Text("Ajouter un cabinet")),
       body: Column(
         children: [
-          // Nom du cabinet
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: "Nom du cabinet",
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-
           // Carte Google Maps
           Expanded(
             child: GoogleMap(
@@ -139,12 +114,35 @@ class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
                     },
             ),
           ),
-
-          // Adresse affichée
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Adresse: $_address"),
+            padding: const EdgeInsets.all(25.0),
+            child: TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: "Nom du cabinet",
+                border: OutlineInputBorder(),
+              ),
+              // onSaved: (newVal){
+              //   setState(() => _cabinetName = newVal);
+                
+              // },
+              onChanged: (value) {
+                setState(() {
+                  _cabinetName = value;
+                });
+              },
+              validator: (value){
+                if(value == null || value.trim().isEmpty){
+                  return 'Veuillez entrer la raison';
+                }
+              }
+            ),
           ),
+          // Adresse affichée
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Text("Adresse: $_address"),
+          // ),
 
           // Boutons
           Row(
@@ -156,7 +154,11 @@ class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
                 label: Text("Ma position"),
               ),
               ElevatedButton.icon(
-                onPressed: (){},
+                onPressed: (_selectedPosition != null && _cabinetName != null )
+                ? (){
+                    _saveCabinet();
+                  } 
+                : null,
                 icon: Icon(Icons.save),
                 label: Text("Enregistrer"),
               ),

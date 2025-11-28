@@ -92,7 +92,7 @@ class _EditprofilState extends State<Editprofil> {
     _medocController.text = _infoUser['MedicationInProgress'];
     _alegieController.text = _infoUser['allergy'];
     _antecMedocController.text= _infoUser['HistoryMedical'];
-    _networkImageUrl = "http://10.219.73.28:8000/images/photos/${_infoUser['photo_profil']}";
+    _networkImageUrl = "http://10.244.91.28:8000/images/photos/${_infoUser['photo_profil']}";
     _photo = _infoUser['photo_profil'];
   }
 

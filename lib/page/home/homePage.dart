@@ -48,7 +48,7 @@ class _HomepageState extends State<HomePage> {
           Builder(
             builder: (context) => GestureDetector(
               onTap: () {
-              Scaffold.of(context).openDrawer();
+              Scaffold.of(context).openDrawer();  
             },
             child: const Icon(
               Icons.auto_awesome_mosaic_outlined,
@@ -177,7 +177,7 @@ class _HomepageState extends State<HomePage> {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage('http://10.219.73.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                            image: NetworkImage('http://10.244.91.28:8000/images/photos/${_infoUser['photo_profil']}'),
                             fit: BoxFit.cover,
                           ),
                       ),

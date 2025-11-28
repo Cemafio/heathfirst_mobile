@@ -33,7 +33,7 @@ class _LoginMobileState extends State<LoginMobile> {
   late Map<String, dynamic> _infoUser;
 
   Future<void> authentification(String email, String pass) async{
-    final url = Uri.parse("http://10.219.73.28:8000/api/authentication");
+    final url = Uri.parse("http://10.244.91.28:8000/api/authentication");
     setState(() {
       isLoading = true;
     });
@@ -60,7 +60,7 @@ class _LoginMobileState extends State<LoginMobile> {
 
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inscription réussie')),
+          const SnackBar(content: Text('Authentificaton réussie')),
         );
         _infoUser = await userInfo();
 
@@ -100,7 +100,7 @@ class _LoginMobileState extends State<LoginMobile> {
       }
     }catch (e){
       isLoading = false;
-      print("❌ $e");
+      print("❌ Echec de la requette Authentification => $e");
     }
   }
 

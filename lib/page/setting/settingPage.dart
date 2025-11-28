@@ -129,7 +129,7 @@ class _SettingpageState extends State<Settingpage> {
                               color: Colors.black26,
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://10.219.73.28:8000/images/photos/${_user['photo_profil']}"),
+                              image: NetworkImage("http://10.244.91.28:8000/images/photos/${_user['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),
