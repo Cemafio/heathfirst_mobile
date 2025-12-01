@@ -33,6 +33,25 @@ class _HomepageState extends State<HomePage> {
   Future<List<dynamic>> _listDoc = fetchData();
   late Future<List<dynamic>> _listDemd;
 
+  // final categorie = [
+  //   {
+  //     'type': _listDoc['Specialty'],
+  //     'choice': true
+  //   },
+  //   {
+  //     'type': "Cardiologue",
+  //     'choice': false
+  //   },
+  //   {
+  //     'type': "Psychiatrique",
+  //     'choice': false
+  //   },
+  //   {
+  //     'type': "Filtrer",
+  //     'choice': false
+  //   },
+  // ];
+
   @override
   void initState() {
     super.initState();
@@ -126,9 +145,9 @@ class _HomepageState extends State<HomePage> {
                         
                       ),
                     ),
-                    const SizedBox(height: 70),
-                    if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT') ?? false)
-                      CategorieSection(),
+                    // const SizedBox(height: 70),
+                    // if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT') ?? false)
+                      // CategorieSection(category: categorie,),
                     
                     if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
                      Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,
