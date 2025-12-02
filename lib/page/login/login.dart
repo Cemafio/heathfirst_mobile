@@ -40,7 +40,6 @@ class _LoginMobileState extends State<LoginMobile> {
     try {
       final response = await http.post(
         url,
-        // headers: {'Content-Type':'application/json'},
         body: {
           '_username': email,
           '_password': pass
@@ -63,10 +62,6 @@ class _LoginMobileState extends State<LoginMobile> {
           const SnackBar(content: Text('Authentificaton réussie')),
         );
         _infoUser = await userInfo();
-
-        // Initiation des donner dans notre userProvider
-        // Future.microtask(() => context.read<UserProvider>().userInfo());
-
 
         setState(() {
           isLoading = false;

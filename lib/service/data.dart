@@ -417,6 +417,62 @@ Future<void> editLocation(int idDoc, String lat, String long, String role) async
   if(response.statusCode == 200){
     print("✅ (>_<) ");
   }else{
-    throw Exception("❌ Erreur status ${response.statusCode} ${response.body}  (O_o)");
+    throw Exception("❌ Erreur ${response.statusCode} ${response.body}  (O_o)");
+  }
+}
+
+Future<List<dynamic>> recherche(
+  String searchTerm,
+  String specialty,
+  String address,
+  int page,
+) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  // Base URL
+  String baseUrl = "http://10.244.91.28:8000/api/search";
+
+  // Paramètres dynamiques
+  Map<String, String> queryParams = {
+    "page": page.toString(),
+  };
+
+  // Ajout des filtres uniquement si non vides
+  if (searchTerm.isNotEmpty) {
+    queryParams["search"] = searchTerm;
+  }
+  if (specialty.isNotEmpty) {
+    queryParams["specialty"] = specialty;
+  }
+  if (address.isNotEmpty) {
+    queryParams["address"] = address;
+  }
+
+  // Construction automatique de l'URL propre
+  final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+
+  print("🌐 URL finale = $uri");
+
+  final response = await http.get(
+    uri,
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+  );
+
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    // for (var list in data) {
+    //   print("✅ (>_<) Success with: ${list['LastName']} ${list['FirstName']}");
+    // }
+    return data;
+  } else {
+    throw Exception("❌ Erreur ${response.statusCode} ${response.body}");
   }
 }
