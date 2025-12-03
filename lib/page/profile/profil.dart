@@ -176,7 +176,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                               color: const Color.fromARGB(57, 255, 255, 255)
                             ),
 
-                            child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
+                            child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color.fromARGB(255, 46, 46, 46),),
                           ),
                         )
                         

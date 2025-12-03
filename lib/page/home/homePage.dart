@@ -33,25 +33,6 @@ class _HomepageState extends State<HomePage> {
   Future<List<dynamic>> _listDoc = fetchData();
   late Future<List<dynamic>> _listDemd;
 
-  // final categorie = [
-  //   {
-  //     'type': _listDoc['Specialty'],
-  //     'choice': true
-  //   },
-  //   {
-  //     'type': "Cardiologue",
-  //     'choice': false
-  //   },
-  //   {
-  //     'type': "Psychiatrique",
-  //     'choice': false
-  //   },
-  //   {
-  //     'type': "Filtrer",
-  //     'choice': false
-  //   },
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -251,7 +232,7 @@ class _HomepageState extends State<HomePage> {
                       leading: const Icon(Icons.map_outlined),
                       title: const Text("Localisation"),
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GoogleMapPage()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => GoogleMapPage(allDoc: [_listDoc,''])));
                       }
                     ),
                   if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR')?? false)

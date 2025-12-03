@@ -6,23 +6,29 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:heathfirst_mobile/page/home/homePage.dart';
+import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:http/http.dart' as http;
 
 class GoogleMapPage extends StatefulWidget {
-  const GoogleMapPage({super.key});
+  final List<dynamic> allDoc;
+  const GoogleMapPage({super.key, required this.allDoc});
   @override
   State<GoogleMapPage> createState() => _GoogleMapPageState();
 }
 
 class _GoogleMapPageState extends State<GoogleMapPage> {
-late GoogleMapController _mapController;
-final Set<Marker> _markers = {};
-final Set<Polyline> _polylines = {};
-List<LatLng> polylineCoordinates = [];
-TextEditingController _searchController = TextEditingController();
-MapType _currentMapType = MapType.normal;
+  Future<List<dynamic>> get _allDoctor => widget.allDoc[0];
+  String get _docCherched => widget.allDoc[1];
 
-final PolylinePoints polylinePoints = PolylinePoints();
+  late GoogleMapController _mapController;
+  final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
+  List<LatLng> polylineCoordinates = [];
+  TextEditingController _searchController = TextEditingController();
+  MapType _currentMapType = MapType.normal;
+
+  final PolylinePoints polylinePoints = PolylinePoints();
   final String googleApiKey = "AIzaSyA-nvourlwGfRs3VMYVSaxpF4NW8vkIuCM";
   // Position initiale (centrage)
   static const LatLng _initialLatLng = LatLng(-18.8792, 47.5079);
@@ -34,24 +40,21 @@ final PolylinePoints polylinePoints = PolylinePoints();
   @override
   void initState(){
     super.initState();
-    _placeMarkerAtCurrentLocation();
+    // _placeMarkerAtCurrentLocation();
   }
-
-  void _placeSingleMarker(LatLng pos,{String title = 'Marqueur'}) {
+  void _placeSingleMarker(LatLng pos, String title) {
     setState(() {
-      _markers.clear();
-      _markers.add(Marker(
-        markerId: const MarkerId('Destination'),
-        position: pos,
-        infoWindow: InfoWindow(title: title),
-      ));
+      _markers.add(
+        Marker(
+          markerId: MarkerId("${title}_${_markers.length}"), // ID unique
+          position: pos,
+          infoWindow: InfoWindow(title: title),
+        ),
+      );
     });
-
-    // recentrer la caméra dessus
-    _mapController.animateCamera(CameraUpdate.newLatLngZoom(pos, 15));
   }
 
-  Future<void> _placeMarkerAtCurrentLocation() async {
+  Future<void> _placeMarkerAtCurrentLocation(LatLng doc_locate, final doc_info) async {
     LocationPermission p = await Geolocator.checkPermission();
     if (p == LocationPermission.denied) {
       p = await Geolocator.requestPermission();
@@ -61,10 +64,12 @@ final PolylinePoints polylinePoints = PolylinePoints();
 
     Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     final origin = LatLng(pos.latitude, pos.longitude);
-    final destination = LatLng(-15.7167, 46.3167);
+    // final destination = LatLng(-15.7167, 46.3167);
     // -15.7167, 46.3167
-    _placeSingleMarker(destination,title: 'Ma position');
-    _drawRoute(origin,destination);
+    _placeSingleMarker(doc_locate,'Cabinet Doc.${doc_info['lastName']}');
+    if(_docCherched == doc_info['lastName']){
+      _drawRoute(origin,doc_locate);
+    }
   }
 
   Future<void> _drawRoute(LatLng _origin, LatLng _destination) async {
@@ -238,23 +243,78 @@ final PolylinePoints polylinePoints = PolylinePoints();
     return Scaffold(
       body: Stack(
         children: [
-          GoogleMap(
-            initialCameraPosition: const CameraPosition(
-              target: _initialLatLng,
-              zoom: 10,
-            ),
-            onMapCreated: _onMapCreated,
-            markers: _markers,
-            polylines: _polylines,
-            onTap: (pos) {
-              _placeSingleMarker(pos);
-            },
-            
-            
-            myLocationButtonEnabled: false,
-            myLocationEnabled: true,
-            mapType: _currentMapType,
-          ),
+          FutureBuilder(
+            future: _allDoctor, 
+            builder: (context, snapshot){
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  margin: EdgeInsets.only(top: 100),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (snapshot.hasError) {
+                if (snapshot.error.toString().contains("unauthorized")) {
+                  Future.microtask(() {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => LoginMobile()),
+                    );
+                  });
+                }
+                return Center(child: Text("Erreur : ${snapshot.error}"));
+              }
+              final docInfo = snapshot.data;
+              if (docInfo!= null) {
+
+                for (var item in docInfo) {
+                  final loc = item['location'];
+
+                  if (loc == null) {
+                    print("⚠️ location est NULL pour : ${item['lastName']}");
+                    continue; // on saute cet item
+                  }
+
+                  if (loc is! String || loc.trim().isEmpty || !loc.contains(";")) {
+                    print("⚠️ location invalide : $loc");
+                    continue;
+                  }
+
+                  final coords = loc
+                      .split(';')
+                      .map((e) => double.tryParse(e.trim()))
+                      .toList();
+
+                  if (coords.length != 2 || coords[0] == null || coords[1] == null) {
+                    print("⚠️ Coordonnées invalides : $coords");
+                    continue;
+                  }
+
+                  final pos = LatLng(coords[0]!, coords[1]!);
+
+                  _placeMarkerAtCurrentLocation(pos, item);
+                }
+              }
+
+              return GoogleMap(
+                initialCameraPosition: const CameraPosition(
+                  target: _initialLatLng,
+                  zoom: 10,
+                ),
+                onMapCreated: _onMapCreated,
+                markers: _markers,
+                polylines: _polylines,
+                onTap: (pos) {
+                  // _placeSingleMarker(pos, 'Nouvel position');
+                },
+                
+                
+                myLocationButtonEnabled: false,
+                myLocationEnabled: true,
+                mapType: _currentMapType,
+              );
+          }),
+          
 
           Positioned(
             top: 40,
@@ -262,6 +322,8 @@ final PolylinePoints polylinePoints = PolylinePoints();
             child: GestureDetector(
               onTap: (){
                 Navigator.pop(context);
+                // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(user: infoUser)));
+
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,
