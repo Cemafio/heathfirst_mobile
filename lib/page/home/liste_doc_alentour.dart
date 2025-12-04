@@ -146,7 +146,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                InfoUser(rdv: doc, user: _infoUser),
+                                InfoUser(data:[doc, _infoUser, _listDoc]),
                           ),
                         );
                       },

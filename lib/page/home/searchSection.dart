@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,56 +9,83 @@ import 'package:heathfirst_mobile/service/data.dart';
 
 class SearchPage extends StatefulWidget {
   final Map<String, dynamic> user;
-  const SearchPage({super.key, required this.user});
+  final Future<List<dynamic>> listDoc;
+
+  const SearchPage({
+    super.key, 
+    required this.user,
+    required this.listDoc,
+  });
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
   Map<String, dynamic> get _infoUser => widget.user;
+  Future<List<dynamic>> get _listDoc=> widget.listDoc;
   List<dynamic> doc_cheched = [];
+  bool isLoaded = false;
+  Timer? _debounce;
+
 
   Future<void> _chercheFunction (String value) async{
-    if (value == "") {
-      setState(() {
-        doc_cheched.clear();
-      });
-    }
-    
-    List<dynamic> listCherche = await recherche(value,'','',1);
-    if (listCherche.isEmpty) {
-      listCherche = await recherche('',value,'',1);
+    print('✅ valeur entrer:'+ value);
 
-      if(listCherche.isEmpty){
-        listCherche = await recherche('','',value,1);
+    Map<String, dynamic> buildDoctor(Map<String, dynamic> list) {
+      return {
+        'id': list['id'],
+        'name' : "${list['LastName']} ${list['FirstName']}",
+        'lastName' : list['LastName'],
+        'firstName' : list['FirstName'],
+        'specialty' : list['Specialty'],
+        'Address' : list['Address'],
+        'AddressCabinet' : list['AddressCabinet'],
+        'photoProfil' : list['photoProfil'],
+        'phone' : list['phome'],
+        'email' : list['email'],
+      };
+    }
+
+    // if (value == "") {
+    setState(() {
+      isLoaded = true;
+    });
+    // }
+    List<dynamic> newList = [];
+    List<dynamic> listCherche = await recherche(value,'','',1);
+    List<dynamic> listChercheAddress = await recherche('','',value,1);
+    List<dynamic> listChercheSpeciality = await recherche('',value,'',1);
+
+
+    if (listCherche.isEmpty) {
+
+      if(listChercheSpeciality.isNotEmpty){
+        for (var list in listChercheSpeciality) {
+          print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
+          newList.add(buildDoctor(list));
+        }
+      }else if(listChercheAddress.isNotEmpty){
+
+        for (var list in listChercheAddress) {
+          print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
+          newList.add(buildDoctor(list));
+        }
+      }
+    }else{
+
+      for (var list in listCherche) {
+        print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
+        newList.add(buildDoctor(list));
       }
     }
-    if(listCherche.isNotEmpty){
-        doc_cheched.clear();
 
-        for (var list in listCherche) {
-
-          print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
-          setState(() {
-            doc_cheched.add(
-              {
-                'id': list['id'],
-                'name' : "${list['LastName']} ${list['FirstName']}",
-                'lastName' : list['LastName'],
-                'firstName' : list['FirstName'],
-                'specialty' : list['Specialty'],
-                'Address' : list['Address'],
-                'AddressCabinet' : list['AddressCabinet'],
-                'photoProfil' : list['photoProfil'],
-                'phone' : list['phome'],
-                'email' : list['email'],
-              }
-            );
-          });
-        }
-    }else{
-      print('Auccun donner correspond a notre recherche');
-    }
+    setState(() {
+      doc_cheched = newList;
+      isLoaded = false;
+    });
+    // else{
+    //   print('Auccun donner correspond a notre recherche');
+    // }
 
   }
 
@@ -67,12 +96,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         actions: [
           
-          GestureDetector(
-            onTap:(){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  HomePage(user: _infoUser,)));
-            },
-
-            child: Container(
+          Container(
               width: 300,
               height: 35,
               padding: EdgeInsets.all(5),
@@ -85,15 +109,19 @@ class _SearchPageState extends State<SearchPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.search),
-                  // const SizedBox(width: 10,),
-                  Container(
+                  SizedBox(
                     width: 250,
                     height: 100.w,
                     child: TextFormField(
-                      onChanged: (value) async{
-                        _chercheFunction(value);
+
+                      onChanged: (value) {
+                        if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                        _debounce = Timer(const Duration(milliseconds: 400), () {
+                          _chercheFunction(value);
+                        });
                       },
+
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
@@ -102,11 +130,19 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     ),
                   ),
+                  GestureDetector(
+                    onTap:(){
+                      // Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  HomePage(user: _infoUser,)));
+                    },
+
+                    child: 
+                      const Icon(Icons.search),
+                  ),
                 ],
               ),
               
             ), 
-          ),
+
           const SizedBox(width: 15),
         ],
       ),
@@ -116,6 +152,13 @@ class _SearchPageState extends State<SearchPage> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
+              if (isLoaded == true) 
+                Container(
+                  // height: 20,
+                  margin: EdgeInsets.only(top: 100),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              if(isLoaded == false)    
               ListView.builder(
                 itemCount: doc_cheched.length,
                 shrinkWrap: true,
@@ -125,13 +168,14 @@ class _SearchPageState extends State<SearchPage> {
                   if (doc_cheched.isEmpty) {
                     print('vide');
                   }
+
                 
                   return GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              InfoUser(rdv: doc, user: _infoUser),
+                              InfoUser(data: [doc,_infoUser, _listDoc]),
                         ),
                       );
                     },

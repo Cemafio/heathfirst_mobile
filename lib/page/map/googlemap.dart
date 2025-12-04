@@ -64,8 +64,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
 
     Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     final origin = LatLng(pos.latitude, pos.longitude);
-    // final destination = LatLng(-15.7167, 46.3167);
-    // -15.7167, 46.3167
+
     _placeSingleMarker(doc_locate,'Cabinet Doc.${doc_info['lastName']}');
     if(_docCherched == doc_info['lastName']){
       _drawRoute(origin,doc_locate);

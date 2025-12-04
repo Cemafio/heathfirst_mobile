@@ -59,7 +59,7 @@ class _LoginMobileState extends State<LoginMobile> {
 
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authentificaton réussie')),
+          const SnackBar(content: Text('Authentification réussie')),
         );
         _infoUser = await userInfo();
 

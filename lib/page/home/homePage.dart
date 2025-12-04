@@ -58,7 +58,7 @@ class _HomepageState extends State<HomePage> {
           
           GestureDetector(
             onTap:(){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SearchPage(user: _infoUser,)));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SearchPage(user: _infoUser, listDoc: _listDoc)));
             },
 
             child: Container(
@@ -126,9 +126,6 @@ class _HomepageState extends State<HomePage> {
                         
                       ),
                     ),
-                    // const SizedBox(height: 70),
-                    // if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT') ?? false)
-                      // CategorieSection(category: categorie,),
                     
                     if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
                      Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,

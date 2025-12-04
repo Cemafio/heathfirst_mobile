@@ -5,24 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/page/map/googlemap.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 
 class InfoUser extends StatefulWidget {
-  final Map<String, dynamic> rdv;
-  final Map<String, dynamic> user;
+  final List<dynamic> data;
 
-  const InfoUser({super.key, required this.rdv, required this.user});
+  const InfoUser({super.key, required this.data});
 
   @override
   State<InfoUser> createState() => _InfoUserState();
 }
 
 class _InfoUserState extends State<InfoUser> {
+
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic> get _apropos => widget.rdv;
+  Map<String, dynamic> get _apropos => widget.data[0];
+  Map<String, dynamic> get _infoUser => widget.data[1]; 
+  Future<List<dynamic>> get _listDoc => widget.data[2];
+
   DateTime dayNow = DateTime.now();
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
@@ -32,7 +36,6 @@ class _InfoUserState extends State<InfoUser> {
   String _symptome = '';
   bool isWaiting = false;
   late Future<Map<String,dynamic>> _etatRdv ;
-  Map<String, dynamic> get _infoUser => widget.user;
   
   @override
   void initState(){
@@ -49,8 +52,6 @@ class _InfoUserState extends State<InfoUser> {
     await takeAppointment(_apropos['id'], _symptome, _selectedDate!, _time);
     Navigator.pop(context);
   }
-  
-
 
   Future popUp () => showDialog(
     context: context,
@@ -210,7 +211,18 @@ class _InfoUserState extends State<InfoUser> {
     } 
   );
 
+  Future<void> _navigation(Widget materialPage) async {
+    final opened = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => materialPage),
+    );
 
+    if (opened == true) {
+      setState(() {
+        // _infoUser = userInfo();
+      });
+    }
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 241, 241, 241),
@@ -347,7 +359,7 @@ class _InfoUserState extends State<InfoUser> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 250,
+                    height: 200,
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50)),
                       color: Colors.white,
@@ -361,7 +373,7 @@ class _InfoUserState extends State<InfoUser> {
                           height: 50,
                           child: Column(
                             children: [
-                              Text("1000+", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                              Text("1000+", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                               Text("patient"),
                             ],
                           ),
@@ -434,7 +446,7 @@ class _InfoUserState extends State<InfoUser> {
                     // height: 300,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(30))
+                      borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,32 +493,63 @@ class _InfoUserState extends State<InfoUser> {
                           Text("email"),
                           Text("${_apropos['email']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
-
-                        const SizedBox(height: 40,),
-                        Text("Heurs de travails",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            letterSpacing: 2.0
-                          )
-                        ),
-                        const SizedBox(height: 20,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                          Text("lundi-vendredi"),
-                          Text("08:00-18:00", style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],),
-                        const SizedBox(height: 7,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                          Text("sam-dim"),
-                          Text("09:00-16:00", style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],),
                     ],),
                   ),
+
+                   Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
+                    // height: 300,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      // border: Border.all()
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 100.w,
+                          width: 100.w,
+
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/map_img.jpg"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text('Localisation du cabinet'),
+                            Text('Analakely - ${_apropos['AddressCabinet']}'),
+                          ],
+                        ),
+                        const SizedBox(width: 10,),
+                        GestureDetector(
+                          onTap: (){
+                            _navigation(GoogleMapPage(allDoc: [_listDoc, _apropos['lastName']]));
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              // color: const Color.fromARGB(255, 241, 241, 241),
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(color: Colors.black26)
+                            ),
+
+                            child: Center(child: Icon(Icons.location_searching_sharp),),
+                          ),
+                        ),
+                    ])
+                  )
                 ],
+
               )
             ]) 
         ),
