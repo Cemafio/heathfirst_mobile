@@ -280,7 +280,7 @@ class _LoginMobileState extends State<LoginMobile> {
                       if(!isLoading)
                         const Center(
                           child: Text(
-                            "S'inscrire",
+                            "Se connecté",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF548856),

@@ -217,15 +217,19 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "${demandeItem['lastname']} ${demandeItem['firstname']}",
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(171, 0, 0, 0),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          letterSpacing: 3,
+                                      SizedBox(
+                                        width: 200,
+                                        child: Text(
+                                          "${demandeItem['lastname']} ${demandeItem['firstname']}",
+                                          style: const TextStyle(
+                                            color: Color.fromARGB(171, 0, 0, 0),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            letterSpacing: 3,
+                                          ),
                                         ),
                                       ),
+
                                       const SizedBox(height: 10),
                                       const Text("22 ans",
                                           style: TextStyle(
@@ -257,27 +261,25 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                                   if(demande[index]['status'] == 'pending')
                                     TextButton(
                                       onPressed: () async {
-                                        final docId = demande[index]['doctor']['id'];
-                                        final patientId = demande[index]['patient']['id'];
+                                        final doc = demande[index]['doctor'];
+                                        final patient = demande[index]['patient'];
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
                                         print("Donner envoyer => ${demande[index]}");
-                                        await responseAppointment(demande[index]['id'], 'refused');
+                                        await responseAppointment(demande[index]['id'], 'refused', patient['id'], doc['id']);
                                         reloadRdv();
                                       },
                                       child: const Text('refuser', style: TextStyle(color: Colors.red)),
                                     ),
-                                  // if(demande[index]['reponse'] == 'en attente')
-                                    // const SizedBox(width: 6),
                                   if(demande[index]['status'] == 'pending')
                                     TextButton(
                                       onPressed: () async {
-                                        final docId = demande[index]['doctor']['id'];
-                                        final patientId = demande[index]['patient']['id'];
+                                        final doc = demande[index]['doctor'];
+                                        final patient = demande[index]['patient'];
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
                                         print("Donner envoyer => ${demande[index]}");
-                                        await responseAppointment(demande[index]['id'], 'accepted');
+                                        await responseAppointment(demande[index]['id'], 'accepted', patient['id'], doc['id']);
                                         reloadRdv();
                                       },
                                       child: const Text('accepter'),

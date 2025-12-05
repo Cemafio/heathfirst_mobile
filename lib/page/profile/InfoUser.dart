@@ -49,7 +49,7 @@ class _InfoUserState extends State<InfoUser> {
       });
   }
   void sendRdv() async{
-    await takeAppointment(_apropos['id'], _symptome, _selectedDate!, _time);
+    await takeAppointment(_apropos['id'], _symptome, _selectedDate!, _time, _apropos['id'], _infoUser['id']);
     Navigator.pop(context);
   }
 

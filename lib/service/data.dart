@@ -6,6 +6,31 @@ import 'package:http/http.dart' as http;
 // import 'package:project_1/First_Health/screen/mobile/widget/calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
+Future<void> sendEmailReminder(List<dynamic> tabEmail, String type) async {
+  final url = Uri.parse("http://172.27.136.28:8000/api/sendEmail"); 
+  // Sur Android Emulator → backend local = 10.0.2.2
+
+  final body = jsonEncode({
+    // "email": emailReceiver,
+    "type": type,
+    "list_email_rappel": tabEmail
+  });
+
+  final response = await http.post(
+    url,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: body,
+  );
+
+  if (response.statusCode == 200) {
+    print("✔ Email envoyé : ${response.body}");
+  } else {
+    print("❌ Erreur : ${response.body}");
+  }
+}
 Future<List<dynamic>> rdvUserData() async{
   final url = Uri.parse('http://172.27.136.28:8000/api/get_appointment'); // L'URL de votre API
   final perfs = await SharedPreferences.getInstance();
@@ -189,7 +214,7 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
     throw Exception("❌ Erreur to delete unvalaible day $idDoc [$date] : status ${response.statusCode} ${response.body}  (O_o)");
   }
 }
-Future<void> responseAppointment(int appointment, String status) async {
+Future<void> responseAppointment(int appointment, String status, int idPatient, int idDoc) async {
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final url = Uri.parse('http://172.27.136.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
@@ -212,11 +237,12 @@ Future<void> responseAppointment(int appointment, String status) async {
 
   if(response.statusCode == 200 || response.statusCode == 204){
     print("✅ Rdv updated  (>_<)");
+    sendEmailReminder([idPatient,idDoc, status] ,'res_rdv');
   }else{
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
 }
-Future<void> takeAppointment(int docId, String symptome, DateTime date,String hour) async{
+Future<void> takeAppointment(int docId, String symptome, DateTime date, String hour, int idDoc, int patientid) async{
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final url = Uri.parse('http://172.27.136.28:8000/api/validate/get_appointement');
@@ -242,6 +268,7 @@ Future<void> takeAppointment(int docId, String symptome, DateTime date,String ho
   
   if(response.statusCode == 200 || response.statusCode == 201){
     print("✅ Rdv [$date] $hour envoyer  (>_<)");
+    sendEmailReminder([patientid, idDoc], 'env_rdv');
   }else{
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
@@ -430,7 +457,6 @@ Future<List<dynamic>> recherche(
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
-  // Base URL
   String baseUrl = "http://172.27.136.28:8000/api/search";
 
   // Paramètres dynamiques
