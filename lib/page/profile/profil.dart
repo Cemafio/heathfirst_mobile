@@ -133,7 +133,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                           color: Colors.white,
                           image: DecorationImage(
-                            image: NetworkImage("http://10.244.91.28:8000/images/photos/${infoUser['photo_profil']}"),
+                            image: NetworkImage("http://172.27.136.28:8000/images/photos/${infoUser['photo_profil']}"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -153,7 +153,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                               color: const Color(0xFF81C784),
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://10.244.91.28:8000/images/photos/${infoUser['photo_profil']}"),
+                              image: NetworkImage("http://172.27.136.28:8000/images/photos/${infoUser['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),

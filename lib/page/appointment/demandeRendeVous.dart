@@ -98,7 +98,7 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                     ),
                     borderRadius: BorderRadius.circular(100),
                     image: DecorationImage(
-                      image: NetworkImage('http://10.244.91.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                      image: NetworkImage('http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -209,7 +209,7 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                                       border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(100),
                                       image: DecorationImage(
-                                        image: NetworkImage("http://10.244.91.28:8000/images/photos/${userProfil?['profil']}"),
+                                        image: NetworkImage("http://172.27.136.28:8000/images/photos/${userProfil?['profil']}"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

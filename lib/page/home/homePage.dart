@@ -174,7 +174,7 @@ class _HomepageState extends State<HomePage> {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage('http://10.244.91.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                            image: NetworkImage('http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}'),
                             fit: BoxFit.cover,
                           ),
                       ),

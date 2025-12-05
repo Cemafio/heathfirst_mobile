@@ -415,7 +415,7 @@ class _InfoUserState extends State<InfoUser> {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage("http://10.244.91.28:8000/images/photos/${_apropos['photoProfil']}"),
+                            image: NetworkImage("http://172.27.136.28:8000/images/photos/${_apropos['photoProfil']}"),
                             fit: BoxFit.cover,
                           ),
                       ),
