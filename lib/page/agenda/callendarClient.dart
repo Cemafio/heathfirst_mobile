@@ -16,6 +16,7 @@ class CallendarClient extends StatefulWidget {
 class _CallendarClientState extends State<CallendarClient> {
   Map<String, dynamic> get _infoUser => widget.user;
   late List<dynamic> _appointment;
+  bool isMarkedRealyEmpty = false;
 
   DateTime dayNow = DateTime.now();
   int justDay = DateTime.now().day;
@@ -33,9 +34,9 @@ class _CallendarClientState extends State<CallendarClient> {
     _seeAptClient();
   }
 
-  void _seeAptClient() async{
+  void _seeAptClient() async {
     try {
-      _appointment  = await seeStatusClientRdv(_infoUser['id']);
+      _appointment = await seeStatusClientRdv(_infoUser['id']);
 
       for (var item in _appointment[0]) {
         final dateStr = item['date'].split(' ')[0];
@@ -43,29 +44,38 @@ class _CallendarClientState extends State<CallendarClient> {
         final docAdr = item['docAdr'];
         final date = DateTime.parse(dateStr);
         final hour = item['info']['hour'];
+
         final text = (item['status'] == 'pending')
-          ?"$hour - Dr. $doctor - $docAdr - (attent)"
-          :(item['status'] == 'accepted')
-            ?"$hour - Dr. $doctor - $docAdr - (accepté)"
-            :"$hour - Dr. $doctor - $docAdr - (refusé)";
+            ? "$hour - Dr. $doctor - $docAdr - (attente)"
+            : (item['status'] == 'accepted')
+                ? "$hour - Dr. $doctor - $docAdr - (accepté)"
+                : "$hour - Dr. $doctor - $docAdr - (refusé)";
 
         if (data.containsKey(date)) {
-          setState(() {
-            data[date]!.add(text);
-          });
+          data[date]!.add(text);
         } else {
-          setState(() {
-            data[date] = [text];
-          });
+          data[date] = [text];
         }
-      }      
-    } catch (e, status){
-      print("$e");
-    }
-// [{id: 14, doctor: /api/doctors/4, patient: /api/patients/18, date: 2025-08-19T18:16:00+00:00, status: pend
-// ing, information: {hour: 18:16, information: {symptome: tucv}}}
+      }
 
+      setState(() {});
+    } catch (e) {
+      // --- CAS SPÉCIAL : ERREUR 404 → on affiche le calendrier vide ---
+      if (e.toString().contains("404")) {
+        print("Aucun rendez-vous trouvé (404). Affichage du calendrier vide.");
+
+        setState(() {
+          isMarkedRealyEmpty = true;
+          data = {};
+        });
+        return;
+      }
+
+      // --- AUTRES ERREURS (500, réseau, etc.) ---
+      print("Erreur: $e");
+    }
   }
+
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +93,7 @@ class _CallendarClientState extends State<CallendarClient> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              if(data.isEmpty)
+              if(data.isEmpty && (isMarkedRealyEmpty == false))
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(70), 
@@ -95,7 +105,7 @@ class _CallendarClientState extends State<CallendarClient> {
                 ),
 
 
-              if(data.isNotEmpty)
+              if(data.isNotEmpty || (isMarkedRealyEmpty == true))
               Stack(
                 children: [
                   AbsorbPointer(

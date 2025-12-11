@@ -213,6 +213,7 @@ class _ProfilSectionState extends State<ProfilSection> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            if((infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
                             GestureDetector(
                               onTap: (){
                                 _navigation(AjouterCabinetPage(user: infoUser,));

@@ -48,6 +48,7 @@ dependencies:
   google_places_flutter: 2.1.1
   firebase_core: ^3.0.0
   firebase_messaging: ^15.0.0
+  jwt_decoder: ^2.0.1
 
   # flutter_google_places: ^0.3.0
   # google_maps_webservice: ^0.0.20-nullsafety.5

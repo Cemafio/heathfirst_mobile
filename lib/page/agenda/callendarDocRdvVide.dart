@@ -30,49 +30,67 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
   final _formKey = GlobalKey<FormState>();
   Key keyForm = UniqueKey();
   final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _reasonController = TextEditingController();
+  TextEditingController _reasonController = TextEditingController();
   bool isLoaded = false;
 
   int get id_user => widget.idUser;
   double get height => widget.heigh;
   String get _page => widget.page;
   Map<String, dynamic> get _infoUser => widget.infoUser;
-  
+  bool isdaySelectedMarked = false;
+  bool isMarkedRealyEmpty = false;
+  // bool isLoaded = false;
+  bool isLoadedDel = false;
 
   DateTime dayNow = DateTime.now();
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
 
-  late Future<void> _dataCallendar;
+  late Future<Map<String, dynamic>> _dataCallendar;
 
   @override
   void initState() {
     super.initState();
     _dataCallendar = _loadData();
   }
-  void _reloadDataCallendar(){
-    setState(() {
-      _dataCallendar = _loadData();
-      isLoaded = false;
-    });
-    resetForm();
-  }
-  Future<void> _loadData() async{
-    try {
-      print('callendar doc vide page');
-      List<dynamic> daysNoWork = await getDayNoWork(id_user);
-      if(daysNoWork.isNotEmpty){
-        setState(() {
-          _markedDays = daysNoWork.map<DateTime>((e) {
-            return DateTime.parse(e['date']);
-          }).toList();
-        });
-      }  
-    } catch (e) {
-      _markedDays = [];
-      print("daysNoWork vide ${e}");
+void _reloadDataCallendar() async {
+  final newData = await _loadData();
+
+  setState(() {
+    /// Convertir List<dynamic> -> List<DateTime>
+    _markedDays = (newData["markedDays"] as List<dynamic>)
+        .map<DateTime>((e) => e as DateTime)
+        .toList();
+
+    _formKey.currentState?.reset();
+    _dateController.clear();
+    _reasonController.clear();
+    _reason = null;
+    isdaySelectedMarked = false;
+  });
+}
+  Future<Map<String, dynamic>> _loadData() async{
+    List<dynamic> daysNoWork = await getDayNoWork(id_user); 
+    print('daysNoworck => $daysNoWork');
+    if(daysNoWork.isNotEmpty){
+      // setState(() {
+        final marked = daysNoWork.map<DateTime>((e) {
+          return DateTime.parse(e['date']);
+        }).toList();
+
+      return {
+        "markedDays": marked,
+      };
+      // });
+    }else{
+      print('Pas de jours feré');
+      setState(() {
+        isMarkedRealyEmpty = true;
+      });
+      return {
+        "markedDays": [],
+      };    
     }
-    
   }
   List<String> weekDays = ['Jan','Fév','Mar','Avr','Mai','Juin','Jul','Août','Sep','Oct','Nov','Déc'];
    void resetForm() {
@@ -117,7 +135,7 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
                       margin: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.red.withOpacity(0.5),
+                        color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
                       ),
                       child: Center(
                         child: Text(
@@ -134,8 +152,20 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
             ),
 
             onDaySelected: (selectedDay, focusedDay) {
+              if (isLoaded || isLoadedDel) return;
+
               setState(() {
                 dayNow = selectedDay;
+                if (_markedDays.isNotEmpty) {
+                  final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
+                  if (isdayMarked) {
+                    isdaySelectedMarked = true;
+                    _reasonController = TextEditingController(text: 'Jours déjà marqué');
+                  } else {
+                    isdaySelectedMarked = false;
+                    _reasonController = TextEditingController();
+                  }
+                }
               });
             },
 
@@ -195,45 +225,111 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
                         },
                       ),
                       const SizedBox(height: 20,),
-                      TextButton(
-                        onPressed: (_reason != null && _reason!.trim().isNotEmpty)
-                          ? () {
-                              setState((){
-                                isLoaded = true;
-                              });
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: (_reason != null && _reason!.trim().isNotEmpty)
+                              ? () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    final startTime = DateTime.now();
+                                    setState(() {
+                                      isLoaded = true; // arrêter le loading
+                                    });
+                                    try {
+                                      await addDayNoWork(dayNow, _reason!.trim());
 
-                              if (_formKey.currentState!.validate()) {
-                                try {
-                                  addDayNoWork(dayNow, _reason!.trim());
-                                  _reloadDataCallendar();
-                                } catch (e) {
-                                  setState(() {
-                                    isLoaded = false;
-                                  });  
+                                      // Calcul du temps écoulé
+                                      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+                                      // Si moins de 2000ms écoulées → attendre le reste
+                                      if (elapsed < 2000) {
+                                        await Future.delayed(Duration(milliseconds: 2000 - elapsed));
+                                      }
+
+                                      _reloadDataCallendar();
+
+                                    } catch (e) {
+                                      print("Erreur : $e");
+                                    }finally{
+                                      setState(() {
+                                        isLoaded = false; // arrêter le loading
+                                      });
+                                    }
+                                  }
                                 }
-                              }else{
-                                setState(() {
-                                  isLoaded = false;
-                                });
-                              }
-                            }
-                          : null,
+                              : null,
 
-                        child: (isLoaded)
-                        ? const SizedBox(
-                              height: 12,
-                              width: 12,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.0,
+                            child: (isLoaded == true)
+                            ? const SizedBox(
+                                  height: 12,
+                                  width: 12,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                  ),
+                              )
+                            : const Text(
+                              'Ajouter',
+                              style: TextStyle(
+                                fontSize: 12,
                               ),
-                          )
-                        : const Text(
-                          'Ajouter',
-                          style: TextStyle(
-                            fontSize: 12,
+                            )
                           ),
-                        )
-                      )
+
+                          const SizedBox(width: 5,),
+                          TextButton(
+                            onPressed: isdaySelectedMarked
+                            ? () async {
+                                final startTime = DateTime.now();
+
+                                setState(() {
+                                  isLoadedDel = true;
+                                });
+                                if (_formKey.currentState!.validate()) {
+                                  try {
+                                    await deleteDaysNoWork(_infoUser['id'], dayNow);
+                                    
+                                    // Calcul du temps écoulé
+                                    final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+                                    // Si moins de 2000ms écoulées → attendre le reste
+                                    if (elapsed < 2000){ 
+                                      await Future.delayed(Duration(milliseconds: 2000 - elapsed));
+                                    }
+                                    print('--------- Supprimer ------');
+                                    
+                                    _reloadDataCallendar();
+
+
+                                  } catch (e) {
+                                      print("Erreur : $e");
+                                  }finally{
+                                    setState(() {
+                                      isLoadedDel = false;
+                                    });
+                                  }
+                                }
+                              }
+                            : null,
+
+                            child: 
+                            (isLoadedDel == true)
+                            ? const SizedBox(
+                                  height: 12,
+                                  width: 12,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                  ),
+                              )
+                            :  Text(
+                                'Suprimer',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isdaySelectedMarked? Colors.red : Color.fromARGB(255, 253, 190, 186)
+                                ),
+                              ),
+                          ),
+                           
+                        ]
+                      ),
                     ],
                   ),
                 )

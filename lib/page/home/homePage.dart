@@ -20,6 +20,7 @@ import 'package:heathfirst_mobile/page/profile/profil.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomePage extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -38,8 +39,66 @@ class _HomepageState extends State<HomePage> {
   void initState() {
     super.initState();
     _listDemd = rdvUserData();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startSessionWatcher(context);
+    });
   }
-  
+  Future<void> _navigation(Widget materialPage) async {
+    final opened = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => materialPage),
+    );
+
+    if (opened == true) {
+      setState(() {
+        // _infoUser = userInfo();
+      });
+    }
+  }
+  // -------------------Verrif SESSION---------------------
+  void startSessionWatcher(BuildContext context) {
+    Timer.periodic(const Duration(minutes: 5), (timer) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+
+      if (token != null && JwtDecoder.isExpired(token)) {
+        timer.cancel(); // stop timer
+
+        // Supprimer token
+        await prefs.remove("token");
+
+        print("⚠ Token expiré automatiquement");
+
+        // Afficher popup
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false, // l'utilisateur ne peut pas fermer sans cliquer sur OK
+            builder: (context) => AlertDialog(
+              title: const Text("Session Expirée"),
+              content: const Text(
+                "Votre session a expiré pour des raisons de sécurité.\n\nVeuillez vous reconnecter."
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // fermer popup
+
+                    // 👉 Redirection vers la page Login
+                    // Navigator.pushReplacementNamed(context, "/login");
+                    _navigation(LoginMobile());
+                  },
+                  child: const Text("OK"),
+                )
+              ],
+            ),
+          );
+        }
+      }
+    });
+  }
+
   @override
     Widget build(BuildContext context) {
     return Scaffold(
