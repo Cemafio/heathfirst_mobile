@@ -39,11 +39,15 @@ class _CallendarClientState extends State<CallendarClient> {
 
       for (var item in _appointment[0]) {
         final dateStr = item['date'].split(' ')[0];
-        final doctor = "${item['doctorLastName']} ${item['doctorFirstName']}";
+        final doctor = "${item['doctorLastName']}";
         final docAdr = item['docAdr'];
         final date = DateTime.parse(dateStr);
         final hour = item['info']['hour'];
-        final text = "$hour - Dr. $doctor - $docAdr";
+        final text = (item['status'] == 'pending')
+          ?"$hour - Dr. $doctor - $docAdr - (attent)"
+          :(item['status'] == 'accepted')
+            ?"$hour - Dr. $doctor - $docAdr - (accepté)"
+            :"$hour - Dr. $doctor - $docAdr - (refusé)";
 
         if (data.containsKey(date)) {
           setState(() {
@@ -119,7 +123,7 @@ class _CallendarClientState extends State<CallendarClient> {
               ),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(15),
                   width: double.infinity,
 
                     decoration: BoxDecoration(
@@ -145,15 +149,19 @@ class _CallendarClientState extends State<CallendarClient> {
                       ..._getEventsForDay(dayNow).map(
                         (event) => Row(
                           children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
-                                const SizedBox(width: 10,),
-                                Text(event,
+
+                                  
+                            const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
+                            const SizedBox(width: 10,),
+                            SizedBox(
+                              width: 305,
+                              child: Text(
+                                softWrap: true,
+                                event,
                                 style: const TextStyle(
                                   fontSize: 15
-                                ),),
-                              ],
+                                ),
+                              ),
                             )
                           ],
                         )

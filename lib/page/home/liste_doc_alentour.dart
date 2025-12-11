@@ -184,18 +184,31 @@ class _ListDocSectionState extends State<ListDocSection> {
                                   ),
                                 ),
                                 SizedBox(height: 5),
-                                Text(
-                                  specialty,
-                                  style: TextStyle(
-                                      fontSize: 13, color: Colors.black87),
-                                ),
-                                SizedBox(height: 10),
                                 Row(
                                   children: [
-                                    Icon(Icons.timer_outlined,
-                                        color: Color(0xFF548856)),
+                                    Icon(Icons.add_chart_rounded,
+                                        color: Color(0xFF548856),
+                                        size: 15),
+                                        const SizedBox(width: 3),
                                     Text(
-                                      "08:00am - 18:30pm",
+                                      doc['specialty'],
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 0),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_city_rounded,
+                                        color: Color(0xFF548856),
+                                        size: 15),
+                                        const SizedBox(width: 3),
+                                    Text(
+                                      doc['AddressCabinet'],
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,

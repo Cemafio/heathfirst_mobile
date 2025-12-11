@@ -94,7 +94,7 @@ class _EditprofilDocState extends State<EditprofilDoc> {
     _dateController.text = _infoUser['DateOfBird'];
     _specialityController.text = _infoUser['Specialty'];
     _adrCabinetController.text = _infoUser['AddressCabinet'];
-    _networkImageUrl = "http://10.244.91.28:8000/images/photos/${_infoUser['photo_profil']}";
+    _networkImageUrl = "http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}";
     _photo = _infoUser['photo_profil'];
   }
 

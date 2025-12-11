@@ -1,6 +1,8 @@
 // import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,33 +36,41 @@ class _LoginMobileState extends State<LoginMobile> {
 
   Future<void> authentification(String email, String pass) async{
     final url = Uri.parse("http://172.27.136.28:8000/api/authentication");
-    setState(() {
-      isLoading = true;
-    });
+
+    setState(() => isLoading = true);
+
     try {
+      // Timeout de 10 secondes
       final response = await http.post(
         url,
         body: {
           '_username': email,
-          '_password': pass
+          '_password': pass,
+        },
+      ).timeout(Duration(seconds: 20));
+
+      // ======== SI LE SERVEUR RÉPOND ========
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data;
+
+        // Sécuriser jsonDecode
+        try {
+          data = jsonDecode(response.body);
+        } catch (e) {
+          throw FormatException("Réponse JSON invalide");
         }
-      );
 
-      if(response.statusCode == 200){
-        final data = jsonDecode(response.body);
         final token = data['tokenss'];
-        // Authentification réussie
-        print("✅ Utilisateur authentifié !  (>_<)");
-        print(response.body);
+        if (token == null) throw Exception("Token introuvable");
 
-        // Stockage dans SharedPreferences
+        // Stockage local
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
 
+        print("✅ Authentification réussie !");
+        print(response.body);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authentification réussie')),
-        );
+        // Récupération info user
         _infoUser = await userInfo();
 
         setState(() {
@@ -68,34 +78,84 @@ class _LoginMobileState extends State<LoginMobile> {
           icon = null;
           error = null;
         });
-        
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(user: _infoUser   )));
-      }else{
-        // Erreur (ex: validation)
-        print("❌ Erreur : ${response.statusCode} (O_o)");
-        print(response.body);
-        setState(() {
-          isLoading = false;
-          icon = const Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.red,
-                );
-          error = const Text('Veullier verrifié les informations que vous avez entrer !',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      letterSpacing: 1.9,
-                      fontSize: 11
-                    ),
-                    softWrap: true,
-                    overflow: TextOverflow.visible,
-                  );  
-        });
-        
-        throw Exception('Erreur lors de l’inscription  (O_o)');
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage(user: _infoUser)),
+        );
+        return;
       }
-    }catch (e){
-      isLoading = false;
-      print("❌ Echec de la requette Authentification => $e");
+
+      // ======== ERREUR CÔTÉ SERVEUR 4xx / 5xx ========
+      print("❌ ERREUR ${response.statusCode} : ${response.body}");
+
+      setState(() {
+        isLoading = false;
+        icon = Icon(Icons.warning_amber_rounded, color: Colors.red);
+        error = Text(
+          'Email ou mot de passe incorrect.',
+          style: TextStyle(color: Colors.redAccent, fontSize: 11),
+        );
+      });
+    }
+
+    // ========== TIMEOUT ==========
+    on TimeoutException {
+      print("⏳ Timeout : serveur ne répond pas.");
+
+      setState(() {
+        isLoading = false;
+        icon = Icon(Icons.access_time_filled, color: Colors.orange);
+        error = Text(
+          'Temps de réponse dépassé (serveur lent ou hors ligne).',
+          style: TextStyle(color: Colors.orangeAccent, fontSize: 11),
+        );
+      });
+    }
+
+    // ========== PROBLÈME DE RÉSEAU ==========
+    on SocketException catch (e) {
+      print("🌐 Problème réseau : $e");
+
+      setState(() {
+        isLoading = false;
+        icon = Icon(Icons.wifi_off, color: Colors.red);
+        error = Text(
+          'Impossible de contacter le serveur.\n'
+          '• IP incorrecte\n'
+          '• Serveur éteint\n'
+          '• Pas de connexion internet',
+          style: TextStyle(color: Colors.redAccent, fontSize: 11),
+        );
+      });
+    }
+
+    // ========== JSON INVALIDE ==========
+    on FormatException catch (e) {
+      print("📛 JSON invalide : $e");
+
+      setState(() {
+        isLoading = false;
+        icon = Icon(Icons.code_off, color: Colors.red);
+        error = Text(
+          "La réponse du serveur est invalide.",
+          style: TextStyle(color: Colors.redAccent, fontSize: 11),
+        );
+      });
+    }
+
+    // ========== AUTRES ERREURS ==========
+    catch (e) {
+      print("❌ ERREUR inconnue : $e");
+
+      setState(() {
+        isLoading = false;
+        icon = Icon(Icons.error_outline, color: Colors.red);
+        error = Text(
+          'Erreur inattendue. Réessayer.',
+          style: TextStyle(color: Colors.redAccent, fontSize: 11),
+        );
+      });
     }
   }
 
@@ -244,6 +304,10 @@ class _LoginMobileState extends State<LoginMobile> {
                   child: InkWell(
                   onTap: isLoading? null : () async {
                     // Action
+                    setState(() {
+                      error = Text('');
+                      icon = null;
+                    });    
                     final isValide = _formKey.currentState!.validate();
                     if (isValide) {
                       // Save data in texFormField
@@ -252,8 +316,6 @@ class _LoginMobileState extends State<LoginMobile> {
                       // Call function future
                       try {
                         await authentification(_email, _pass);
-                        // await _loadUserInfo();
-                        // Redirection ou autre
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Erreur : ${e.toString()}')),
@@ -311,7 +373,8 @@ class _LoginMobileState extends State<LoginMobile> {
             children: [
               GestureDetector(
                 onTap: () {
-                  // print('Pop up');      
+                  // print('Pop up'); 
+ 
                   PopUp ();
                 },
                 child: Text("Pas encore isncrit? S'isncrire",
@@ -324,10 +387,10 @@ class _LoginMobileState extends State<LoginMobile> {
 
               SizedBox(height: 10,),
 
-              Text('Mots de passe oublié', style: TextStyle(
-                fontSize: 13,
-                color: Colors.red
-              )),
+              // Text('Mots de passe oublié', style: TextStyle(
+              //   fontSize: 13,
+              //   color: Colors.red
+              // )),
             ],
           ),
         )

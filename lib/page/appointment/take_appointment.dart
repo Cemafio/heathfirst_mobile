@@ -1,25 +1,26 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
+import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
-import 'package:heathfirst_mobile/page/login/login.dart';
-  
-class DocInscription extends StatefulWidget {
-  const DocInscription({super.key});
+
+class TakeAppointment extends StatefulWidget {
+  final Map<String, dynamic> docInfo;
+  const TakeAppointment({super.key, required this.docInfo});
 
   @override
-  State<DocInscription> createState() => _DocInscriptionState();
+  State<TakeAppointment> createState() => _TakeAppointmentState();
 }
 
-class _DocInscriptionState extends State<DocInscription> {
+class _TakeAppointmentState extends State<TakeAppointment> {
+  Map<String, dynamic> get _docInfo => widget.docInfo;
+  bool isLoaded = false;
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
-  File? _selectedImage;
+  DateTime? _selectedDateRdv;
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateControllerRdv = TextEditingController();
 
   String _nom = '';
   String _prenom = '';
@@ -30,57 +31,20 @@ class _DocInscriptionState extends State<DocInscription> {
   String _identifiant = '';
   String _pass = '';
   String _adress = '';
-  String _adress_cabinet = '';
   String _date_de_naissance = '';
-  String _speciality = '';
+  String _date_de_rdv = '';
+  String _city = '';
+
+  String _symptome = '';
+  String _timeSelected = '_ _ : _ _';
+  String _time = '';
 
 
-  Future<void> inscriptionPatient(String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String  ident, String pass, String adress, String roles, String speciality, String  adressCabinet) async {
-    final url = Uri.parse("http://172.27.136.28:8000/api/registration");
-
-    var request = http.MultipartRequest("POST", url);
-
-    request.fields['nom'] = nom;
-    request.fields['prenom'] = prenom;
-    request.fields['DateDeNaissance'] = date_de_naissance;
-    request.fields['Sexe'] = sexe;
-    request.fields['sex'] = sexe;
-    request.fields['telephone'] = tel;
-    request.fields['roles'] = jsonEncode([roles]);
-    request.fields['roles'] = roles;
-    request.fields['email'] = ident;
-    request.fields['password'] = pass;
-    request.fields['Adresse'] = adress;
-    request.fields['AddressCabinet'] = adressCabinet;
-
-    // Fichier image
-    request.files.add(await http.MultipartFile.fromPath(
-      'photo_profil',
-      photo, // exemple: "/data/user/0/com.example.project_1/cache/temp.jpg"
-    ));
-    request.fields['Speciality'] = speciality;
-
-    var response = await request.send();
-    final responseData = await http.Response.fromStream(response);
-
-    if(response.statusCode == 200){
-      // Inscription réussie
-      print("✅ Utilisateur inscrit !  (>_<)");
-      print(responseData.body);
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginMobile()));
-    }else{
-      // Erreur (ex: validation)
-      print("❌ Erreur : ${response.statusCode} (O_o)");
-      print(responseData.body);
-      throw Exception('Erreur lors de l’inscription  (O_o)');
-    }
-  }
-  
   Future<void> _selectDate(BuildContext context) async{
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000, 1),
-      firstDate: DateTime(1900),
+      initialDate: DateTime(2001, 1),
+      firstDate: DateTime(1990),
       lastDate: DateTime.now(),
     );
     if (picked != null) {
@@ -91,16 +55,18 @@ class _DocInscriptionState extends State<DocInscription> {
       });
     }
   }
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
+    Future<void> _selectDateRdv(BuildContext context) async{
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(DateTime.now().year, DateTime.now().month),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(DateTime.now().year + 1, 12),
+    );
+    if (picked != null) {
       setState(() {
-        _selectedImage = File(image.path);
-        // List<String> photoName = image.path.split('/');
-        _photo = image.path;
+        _selectedDateRdv = picked;
+        _dateControllerRdv.text = DateFormat('yyyy-MM-dd').format(picked); // format ISO
+        _date_de_rdv =_dateController.text;
       });
     }
   }
@@ -118,28 +84,6 @@ class _DocInscriptionState extends State<DocInscription> {
             // const SizedBox(height: 60),
             
             const SizedBox(height: 80),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _selectedImage != null
-                      ? ClipOval(child:Image.file(_selectedImage!, width: 100, height: 100, fit: BoxFit.cover))
-                      : Container(
-                          width: 100,
-                          height: 100,
-                          child: const Icon(Icons.camera_alt),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(50.w)),
-                            color: Colors.grey[300],
-                          ),
-                        ),
-                ),
-                const SizedBox(height: 10),
-                const Text('Photo de profil'),
-              ],
-            ),
-            const SizedBox(height: 30,),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 50.w),
               child: Form(
@@ -227,22 +171,8 @@ class _DocInscriptionState extends State<DocInscription> {
                       },
                       onSaved: (newValue) => _tel = newValue!,
                     ),
-                    
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Mot de passe',
-                        prefixIcon: Icon(Icons.password),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre mot de passe';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _pass = newValue!,
-                    ),
+
+
                     const SizedBox(height: 30),
                     TextFormField(
                       decoration: InputDecoration(
@@ -258,32 +188,27 @@ class _DocInscriptionState extends State<DocInscription> {
                       onSaved: (newValue) => _adress = newValue!,
                     ),
                     const SizedBox(height: 30),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Votre adresse de cabinet',
-                        prefixIcon: Icon(Icons.location_on_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre adresse de cabinet';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _adress_cabinet = newValue!,
-                    ),
-                    const SizedBox(height: 30),
-                    TextFormField(
+                    DropdownButtonFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Votre Specialiter',
-                        prefixIcon: Icon(Icons.folder_special_outlined),
+                        labelText: 'Ville',
+                        prefixIcon: Icon(Icons.wc),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre specialité';
-                        }
-                        return null;
+                      items: ['Madagascar', 'France']
+                        .map((label) => DropdownMenuItem(
+                          value: label,
+                          child: Text(label),
+                        ))
+                        .toList(), 
+                      
+                      onChanged: (value){
+                        setState(() {
+                          _city = value!;
+                        });
                       },
-                      onSaved: (newValue) => _speciality = newValue!,
+                      validator: (value) => value == null ? 'Veuillez sélectionner une option' : null,
+                      onSaved: (newValue) {
+                        _city = newValue!;
+                      },
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
@@ -302,6 +227,82 @@ class _DocInscriptionState extends State<DocInscription> {
                       readOnly: true,
                       onTap: () => _selectDate(context),
                     ),
+                    const SizedBox(height: 40),
+                    Container(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_month_rounded, color: const Color.fromARGB(255, 62, 119, 85),),
+                          const SizedBox(width: 15,),
+                          Text('Information important', style: TextStyle(
+                            fontSize: 16,
+
+                          ),),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Symptôme',
+                        prefixIcon: Icon(Icons.healing),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre Symptôme';
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) => _symptome = newValue!,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _dateControllerRdv,
+                      decoration: InputDecoration(
+                        labelText: 'Date de rendez-vous',
+                        prefixIcon: Icon(Icons.calendar_today),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre date de rendez-vous';
+                        }
+                        return null;
+                      },
+                      readOnly: true,
+                      onTap: () => _selectDateRdv(context),
+                    ),
+                    const SizedBox(height: 20),
+                    MaterialButton(
+                      onPressed: () {
+                        showTimePicker(
+                          context: context, 
+                          initialTime:TimeOfDay.now()
+                        ).then((onValue) {
+                          setState((){
+                            _timeSelected = onValue!.format(context).toString();
+                            _time = onValue.format(context).toString();
+                          });
+                        });
+                      },
+                      child: Container(
+                        width: 100,
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all()
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.access_time_outlined),
+                            const SizedBox(width: 6,),
+                            Text(_timeSelected)
+                          ],
+                        ),
+                      ), 
+                    ),
                     
                     const SizedBox(height: 80),
                     Material(
@@ -316,17 +317,31 @@ class _DocInscriptionState extends State<DocInscription> {
                             
                             // Call function future
                             try {
-                              await inscriptionPatient(  _nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _pass, _adress, _roles, _speciality, _adress_cabinet);
+                              setState(() {
+                                isLoaded = true;
+                              });
+
+                              print( " $_nom,$_prenom, $_date_de_naissance,$_sexe, $_tel,$_identifiant, $_adress, $_symptome,$_date_de_rdv, $_time");
+                              await takeAppointmentSimple(nom: _nom,prenom: _prenom,birthday:  _date_de_naissance,sexe:  _sexe,tel:  _tel,email:  _identifiant,address:  _adress,city:  _city,hour:  _time,date:  _date_de_rdv,symptome:  _symptome,idDoctor:  _docInfo['id']);
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Inscription réussie')),
+                                const SnackBar(content: Text('Rendez-vous envoyée')),
                               );
-
+                              Navigator.pop(context, true);
                               // Redirection ou autre
                             } catch (e) {
+                              setState(() {
+                                isLoaded = false;
+                              });
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Erreur : ${e.toString()}')),
                               );
+                            }finally{
+                              setState(() {
+                                isLoaded = false;
+                              });
+
                             }
                           }
                         },
@@ -339,24 +354,34 @@ class _DocInscriptionState extends State<DocInscription> {
                             border: Border.all(color: Color(0xFF548856), width: 2),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Center(child: Text(
-                            "S'inscrire",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF548856),
+                          child:  Center(
+                            child: 
+                              (isLoaded != true) 
+                              ?Text(
+                                "Envoyé rendez-vous",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF548856),
+                                ),
+                              )
+                              : const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3.0,
+                                  ),
+                                ),
                             ),
-                          )),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-
+      );
   }
 }

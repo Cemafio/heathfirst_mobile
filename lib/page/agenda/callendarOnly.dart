@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,7 @@ class _CallendaronlyState extends State<Callendaronly> {
   Map<DateTime, List<String>> programmes = {};
   late final Map<DateTime, List<String>> _data = widget.data;
   List<DateTime> _markedDays = [];
+  bool isMarkedRealyEmpty = false;
   String? _reason;
   final _formKey = GlobalKey<FormState>();
   Key keyForm = UniqueKey();
@@ -45,30 +47,55 @@ class _CallendaronlyState extends State<Callendaronly> {
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
 
-  late Future<void> _dataCallendar;
+  late Future<Map<String, dynamic>> _dataCallendar;
 
   @override
   void initState() {
     super.initState();
     _dataCallendar = _loadData();
   }
-  void _reloadDataCallendar(){
-    setState(() {
-      _dataCallendar = _loadData();
-      resetForm();
-      _reason = null;
 
-    });
-  }
-  Future<void> _loadData() async{
+void _reloadDataCallendar() async {
+  final newData = await _loadData();
+
+  setState(() {
+    /// Convertir List<dynamic> -> List<DateTime>
+    _markedDays = (newData["markedDays"] as List<dynamic>)
+        .map<DateTime>((e) => e as DateTime)
+        .toList();
+
+    _formKey.currentState?.reset();
+    _dateController.clear();
+    _reasonController.clear();
+    _reason = null;
+    isdaySelectedMarked = false;
+  });
+}
+
+
+
+  
+  Future<Map<String, dynamic>> _loadData() async{
     List<dynamic> daysNoWork = await getDayNoWork(id_user);
+    print('daysNoworck => $daysNoWork');
     if(daysNoWork.isNotEmpty){
-      setState(() {
-        _markedDays = daysNoWork.map<DateTime>((e) {
+      // setState(() {
+        final marked = daysNoWork.map<DateTime>((e) {
           return DateTime.parse(e['date']);
         }).toList();
+
+      return {
+        "markedDays": marked,
+      };
+      // });
+    }else{
+      print('Pas de jours feré');
+      setState(() {
+        isMarkedRealyEmpty = true;
       });
-    }
+      return {
+        "markedDays": [],
+      };    }
   }
   List<String> weekDays = ['Jan','Fév','Mar','Avr','Mai','Juin','Jul','Août','Sep','Oct','Nov','Déc'];
 
@@ -86,12 +113,14 @@ class _CallendaronlyState extends State<Callendaronly> {
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-        if(_markedDays.isEmpty)
-        Container(
+        if(_markedDays.isEmpty && (isMarkedRealyEmpty == false))
+          Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))),
+            padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))
+          ),
 
-        if(_markedDays.isNotEmpty)
+
+        if(_markedDays.isNotEmpty || (isMarkedRealyEmpty == true))
 
         Container(
           decoration: BoxDecoration(
@@ -334,13 +363,13 @@ class _CallendaronlyState extends State<Callendaronly> {
                                     if (elapsed < 2000){ 
                                       await Future.delayed(Duration(milliseconds: 2000 - elapsed));
                                     }
-  
+                                    print('--------- Supprimer ------');
+                                    
                                     _reloadDataCallendar();
 
+
                                   } catch (e) {
-                                    setState(() {
-                                      isLoadedDel = true;
-                                    });  
+                                      print("Erreur : $e");
                                   }finally{
                                     setState(() {
                                       isLoadedDel = false;

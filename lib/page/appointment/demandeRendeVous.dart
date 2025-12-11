@@ -18,12 +18,32 @@ class _RendezvousSectionState extends State<RendezvousSection> {
   Map<String, dynamic> get _infoUser => widget.user;
   Map<int, Map<String, dynamic>> _usersProfil = {};
   bool _loading = true;
+  Timer? timer;
+  String lastHash = '';
 
   @override
   void initState() {
     super.initState();
     _list_demd = _loadData();
+    // timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+    //   List<dynamic> dmd = await rdvUserData();
+
+    //   // On crée une signature unique des données
+    //   final newHash = dmd.toString();
+
+    //   if (newHash != lastHash) {
+    //     print("🔔 Changement détecté !");
+    //     lastHash = newHash;
+    //     setState(() {});
+    //   } else {
+    //     print("Aucun changement");
+    //   }
+    // });
+
   }
+
+
+
 
   void reloadRdv() {
     setState(() {
@@ -51,6 +71,7 @@ class _RendezvousSectionState extends State<RendezvousSection> {
         _usersProfil = profils;
         _loading = false;
       });
+
       return rdvList;
     } catch (e) {
       setState(() {
@@ -138,7 +159,8 @@ class _RendezvousSectionState extends State<RendezvousSection> {
                       letterSpacing: 3
                     ),
                   ),
-                ],) 
+                ],
+              ) 
             ),
 
               const SizedBox(height: 30,),

@@ -185,7 +185,8 @@ Future<List<dynamic>> getDayNoWork(int id) async {
     final data = jsonDecode(response.body);
     return data;
   }else{
-    throw Exception("❌ Erreur to get unvalaible day : status ${response.statusCode} ${response.body}  (O_o)");
+    print("❌ : status ${response.statusCode} ${response.body}  (O_o)");
+    return [];
   }
 }
 Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
@@ -209,6 +210,7 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
   }
 
   if(response.statusCode == 200 || response.statusCode == 204){
+    print(response);
     print("✅ unvailable day $idDoc [$date] deleted   (>_<)");
   }else{
     throw Exception("❌ Erreur to delete unvalaible day $idDoc [$date] : status ${response.statusCode} ${response.body}  (O_o)");
@@ -242,11 +244,64 @@ Future<void> responseAppointment(int appointment, String status, int idPatient, 
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
 }
+
+Future<void> takeAppointmentSimple({
+  required String nom,
+  required String prenom,
+  required String birthday,
+  required String sexe,
+  required String tel,
+  required String email,
+  required String address,
+  required String city,
+  required String hour,
+  required String date,
+  required String symptome,
+  required int idDoctor,
+}) async {
+
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  final url = Uri.parse("http://172.27.136.28:8000/api/validate/get_appointement");
+
+  final body = {
+    "idDoctor": idDoctor,
+    "date": date,
+    "hour": hour,
+
+    "nom": nom,
+    "prenom": prenom,
+    "birthday": birthday,
+    "sexe": sexe,
+    "numberphone": tel,
+    "email": email,
+    // "password": password,
+    "address": address,
+    "city": city,
+    "symptome": symptome,
+  };
+
+  final response = await http.post(
+    url,
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(body),
+  );
+
+  if (response.statusCode == 201) {
+    print("✅ Demande de rendez-vous envoyée !");
+  } else {
+    print("❌ Erreur (${response.statusCode}) : ${response.body}");
+  }
+}
 Future<void> takeAppointment(int docId, String symptome, DateTime date, String hour, int idDoc, int patientid) async{
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final url = Uri.parse('http://172.27.136.28:8000/api/validate/get_appointement');
-  // print('Date => ${date.toIso8601String().split(' ')[0]}');
+  print('Date => ${date.toIso8601String().split(' ')[0]}');
 
   final response = await http.post(
     url,

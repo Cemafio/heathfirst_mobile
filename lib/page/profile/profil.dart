@@ -390,92 +390,92 @@ class _ProfilSectionState extends State<ProfilSection> {
                               
                           ),
                         
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 5 
-                          ),
-                          width: double.infinity,
-                          margin: const EdgeInsets.all(20),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     vertical: 10,
+                        //     horizontal: 5 
+                        //   ),
+                        //   width: double.infinity,
+                        //   margin: const EdgeInsets.all(20),
 
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.black26)
-                          ),
-                          child: Column(
-                            children: [
-                              const Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.calendar_month),
-                                  SizedBox(width: 10,),
-                                  Text(
-                                    'Apropos',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1,
-                                      color:  Color.fromARGB(158, 0, 0, 0)
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                width: 350,
-                                margin: const EdgeInsets.only(left: 10, top: 10),
-                                child: Text(
-                                  "    Yhhighohhrsg uhbvfruf jjksjkef ujrvjfvvjv jfjksj ufhdfv hfvhf fhihoospdfkjjdf pplmmmmgùg kjeùùmmlhgh ùù;z;;p^^pk,epporktg ,kpogtkbp ojgojbobin,n itio,joi,ndbkkb ,fnb,b,fk, fopjnfojhjfjh oithoiiojfhj ifigojifojh oiopsojrpg çrerhgio uugiuguisif rgoizeyugrgeriuger usheufhurg ushuihsdrvoirogidf seufgurguhrg suhruifhuhrg shfuhruhrog",
-                                  style: TextStyle(letterSpacing: 1),
-                                ),
-                              ),
-                            ]
-                          ),
-                        ),
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(10),
+                        //     border: Border.all(color: Colors.black26)
+                        //   ),
+                        //   child: Column(
+                        //     children: [
+                        //       const Row(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         children: [
+                        //           Icon(Icons.calendar_month),
+                        //           SizedBox(width: 10,),
+                        //           Text(
+                        //             'Apropos',
+                        //             style: TextStyle(
+                        //               fontSize: 16,
+                        //               fontWeight: FontWeight.bold,
+                        //               letterSpacing: 1,
+                        //               color:  Color.fromARGB(158, 0, 0, 0)
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       Container(
+                        //         width: 350,
+                        //         margin: const EdgeInsets.only(left: 10, top: 10),
+                        //         child: Text(
+                        //           "    Yhhighohhrsg uhbvfruf jjksjkef ujrvjfvvjv jfjksj ufhdfv hfvhf fhihoospdfkjjdf pplmmmmgùg kjeùùmmlhgh ùù;z;;p^^pk,epporktg ,kpogtkbp ojgojbobin,n itio,joi,ndbkkb ,fnb,b,fk, fopjnfojhjfjh oithoiiojfhj ifigojifojh oiopsojrpg çrerhgio uugiuguisif rgoizeyugrgeriuger usheufhurg ushuihsdrvoirogidf seufgurguhrg suhruifhuhrg shfuhruhrog",
+                        //           style: TextStyle(letterSpacing: 1),
+                        //         ),
+                        //       ),
+                        //     ]
+                        //   ),
+                        // ),
 
-                      if((infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
-                      Container(
-                          // height: 60,
-                          padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 5 
-                        ),
-                        width: double.infinity,
-                        margin: const EdgeInsets.all(20),
+                        // if((infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
+                        // Container(
+                        //     // height: 60,
+                        //     padding: const EdgeInsets.symmetric(
+                        //     vertical: 10,
+                        //     horizontal: 5 
+                        //   ),
+                        //   width: double.infinity,
+                        //   margin: const EdgeInsets.all(20),
 
-                        decoration: BoxDecoration(
-                          // color: const Color.fromARGB(255, 241, 241, 241),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.black26)
-                        ),
-                        child: Column(
-                          children: [
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.calendar_month),
-                                SizedBox(width: 10,),
-                                Text(
-                                  'Experience',
-                                    style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                    color:  Color.fromARGB(158, 0, 0, 0)
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 350,
-                              margin: const EdgeInsets.only(left: 10, top: 10),
-                              child: Text(
-                                  "    Yhhighohhrsg uhbvfruf jjksjkef ujrvjfvvjv jfjksj ufhdfv hfvhf fhihoospdfkjjdf pplmmmmgùg kjeùùmmlhgh ùù;z;;p^^pk,epporktg ,kpogtkbp ojgojbobin,n itio,joi,ndbkkb",
-                                  style: TextStyle(letterSpacing: 1),
-                              ),
-                            ),
-                          ]
-                        ),
-                      ),
+                        //   decoration: BoxDecoration(
+                        //     // color: const Color.fromARGB(255, 241, 241, 241),
+                        //     borderRadius: BorderRadius.circular(10),
+                        //     border: Border.all(color: Colors.black26)
+                        //   ),
+                        //   child: Column(
+                        //     children: [
+                        //       const Row(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         children: [
+                        //           Icon(Icons.calendar_month),
+                        //           SizedBox(width: 10,),
+                        //           Text(
+                        //             'Experience',
+                        //               style: TextStyle(
+                        //               fontSize: 16,
+                        //               fontWeight: FontWeight.bold,
+                        //               letterSpacing: 1,
+                        //               color:  Color.fromARGB(158, 0, 0, 0)
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       Container(
+                        //         width: 350,
+                        //         margin: const EdgeInsets.only(left: 10, top: 10),
+                        //         child: Text(
+                        //             "    Yhhighohhrsg uhbvfruf jjksjkef ujrvjfvvjv jfjksj ufhdfv hfvhf fhihoospdfkjjdf pplmmmmgùg kjeùùmmlhgh ùù;z;;p^^pk,epporktg ,kpogtkbp ojgojbobin,n itio,joi,ndbkkb",
+                        //             style: TextStyle(letterSpacing: 1),
+                        //         ),
+                        //       ),
+                        //     ]
+                        //   ),
+                        // ),
                     ],
                   ),
                 ),
@@ -483,8 +483,7 @@ class _ProfilSectionState extends State<ProfilSection> {
             );
           }
         ),
-        
-        )
+      )
     );
   }
 }

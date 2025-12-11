@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:heathfirst_mobile/page/agenda/calendar.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarClient.dart';
+import 'package:heathfirst_mobile/page/appointment/RdvStream.dart';
 import 'package:heathfirst_mobile/page/appointment/demandeRendeVous.dart';
 import 'package:heathfirst_mobile/page/home/acceuilDoc.dart';
 import 'package:heathfirst_mobile/page/home/categorie.dart';
@@ -126,7 +127,7 @@ class _HomepageState extends State<HomePage> {
                         
                       ),
                     ),
-                    
+                    const SizedBox(height: 25,),
                     if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
                      Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,
 
@@ -237,7 +238,8 @@ class _HomepageState extends State<HomePage> {
                       leading: const Icon(Icons.supervised_user_circle),
                       title: const Text("Rendez-vous"),
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection(user: _infoUser)));
+                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection(user: _infoUser)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousStream()));
                       }
                     ),
                   ListTile(
