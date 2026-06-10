@@ -9,6 +9,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:http/http.dart' as http;
 
 class GoogleMapPage extends StatefulWidget {
@@ -392,109 +393,146 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Stack(
-        children: [
-          FutureBuilder(
-            future: _allDoctor, 
-            builder: (context, snapshot){
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  margin: EdgeInsets.only(top: 100),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              if (snapshot.hasError) {
-                if (snapshot.error.toString().contains("unauthorized")) {
-                  Future.microtask(() {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => LoginMobile()),
-                    );
-                  });
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            FutureBuilder(
+              future: _allDoctor, 
+              builder: (context, snapshot){
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 100),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
                 }
-                return Center(child: Text("Erreur : ${snapshot.error}"));
-              }
-
-              if(snapshot.hasData && !_markersLoaded){
-                _markersLoaded = true;
-                final docInfo = snapshot.data;
-                _generateMarker(docInfo!);
-              }
-
-              return GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: _initialLatLng,
-                  zoom: 10,
-                ),
-                onMapCreated: _onMapCreated,
-                markers: _markers,
-                polylines: _polylines,
-                onTap: (pos) {
-                  setState(() {
-                    _showCard = false;
-                  });
-                  // _placeSingleMarker(pos, 'Nouvel position');
+        
+                if (snapshot.hasError) {
+                  if (snapshot.error.toString().contains("unauthorized")) {
+                    Future.microtask(() {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginMobile()),
+                      );
+                    });
+                  }
+                  if(snapshot.error.toString().contains("Null")){
+                    return GoogleMap(
+                      initialCameraPosition: const CameraPosition(
+                        target: _initialLatLng,
+                        zoom: 10,
+                      ),
+                      onMapCreated: _onMapCreated,
+                      markers: _markers,
+                      polylines: _polylines,
+                      onTap: (pos) {
+                        setState(() {
+                          _showCard = false;
+                        });
+                      },
+                      
+                      
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: true,
+                      mapType: _currentMapType,
+                    );
+                  }
+                  return Center(child: Text("Erreur : ${snapshot.error}"));
+                }
+        
+                if(snapshot.hasData && !_markersLoaded){
+                  _markersLoaded = true;
+                  final docInfo = snapshot.data;
+                  _generateMarker(docInfo!);
+                }
+        
+                return GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: _initialLatLng,
+                    zoom: 10,
+                  ),
+                  onMapCreated: _onMapCreated,
+                  markers: _markers,
+                  polylines: _polylines,
+                  onTap: (pos) {
+                    setState(() {
+                      _showCard = false;
+                    });
+                  },
+                  
+                  
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: true,
+                  mapType: _currentMapType,
+                );
+            }),
+            
+        
+            Positioned(
+              top: 40,
+              left: 0,
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.pop(context);
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(user: infoUser)));
+        
                 },
-                
-                
-                myLocationButtonEnabled: false,
-                myLocationEnabled: true,
-                mapType: _currentMapType,
-              );
-          }),
-          
-
-          Positioned(
-            top: 40,
-            left: 0,
-            child: GestureDetector(
-              onTap: (){
-                Navigator.pop(context);
-                // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(user: infoUser)));
-
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                // height: 100,
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        // border: Border.all(),
-                        color: Color.fromARGB(97, 107, 107, 107)
-                      ),
-
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
-                    ),
-
-                    Container(
-                      width: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: GooglePlaceAutoCompleteTextField(
-                        textEditingController: _searchController,
-                        googleAPIKey: googleApiKey,
-                        inputDecoration: const InputDecoration(
-                          hintText: "Rechercher un lieu...",
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(10),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  // height: 100,
+                  padding: EdgeInsets.all(15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+        
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          // border: Border.all(),
+                          color: Color.fromARGB(97, 107, 107, 107)
                         ),
-                        debounceTime: 800,
-                        countries: ["mg"], // Limiter aux pays (MG = Madagascar)
-                        isLatLngRequired: true,
-                        getPlaceDetailWithLatLng: (prediction) async {
-
+        
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,),
+                      ),
+        
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: GooglePlaceAutoCompleteTextField(
+                          textEditingController: _searchController,
+                          googleAPIKey: googleApiKey,
+                          inputDecoration: const InputDecoration(
+                            hintText: "Rechercher un lieu...",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(10),
+                          ),
+                          debounceTime: 800,
+                          countries: ["mg"], // Limiter aux pays (MG = Madagascar)
+                          isLatLngRequired: true,
+                          getPlaceDetailWithLatLng: (prediction) async {
+        
+                            if (prediction.placeId != null) {
+                            final details = await getPlaceDetails(prediction.placeId!);
+                              if (details != null) {
+                                _goToPlace(
+                                  details["lat"],
+                                  details["lng"],
+                                );
+                              }
+                            }
+                          },
+        
+                          itemClick: (prediction) async {
+                          // Quand l’utilisateur clique sur un résultat
+                          _searchController.text = prediction.description ?? "";
+        
                           if (prediction.placeId != null) {
-                          final details = await getPlaceDetails(prediction.placeId!);
+                            final details = await getPlaceDetails(prediction.placeId!);
                             if (details != null) {
                               _goToPlace(
                                 details["lat"],
@@ -503,57 +541,43 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                             }
                           }
                         },
-
-                        itemClick: (prediction) async {
-                        // Quand l’utilisateur clique sur un résultat
-                        _searchController.text = prediction.description ?? "";
-
-                        if (prediction.placeId != null) {
-                          final details = await getPlaceDetails(prediction.placeId!);
-                          if (details != null) {
-                            _goToPlace(
-                              details["lat"],
-                              details["lng"],
-                            );
-                          }
-                        }
-                      },
-                      ),
-                    ),                    
-                  ],
-                ),
-              ), 
-            )
-          ),
-          
-          Positioned(
-            bottom: 90,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: _goToCurrentPosition,
-              child: Icon(Icons.location_on_outlined),
+                        ),
+                      ),                    
+                    ],
+                  ),
+                ), 
+              )
             ),
-          ),
-          
-          Positioned(
-            bottom: 20,
-            left: 10,
-            child: FloatingActionButton(
-              onPressed: _toggleMapType,
-              child: Icon(Icons.map_rounded),
+            
+            Positioned(
+              bottom: 90,
+              left: 10,
+              child: FloatingActionButton(
+                onPressed: _goToCurrentPosition,
+                child: Icon(Icons.location_on_outlined),
+              ),
             ),
-          ),
-
-          // 🔥 Panneau avec animation slide
-          AnimatedPositioned(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-            left: 0,
-            right: 0,
-            bottom: _showCard ? 0 : -200, // ← Slide up/down !
-            child: _buildSlidingCard(_selectedWidget),
-          ),
-        ],
+            
+            Positioned(
+              bottom: 20,
+              left: 10,
+              child: FloatingActionButton(
+                onPressed: _toggleMapType,
+                child: Icon(Icons.map_rounded),
+              ),
+            ),
+        
+            // 🔥 Panneau avec animation slide
+            AnimatedPositioned(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+              left: 0,
+              right: 0,
+              bottom: _showCard ? 0 : -200, // ← Slide up/down !
+              child: _buildSlidingCard(_selectedWidget),
+            ),
+          ],
+        ),
       )
     );
   }

@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/profile/editProfil.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/editProfilDoc.dart';
-import 'package:heathfirst_mobile/page/profile/profil.dart';
 import 'package:heathfirst_mobile/page/setting/aboutApp.dart';
 import 'package:heathfirst_mobile/page/setting/security.dart';
 
@@ -129,13 +126,13 @@ class _SettingpageState extends State<Settingpage> {
                               color: Colors.black26,
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://172.27.136.28:8000/images/photos/${_user['photo_profil']}"),
+                              image: NetworkImage("http://172.25.69.28:8000/images/photos/${_user['photo_profil']}"),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         const SizedBox(width: 10,),
-                        Container(
+                        SizedBox(
                           width: 250,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

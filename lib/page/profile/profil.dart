@@ -10,6 +10,7 @@ import 'package:heathfirst_mobile/page/profile/editProfil.dart';
 import 'package:heathfirst_mobile/page/profile/editProfilDoc.dart';
 import 'package:heathfirst_mobile/page/setting/settingPage.dart';
 import 'package:heathfirst_mobile/service/data.dart';
+import 'package:heathfirst_mobile/utils/string_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -23,9 +24,7 @@ class ProfilSection extends StatefulWidget {
 }
 
 class _ProfilSectionState extends State<ProfilSection> {
-  // Map<String, dynamic> get _infoUser => widget.infoUser;
   Future<Map<String, dynamic>> _infoUser = userInfo();
-  // Future<List<dynamic>> get _listDemd => widget.listDemd;
   Future<List<dynamic>> _listDemd = rdvUserData();
 
   DateTime dayNow = DateTime.now();
@@ -48,12 +47,6 @@ class _ProfilSectionState extends State<ProfilSection> {
       // _contains = tmp;
     });
   }
-  // Définir une liste de jours fériés
-  final List<DateTime> _holidays = [
-    DateTime.utc(2024, 7, 10),
-    DateTime.utc(2024, 7, 25),
-    DateTime.utc(2024, 7, 14),
-  ];
 
   @override
   void initState() {
@@ -141,23 +134,51 @@ class _ProfilSectionState extends State<ProfilSection> {
                       Positioned(
                         bottom: -70,
                         left: 130,
-                        child: Container(
-                          width: 130,
-                          height: 130,
-                          margin: const EdgeInsets.only(bottom: 5),
+                        child: (infoUser['photo_profil'] != null)
+                          ? Container(
+                            width: 130,
+                            height: 130,
+                            margin: const EdgeInsets.only(bottom: 5),
 
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              width: sqrt1_2,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                width: sqrt1_2,
+                                color: const Color(0xFF81C784),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage("http://172.25.69.28:8000/images/photos/${infoUser['photo_profil']}"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                          : Container(
+                            width: 130,
+                            height: 130,
+                            margin: const EdgeInsets.only(bottom: 5),
+
+                            decoration: BoxDecoration(
                               color: const Color(0xFF81C784),
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                width: sqrt1_2,
+                                color: const Color(0xFF81C784),
+                              ),
                             ),
-                            image: DecorationImage(
-                              image: NetworkImage("http://172.27.136.28:8000/images/photos/${infoUser['photo_profil']}"),
-                              fit: BoxFit.cover,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  infoUser['LastName'].toString().uperFirstChart(),
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                        ),
+                            
+                          )
                       ),
                       Positioned(
                         top: 40,

@@ -71,11 +71,11 @@ class _EditprofilState extends State<Editprofil> {
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
-        // List<String> photoName = image.path.split('/');
         _photo = image.path;
       });
     }
   }
+
   @override
   void initState () {
     super.initState();
@@ -90,10 +90,10 @@ class _EditprofilState extends State<Editprofil> {
     _numController.text  = _infoUser['phone'];
     _dateController.text = _infoUser['DateOfBird'];
     _medocController.text = _infoUser['MedicationInProgress'];
-    _alegieController.text = _infoUser['allergy'];
-    _antecMedocController.text= _infoUser['HistoryMedical'];
-    _networkImageUrl = "http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}";
-    _photo = _infoUser['photo_profil'];
+    _alegieController.text = _infoUser['allergy']??'';
+    _antecMedocController.text= _infoUser['HistoryMedical']??'';
+    _networkImageUrl = "http://172.25.69.28:8000/images/photos/${_infoUser['photo_profil']}";
+    _photo = _infoUser['photo_profil']??'';
   }
 
   Widget build(BuildContext context) {
@@ -114,10 +114,23 @@ class _EditprofilState extends State<Editprofil> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: _selectedImage != null
-                      ? ClipOval(child:Image.file(_selectedImage!, width: 100, height: 100, fit: BoxFit.cover))
-                      : (_networkImageUrl != null)
-                        ? ClipOval(child: Image.network(_networkImageUrl!,width: 100,height: 100,fit: BoxFit.cover))
-                        
+                      ? ClipOval(
+                          child:Image.file(
+                            _selectedImage!, 
+                            width: 100, 
+                            height: 100, 
+                            fit: BoxFit.cover
+                          )
+                        )
+                      : (_infoUser['photo_profil'] != null)
+                        ? ClipOval(
+                            child: Image.network(
+                              _networkImageUrl!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover
+                            )
+                          )
                         : Container(
                           width: 100,
                           height: 100,
@@ -319,6 +332,7 @@ class _EditprofilState extends State<Editprofil> {
                           if (isValide) {
                             _formKey.currentState!.save();
                             try {
+
                               await editProfil( _infoUser['id'],_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client');
                               
                               ScaffoldMessenger.of(context).showSnackBar(

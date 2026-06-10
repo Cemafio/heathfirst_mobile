@@ -383,6 +383,8 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
     request.fields['isChangeProfile'] = 'false';
   }
 
+  // print("Photo isChangedProfile in API= ${request.fields['isChangeProfile']}");
+
   var response = await request.send();
   final responseData = await http.Response.fromStream(response);
   
