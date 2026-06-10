@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:heathfirst_mobile/service/data.dart';
 
 class RdvStreamService {

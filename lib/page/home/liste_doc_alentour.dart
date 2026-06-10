@@ -68,10 +68,10 @@ class _ListDocSectionState extends State<ListDocSection> {
             }
 
             final docList = snapshot.data!;
-
+            print(docList[0]);
             // Ajouter les spécialités sans dupliquer
             for (var doc in docList) {
-              final spec = (doc['specialty'] ?? doc['Specialty'])?.toString() ?? "";
+              final spec = (doc['speciality'] ?? doc['Speciality'])?.toString() ?? "";
               if (spec.isNotEmpty && !specialitesUniques.contains(spec)) {
                 specialitesUniques.add(spec);
                 categorie.add({"type": spec, "choice": false});
@@ -140,7 +140,7 @@ class _ListDocSectionState extends State<ListDocSection> {
 
                     // Filtrage
                     final specialty =
-                        (doc['specialty'] ?? doc['Specialty']).toString();
+                        (doc['speciality'] ?? doc['Speciality']).toString();
 
                     if (activeFilter != "Tous" && specialty != activeFilter) {
                       return SizedBox.shrink();
@@ -171,7 +171,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50),
                                 child: Image.network(
-                                  "http://172.27.136.28:8000/images/photos/${doc['photoProfil']}",
+                                  "http://172.25.69.28:8000/images/photos/${doc['photo_doc']}",
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -182,7 +182,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${doc["LastName"]} ${doc["FirstName"]}',
+                                  '${doc["last_name"]} ${doc["first_name"]}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
@@ -196,7 +196,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                                         size: 15),
                                         const SizedBox(width: 3),
                                     Text(
-                                      doc['specialty'],
+                                      doc['speciality']??'',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
@@ -208,12 +208,14 @@ class _ListDocSectionState extends State<ListDocSection> {
                                 SizedBox(height: 0),
                                 Row(
                                   children: [
-                                    Icon(Icons.location_city_rounded,
-                                        color: Color(0xFF548856),
-                                        size: 15),
-                                        const SizedBox(width: 3),
+                                    Icon(
+                                      Icons.location_city_rounded,
+                                      color: Color(0xFF548856),
+                                      size: 15
+                                    ),
+                                    const SizedBox(width: 3),
                                     Text(
-                                      doc['AddressCabinet'],
+                                      doc['addressCabinet']??'',
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,

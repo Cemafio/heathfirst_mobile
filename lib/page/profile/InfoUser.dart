@@ -255,7 +255,7 @@ Future<void> _navigation(Widget materialPage) async {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage("http://172.27.136.28:8000/images/photos/${_apropos['photoProfil']}"),
+                            image: NetworkImage("http://172.25.69.28:8000/images/photos/${_apropos['photo_doc']}"),
                             fit: BoxFit.cover,
                           ),
                       ),
@@ -269,7 +269,7 @@ Future<void> _navigation(Widget materialPage) async {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${_apropos['lastName']} ${_apropos['firstName']}',
+                    '${_apropos['last_name']} ${_apropos['first_name']}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -303,21 +303,14 @@ Future<void> _navigation(Widget materialPage) async {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Specialisation"),
-                          Text("${_apropos['specialty']}", style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],),
-                        const SizedBox(height: 7,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                          Text("Adress"),
-                          Text("${_apropos['Address']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['speciality']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                           Text("Adess cabinet"),
-                          Text("${_apropos['AddressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text("${_apropos['addressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
                         ],),
                         const SizedBox(height: 7,),
                         Row(

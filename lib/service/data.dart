@@ -119,8 +119,8 @@ Future<List<dynamic>> fetchDataDoc() async {
     throw Exception("unauthorized");
   }
   if(status == 200 ){
-    final doctor = jsonDecode(response.body)['data'];
-    print("Data => ${doctor}");
+    final doctor = jsonDecode(response.body)['dataNoPagination'];
+    // print("Data => ${jsonDecode(response.body)}");
 
     return doctor;
   }else{

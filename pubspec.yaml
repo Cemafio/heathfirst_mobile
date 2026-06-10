@@ -51,6 +51,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   lottie: ^3.1.0  
   hugeicons: ^1.1.7 
+  flutter_riverpod: ^3.3.2
 
   # flutter_google_places: ^0.3.0
   # google_maps_webservice: ^0.0.20-nullsafety.5

@@ -1,13 +1,14 @@
   import 'package:flutter/material.dart';
   import 'package:flutter_screenutil/flutter_screenutil.dart';
-  import 'package:responsive_builder/responsive_builder.dart';
-  import 'package:heathfirst_mobile/provider/userProvider.dart';
   import 'package:heathfirst_mobile/page/login/login.dart';
-
-  import 'package:provider/provider.dart';
+  import 'package:flutter_riverpod/flutter_riverpod.dart';
 
   void main() {
-  runApp(MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    )
+  );
 }
 
 
