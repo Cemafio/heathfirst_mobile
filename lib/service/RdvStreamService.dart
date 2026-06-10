@@ -15,7 +15,6 @@ class RdvStreamService {
     // Vérifie toutes les 5 secondes
     _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
       final List<dynamic> dmd = await rdvUserData(); // Ton fetch backend
-
       final newHash = dmd.toString(); // Signature des données
 
       if (newHash != _lastHash) {

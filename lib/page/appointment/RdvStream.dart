@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/service/RdvStreamService.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
@@ -49,6 +50,10 @@ class _RdvPageState extends State<RendezvousStream> {
 
               final rdvList = snapshot.data!;
 
+              if(rdvList.isEmpty){
+                return EmptyStateWidget(txt: 'Aucun demande, pour le moment',);
+              }
+
               return ListView.builder(
                 itemCount: rdvList.length,
                 itemBuilder: (context, index) {
@@ -58,158 +63,158 @@ class _RdvPageState extends State<RendezvousStream> {
                   // print(rdv);
 
                   return Stack(
+                    children: [
+                      Container(
+                        height: 190,
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 241, 241, 241),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.black26)
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              height: 190,
-                              margin: const EdgeInsets.all(10),
-                              padding: const EdgeInsets.all(10),
+                              height: 60,
+                              width: 60,
+                              margin: const EdgeInsets.only(right: 10),
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 241, 241, 241),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.black26)
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(100),
+                                image: DecorationImage(
+                                  image: NetworkImage("http://172.25.69.28:8000/images/photos/${rdv['patient']['photo']}"),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 60,
-                                    width: 60,
-                                    margin: const EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(100),
-                                      image: DecorationImage(
-                                        image: NetworkImage("http://172.27.136.28:8000/images/photos/${rdv['patient']['photo']}"),
-                                        fit: BoxFit.cover,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 200,
+                                  child: Text(
+                                    "${rdv['patient']['lastname']} ${rdv['patient']['firstname']}",
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(171, 0, 0, 0),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      letterSpacing: 3,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 10),
+                                Text("À - ${rdv['information']['hour']}H",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(171, 63, 137, 72),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 3,
+                                    )),
+                                const SizedBox(height: 10),
+                                if (rdv['information']['symptome'] != null)
+                                  SizedBox(
+                                    width: 200,
+                                    child: Text(
+                                      "Symptome: - ${rdv['information']['symptome']}",
+                                      style: const TextStyle(
+                                        color: Color.fromARGB(171, 0, 0, 0),
+                                        fontSize: 15,
+                                        letterSpacing: 1,
                                       ),
                                     ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(
-                                          "${rdv['patient']['lastname']} ${rdv['patient']['firstname']}",
-                                          style: const TextStyle(
-                                            color: Color.fromARGB(171, 0, 0, 0),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            letterSpacing: 3,
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 10),
-                                      Text("À - ${rdv['information']['hour']}H",
-                                          style: TextStyle(
-                                            color: Color.fromARGB(171, 63, 137, 72),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 3,
-                                          )),
-                                      const SizedBox(height: 10),
-                                      if (rdv['information']['symptome'] != null)
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(
-                                            "Symptome: - ${rdv['information']['symptome']}",
-                                            style: const TextStyle(
-                                              color: Color.fromARGB(171, 0, 0, 0),
-                                              fontSize: 15,
-                                              letterSpacing: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        
-                                    ],
-                                  )
-                                ]
-                              )
-                            ),
-                            Positioned(
-                              bottom: 15,
-                              right: 20,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  if (isLoading)
-                                    Container(
-                                      margin: const EdgeInsets.only(bottom: 10),
-                                      height: 18,
-                                      width: 18,
-                                      child: const CircularProgressIndicator(strokeWidth: 3),
-                                    ),
-
-
-                                  if (rdv['status'] == 'pending' && !isLoading)
-                                    TextButton(
-                                      onPressed: () async {
-                                        final doc = rdv['doctor'];
-                                        final patient = rdv['patient'];
-
-                                        setState(() {
-                                          _loadingRdvId = rdv['id'];
-                                        });
-
-                                        await responseAppointment(rdv['id'], 'refused', patient['id'], doc['id']);
-                                        await Future.delayed(const Duration(seconds: 6));
-
-                                        setState(() {
-                                          _loadingRdvId = null;
-                                        });
-                                      },
-                                      child: const Text('refuser', style: TextStyle(color: Colors.red)),
-                                    ),
-
-                                  if (rdv['status'] == 'pending' && !isLoading)
-                                    TextButton(
-                                      onPressed: () async {
-                                        final doc = rdv['doctor'];
-                                        final patient = rdv['patient'];
-
-                                        setState(() {
-                                          _loadingRdvId = rdv['id'];
-                                        });
-
-                                        await responseAppointment(rdv['id'], 'accepted', patient['id'], doc['id']);
-                                        await Future.delayed(const Duration(seconds: 5));
-
-                                        setState(() {
-                                          _loadingRdvId = null;
-                                        });
-                                      },
-                                      child: const Text('accepter'),
-                                    ),
-
-                                  if (!isLoading && rdv['status'] != 'pending')
-                                    Text(
-                                      rdv['status'] == 'accepted' ? 'accepté' : 'refusé',
-                                      style: TextStyle(
-                                        color: rdv['status'] == 'accepted'
-                                            ? Color.fromARGB(255, 170, 211, 172)
-                                            : Color.fromARGB(255, 216, 178, 176),
-                                      ),
-                                    ),
                                   
-
-
-                                  // if(rdv['status'] != 'pending' && _isLoaded == false)
- 
-                                  //   if(rdv['status'] == 'accepted')
-                                  //     TextButton(
-                                  //       onPressed: null,
-                                  //       child: Text('accepté', style: const TextStyle(color: Color.fromARGB(255, 170, 211, 172)),),
-                                  //     ),
-                                  //   if(rdv['status'] == 'refused')
-                                  //     TextButton(
-                                  //       onPressed: null,
-                                  //       child: Text('refusé', style: const TextStyle(color:  Color.fromARGB(255, 216, 178, 176)),),
-                                  //     ),
-                                ],
-                              ),
+                              ],
                             )
-                          ]);
+                          ]
+                        )
+                      ),
+                      Positioned(
+                        bottom: 15,
+                        right: 20,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            if (isLoading)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                height: 18,
+                                width: 18,
+                                child: const CircularProgressIndicator(strokeWidth: 3),
+                              ),
+
+
+                            if (rdv['status'] == 'pending' && !isLoading)
+                              TextButton(
+                                onPressed: () async {
+                                  final doc = rdv['doctor'];
+                                  final patient = rdv['patient'];
+
+                                  setState(() {
+                                    _loadingRdvId = rdv['id'];
+                                  });
+
+                                  await responseAppointment(rdv['id'], 'refused', patient['id'], doc['id']);
+                                  await Future.delayed(const Duration(seconds: 6));
+
+                                  setState(() {
+                                    _loadingRdvId = null;
+                                  });
+                                },
+                                child: const Text('refuser', style: TextStyle(color: Colors.red)),
+                              ),
+
+                            if (rdv['status'] == 'pending' && !isLoading)
+                              TextButton(
+                                onPressed: () async {
+                                  final doc = rdv['doctor'];
+                                  final patient = rdv['patient'];
+
+                                  setState(() {
+                                    _loadingRdvId = rdv['id'];
+                                  });
+
+                                  await responseAppointment(rdv['id'], 'accepted', patient['id'], doc['id']);
+                                  await Future.delayed(const Duration(seconds: 5));
+
+                                  setState(() {
+                                    _loadingRdvId = null;
+                                  });
+                                },
+                                child: const Text('accepter'),
+                              ),
+
+                            if (!isLoading && rdv['status'] != 'pending')
+                              Text(
+                                rdv['status'] == 'accepted' ? 'accepté' : 'refusé',
+                                style: TextStyle(
+                                  color: rdv['status'] == 'accepted'
+                                      ? Color.fromARGB(255, 170, 211, 172)
+                                      : Color.fromARGB(255, 216, 178, 176),
+                                ),
+                              ),
+                            
+
+
+                            // if(rdv['status'] != 'pending' && _isLoaded == false)
+
+                            //   if(rdv['status'] == 'accepted')
+                            //     TextButton(
+                            //       onPressed: null,
+                            //       child: Text('accepté', style: const TextStyle(color: Color.fromARGB(255, 170, 211, 172)),),
+                            //     ),
+                            //   if(rdv['status'] == 'refused')
+                            //     TextButton(
+                            //       onPressed: null,
+                            //       child: Text('refusé', style: const TextStyle(color:  Color.fromARGB(255, 216, 178, 176)),),
+                            //     ),
+                          ],
+                        ),
+                      )
+                    ]);
                   // ListTile(
                   //   title: Text("Rendez-vous n°$index"),
                   //   subtitle: Text(rdv.toString()),

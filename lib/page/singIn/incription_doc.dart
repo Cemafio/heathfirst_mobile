@@ -36,7 +36,7 @@ class _DocInscriptionState extends State<DocInscription> {
 
 
   Future<void> inscriptionPatient(String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String  ident, String pass, String adress, String roles, String speciality, String  adressCabinet) async {
-    final url = Uri.parse("http://172.27.136.28:8000/api/registration");
+    final url = Uri.parse("http://172.25.69.28:8000/api/registration");
 
     var request = http.MultipartRequest("POST", url);
 
