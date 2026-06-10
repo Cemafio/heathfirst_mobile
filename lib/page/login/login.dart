@@ -4,9 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/singIn/incription_doc.dart';
@@ -35,22 +33,24 @@ class _LoginMobileState extends State<LoginMobile> {
   late Map<String, dynamic> _infoUser;
 
   Future<void> authentification(String email, String pass) async{
-    final url = Uri.parse("http://172.27.136.28:8000/api/authentication");
+    final url = Uri.parse("http://172.25.69.28:8000/api/login");
 
     setState(() => isLoading = true);
 
     try {
-      // Timeout de 10 secondes
       final response = await http.post(
         url,
-        body: {
-          '_username': email,
-          '_password': pass,
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ).timeout(Duration(seconds: 20));
+        body: jsonEncode({
+          'email': email,
+          'password': pass,
+        }),
+      ).timeout(Duration(seconds: 5));
 
       // ======== SI LE SERVEUR RÉPOND ========
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data;
 
         // Sécuriser jsonDecode
@@ -60,7 +60,7 @@ class _LoginMobileState extends State<LoginMobile> {
           throw FormatException("Réponse JSON invalide");
         }
 
-        final token = data['tokenss'];
+        final token = data['token'];
         if (token == null) throw Exception("Token introuvable");
 
         // Stockage local
@@ -142,10 +142,7 @@ class _LoginMobileState extends State<LoginMobile> {
           style: TextStyle(color: Colors.redAccent, fontSize: 11),
         );
       });
-    }
-
-    // ========== AUTRES ERREURS ==========
-    catch (e) {
+    }catch (e) {
       print("❌ ERREUR inconnue : $e");
 
       setState(() {
@@ -170,33 +167,35 @@ class _LoginMobileState extends State<LoginMobile> {
             GestureDetector(
               onTap: (() => Navigator.of(context).push(MaterialPageRoute(builder: ((context)=> const PatientInscription())))),
 
-              child: Container(
-              height: 100,
+              child: SizedBox(
+                height: 100,
 
-              child: Column (children: [
-                Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    border: Border.all( width: 1),
-                    borderRadius: BorderRadius.circular(10)
-                  ),
+                child: Column (
+                  children: [
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        border: Border.all( width: 1),
+                        borderRadius: BorderRadius.circular(10)
+                      ),
 
-                  child: const Center(
-                    child:  Icon(Icons.person,
-                      size: 40,),
-                  ),
+                      child: const Center(
+                        child:  Icon(Icons.person,
+                          size: 40,),
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    const Text("Patien")
+                  ],
                 ),
-                  const SizedBox(height: 10,),
-                  const Text("Patien")
-                ],),
               ),
             ),
 
             GestureDetector(
               onTap: (() => Navigator.of(context).push(MaterialPageRoute(builder: ((context)=> const DocInscription())))),
 
-              child: Container(
+              child: SizedBox(
                 height: 100,
                 child: Column (
                 children: [
@@ -282,7 +281,7 @@ class _LoginMobileState extends State<LoginMobile> {
               ),
 
               const SizedBox(height:  30),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Wrap(
                   spacing: 8,
@@ -295,7 +294,6 @@ class _LoginMobileState extends State<LoginMobile> {
                   ]
                 ),
               ),
-              
 
               const SizedBox(height: 30),
               Material(
@@ -365,10 +363,9 @@ class _LoginMobileState extends State<LoginMobile> {
               ),
         )]),
         ),
-
       ),
 
-        Container(
+        SizedBox(
           child: Column(
             children: [
               GestureDetector(

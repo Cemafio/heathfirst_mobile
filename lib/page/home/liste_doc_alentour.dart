@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
+import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/service/data.dart';
 
@@ -59,7 +60,11 @@ class _ListDocSectionState extends State<ListDocSection> {
                   );
                 });
               }
-              return Center(child: Text("Erreur : ${snapshot.error}"));
+              if(snapshot.error.toString().contains("Null")){
+                return Center(
+                  child: EmptyStateWidget()
+                );
+              }
             }
 
             final docList = snapshot.data!;

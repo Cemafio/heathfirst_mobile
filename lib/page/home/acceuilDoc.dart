@@ -1,12 +1,10 @@
 import 'dart:ffi';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/appointment/demandeRendeVous.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 
