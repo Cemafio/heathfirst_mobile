@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heathfirst_mobile/model/user_model.dart';
 import 'package:heathfirst_mobile/page/agenda/calendar.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarClient.dart';
 import 'package:heathfirst_mobile/page/appointment/RdvStream.dart';
@@ -15,30 +17,40 @@ import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/map/googlemap.dart';
 import 'package:heathfirst_mobile/page/map/mapTest.dart';
 import 'package:heathfirst_mobile/page/profile/profil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:heathfirst_mobile/utils/string_extension.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   final Map<String, dynamic> user;
   HomePage({super.key, required this.user});
 
   @override
-  State<HomePage> createState() => _HomepageState();
+  ConsumerState<HomePage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<HomePage> {
+class _HomepageState extends ConsumerState<HomePage> {
   Map<String, dynamic> get _infoUser => widget.user;
-  Future<List<dynamic>> _listDoc = fetchDataDoc();
+  late Future<List<dynamic>> _listDoc;
   late Future<List<dynamic>> _listDemd;
+
+  void loadRdvUserData() async{
+    final token = ref.read(accessTokenProvider);
+    final base_url = ref.read(baseUrl);
+    _listDemd = rdvUserData(token: token,baseUrl: base_url);
+    _listDoc = fetchDataDoc(token: token, urlBase: base_url);
+  }
 
   @override
   void initState() {
     super.initState();
-    _listDemd = rdvUserData();
+    loadRdvUserData();
 
+    print(ref.watch(user_data));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       startSessionWatcher(context);
     });
@@ -100,6 +112,8 @@ class _HomepageState extends State<HomePage> {
 
   @override
     Widget build(BuildContext context) {
+    final _userDataAsync = ref.watch(user_data);
+
     return Scaffold(
       // backgroundColor: Color.fromARGB(255, 237, 237, 237),
       appBar: AppBar(
@@ -114,7 +128,6 @@ class _HomepageState extends State<HomePage> {
             )),
           ),
         actions: [
-          
           GestureDetector(
             onTap:(){
               Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SearchPage(user: _infoUser, listDoc: _listDoc)));
@@ -144,58 +157,65 @@ class _HomepageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: 
-          // ==================[Section aceuil]=================
-          Container(
-            width: double.infinity,
-            color: Color.fromARGB(0, 237, 237, 237),
-            padding: EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: MediaQuery.of(context).padding.top + 20,
-            ),
+        child: Container(
+          width: double.infinity,
+          color: Color.fromARGB(0, 237, 237, 237),
+          padding: EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: MediaQuery.of(context).padding.top + 20,
+          ),
 
-            child: Column(
-              children: [
-                const Text(
-                  'Bienvenue sur ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                    letterSpacing: 3,
-                    color: Color.fromARGB(171, 0, 0, 0),
-                  ),
+          child: Column(
+            children: [
+              const Text(
+                'Bienvenue sur ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  letterSpacing: 3,
+                  color: Color.fromARGB(171, 0, 0, 0),
                 ),
-                const Text(
-                  'Health First',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                    letterSpacing: 3,
-                    color: Color(0xFF548856),
-                  ),
+              ),
+              const Text(
+                'Health First',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  letterSpacing: 3,
+                  color: Color(0xFF548856),
                 ),
-                const SizedBox(height: 20,),
-                const Text(
-                  'Vous aider à garder la forme est notre objectif.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    letterSpacing: 3,
-                    color: Color.fromARGB(171, 0, 0, 0),
-                    
-                  ),
+              ),
+              const SizedBox(height: 20,),
+              const Text(
+                'Vous aider à garder la forme est notre objectif.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  letterSpacing: 3,
+                  color: Color.fromARGB(171, 0, 0, 0),
+                  
                 ),
-                const SizedBox(height: 25,),
-                if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
-                  Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,
+              ),
 
-                const SizedBox(height: 20,),
-                if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT') ?? false)
-                  ListDocSection(listDoc: _listDoc, user: _infoUser,)
-              ],
-            ),
-          ), 
+              const SizedBox(height: 25,),
+
+              // if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
+              //   Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,
+              _userDataAsync.when(
+                data: (user){
+                  return ListDocSection(listDoc: _listDoc);
+                },
+                error: (error, stackTrace) => Text('$error'),
+                loading: ()=>Center(
+                  child: CircularProgressIndicator(),
+                )
+              ),
+                
+            ],
+          ),
+        ), 
       ),
+
       drawer: Drawer(
         child: ListView(
           children:[
@@ -213,58 +233,67 @@ class _HomepageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children:[
-                  
-                  GestureDetector(
-                    onTap:(){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
-                    },
+                  _userDataAsync.when(
+                    data: (user){
+                      String _profilUser = '${ref.watch(baseUrl)}/images/photos/${user.profil}';
+                      return GestureDetector(
+                        onTap:(){
+                          // Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
+                        },
 
-                    child: (_infoUser['photo_profil'] != null)
-                    ? Container(
-                        width: 80,
-                        height: 80,
-                        margin: const EdgeInsets.only(bottom: 5),
+                        child: (_infoUser['photo_profil'] != null)
+                        ? Container(
+                            width: 80,
+                            height: 80,
+                            margin: const EdgeInsets.only(bottom: 5),
 
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            width: sqrt1_2,
-                            color: const Color(0xFF81C784),
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage('http://172.25.69.28:8000/images/photos/${_infoUser['photo_profil']}'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      )
-                    : Container(
-                      width: 80,
-                      height: 80,
-                      margin: const EdgeInsets.only(bottom: 5),
-
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF81C784),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          width: sqrt1_2,
-                          color: const Color(0xFF81C784),
-                        ),
-                      ),
-
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _infoUser['LastName'].toString().uperFirstChart(),
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                width: sqrt1_2,
+                                color: const Color(0xFF81C784),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage(_profilUser),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           )
-                        ],
-                      ),
+                        : Container(
+                          width: 80,
+                          height: 80,
+                          margin: const EdgeInsets.only(bottom: 5),
+
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF81C784),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              width: sqrt1_2,
+                              color: const Color(0xFF81C784),
+                            ),
+                          ),
+
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                user.lastname.toString().uperFirstChart(),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    error: (error, stackTrace) => Text('$error'), 
+                    loading: () => Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
+                  
               
               
                   const SizedBox(width: 5,),

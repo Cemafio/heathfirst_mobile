@@ -5,24 +5,26 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/singIn/incription_doc.dart';
 import 'package:heathfirst_mobile/page/singIn/inscription_patient.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class LoginMobile extends StatefulWidget {
+class LoginMobile extends ConsumerStatefulWidget {
   const LoginMobile({super.key});
 
   @override
-  State<LoginMobile> createState() => _LoginMobileState();
+  ConsumerState<LoginMobile> createState() => _LoginMobileState();
 }
 
-class _LoginMobileState extends State<LoginMobile> {
+class _LoginMobileState extends ConsumerState<LoginMobile> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _pass = '';
@@ -47,7 +49,7 @@ class _LoginMobileState extends State<LoginMobile> {
           'email': email,
           'password': pass,
         }),
-      ).timeout(Duration(seconds: 5));
+      ).timeout(Duration(seconds: 20));
 
       // ======== SI LE SERVEUR RÉPOND ========
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -63,15 +65,13 @@ class _LoginMobileState extends State<LoginMobile> {
         final token = data['token'];
         if (token == null) throw Exception("Token introuvable");
 
-        // Stockage local
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
+        ref.read(accessTokenProvider.notifier).state = token;
 
         print("✅ Authentification réussie !");
-        print(response.body);
+        print(ref.read(accessTokenProvider));
 
         // Récupération info user
-        _infoUser = await userInfo();
+        _infoUser = await userInfo(ref.read(baseUrl), token);
 
         setState(() {
           isLoading = false;
@@ -86,7 +86,6 @@ class _LoginMobileState extends State<LoginMobile> {
         return;
       }
 
-      // ======== ERREUR CÔTÉ SERVEUR 4xx / 5xx ========
       print("❌ ERREUR ${response.statusCode} : ${response.body}");
 
       setState(() {

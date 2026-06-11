@@ -1,19 +1,21 @@
 import 'dart:async';
 // import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
-class RendezvousSection extends StatefulWidget {
+class RendezvousSection extends ConsumerStatefulWidget {
   // Future<List<dynamic>> listDemd ;
   final Map<String, dynamic> user;
   RendezvousSection({super.key, required this.user});
 
   @override
-  State<RendezvousSection> createState() => _RendezvousSectionState();
+  ConsumerState<RendezvousSection> createState() => _RendezvousSectionState();
 }
 
-class _RendezvousSectionState extends State<RendezvousSection> {
+class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
   Future<List<dynamic>>? _list_demd;
   Map<String, dynamic> get _infoUser => widget.user;
   Map<int, Map<String, dynamic>> _usersProfil = {};
@@ -53,8 +55,10 @@ class _RendezvousSectionState extends State<RendezvousSection> {
   }
 
   Future<List<dynamic>> _loadData() async {
+    final token = ref.read(accessTokenProvider);
+    final base_url = ref.read(baseUrl);
     try {
-      final rdvList = await rdvUserData();
+      final rdvList = await rdvUserData(token: token, baseUrl: base_url);
       final Map<int, Map<String, dynamic>> profils = {};
 
       for (var item in rdvList) {

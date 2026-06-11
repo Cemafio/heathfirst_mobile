@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,10 +29,8 @@ Future<void> sendEmailReminder(List<dynamic> tabEmail, String type) async {
     print("❌ Erreur : ${response.body}");
   }
 }
-Future<List<dynamic>> rdvUserData() async{
-  final url = Uri.parse('http://172.25.69.28:8000/api/get_appointment'); // L'URL de votre API
-  final perfs = await SharedPreferences.getInstance();
-  final token = perfs.getString('token');
+Future<List<dynamic>> rdvUserData({required String token, required String baseUrl}) async{
+  final url = Uri.parse('$baseUrl/api/get_appointment'); // L'URL de votre API
   final response = await http.get(
     url,
     headers: {
@@ -55,13 +54,8 @@ Future<List<dynamic>> rdvUserData() async{
     throw Exception('Erreur lors du chargement des rendez-vous (O_o)');
   } 
 }  
-Future<Map<String, dynamic>> userInfo()  async{
-  final url = Uri.parse("http://172.25.69.28:8000/api/user");
-
-  
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
-
+Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
+  final url = Uri.parse("$baseUrl/api/user");
   final response = await http.get(
     url,
     headers: {
@@ -102,10 +96,8 @@ Future<Map<String, dynamic>> getProfilUser(id) async {
       }
   }
 // ----------Requette pour recuperer les list des docteurs--------
-Future<List<dynamic>> fetchDataDoc() async {
-  final url = Uri.parse('http://172.25.69.28:8000/api/users'); // L'URL de votre API
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
+Future<List<dynamic>> fetchDataDoc({required String token, required String urlBase}) async {
+  final url = Uri.parse('$urlBase/api/users');
 
   final response = await http.get(
     url,
@@ -120,8 +112,6 @@ Future<List<dynamic>> fetchDataDoc() async {
   }
   if(status == 200 ){
     final doctor = jsonDecode(response.body)['dataNoPagination'];
-    // print("Data => ${jsonDecode(response.body)}");
-
     return doctor;
   }else{
     print("Echec $status");
@@ -294,10 +284,8 @@ Future<void> takeAppointmentSimple({
     print("❌ Erreur (${response.statusCode}) : ${response.body}");
   }
 }
-Future<void> takeAppointment(int docId, String symptome, DateTime date, String hour, int idDoc, int patientid) async{
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
-  final url = Uri.parse('http://172.25.69.28:8000/api/validate/get_appointement');
+Future<void> takeAppointment({required int docId, required String symptome, required DateTime date, required String hour, required int idDoc, required int patientid, required String token, required String baseUrl}) async{
+  final url = Uri.parse('$baseUrl/api/validate/get_appointement');
   print('Date => ${date.toIso8601String().split(' ')[0]}');
 
   final response = await http.post(

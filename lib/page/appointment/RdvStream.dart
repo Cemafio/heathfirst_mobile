@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
+import 'package:heathfirst_mobile/provider/rdvProvider.dart';
 import 'package:heathfirst_mobile/service/RdvStreamService.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
-class RendezvousStream extends StatefulWidget {
+class RendezvousStream extends ConsumerStatefulWidget {
   // Future<List<dynamic>> listDemd ;
   // final Map<String, dynamic> user;
   RendezvousStream({super.key});
 
   @override
-  State<RendezvousStream> createState() => _RdvPageState();
+  ConsumerState<RendezvousStream> createState() => _RdvPageState();
 }
 
-class _RdvPageState extends State<RendezvousStream> {
-  late RdvStreamService _service;
+class _RdvPageState extends ConsumerState<RendezvousStream> {
+  late RdvStreamService _rdvStream;
   int? _loadingRdvId;
   bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    _service = RdvStreamService();
-    _service.start();
+    _rdvStream = ref.watch(rdvStreamServiceProvider);
+    _rdvStream.start();
   }
 
   @override
   void dispose() {
-    _service.stop();
+    _rdvStream.stop();
     super.dispose();
   }
 
@@ -42,7 +44,7 @@ class _RdvPageState extends State<RendezvousStream> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height - 280,
           child: StreamBuilder<List<dynamic>>(
-            stream: _service.stream,
+            stream: _rdvStream.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator());

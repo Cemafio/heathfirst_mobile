@@ -1,28 +1,27 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/service/data.dart';
 
-class ListDocSection extends StatefulWidget {
+class ListDocSection extends ConsumerStatefulWidget {
   final Future<List<dynamic>> listDoc;
-  final Map<String, dynamic> user;
+  // final Map<String, dynamic> user;
 
   ListDocSection({
     super.key,
     required this.listDoc,
-    required this.user,
   });
 
   @override
-  State<ListDocSection> createState() => _ListDocSectionState();
+  ConsumerState<ListDocSection> createState() => _ListDocSectionState();
 }
 
-class _ListDocSectionState extends State<ListDocSection> {
+class _ListDocSectionState extends ConsumerState<ListDocSection> {
   late Future<List<dynamic>> _listDoc;
-  late Map<String, dynamic> _infoUser;
 
   List<Map<String, Object>> categorie = [];
   Set<String> specialitesUniques = {};
@@ -31,7 +30,6 @@ class _ListDocSectionState extends State<ListDocSection> {
   void initState() {
     super.initState();
     _listDoc = widget.listDoc;
-    _infoUser = widget.user;
 
     // Catégorie init
     categorie.add({"type": "Tous", "choice": true});
@@ -151,7 +149,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                InfoUser(data:[doc, _infoUser, _listDoc]),
+                                InfoUser(data:[doc, _listDoc]),
                           ),
                         );
                       },
@@ -171,7 +169,7 @@ class _ListDocSectionState extends State<ListDocSection> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50),
                                 child: Image.network(
-                                  "http://172.25.69.28:8000/images/photos/${doc['photo_doc']}",
+                                  "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
                                   fit: BoxFit.cover,
                                 ),
                               ),

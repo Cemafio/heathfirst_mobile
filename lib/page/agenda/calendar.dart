@@ -4,26 +4,27 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarSection extends StatefulWidget {
+class CalendarSection extends ConsumerStatefulWidget {
   final Map<String, dynamic> user;
   CalendarSection({super.key, this.user = const {}});
 
   @override
-  State<CalendarSection> createState() => _CalendarSectionState();
+  ConsumerState<CalendarSection> createState() => _CalendarSectionState();
 }
 
-class _CalendarSectionState extends State<CalendarSection> {
+class _CalendarSectionState extends ConsumerState<CalendarSection> {
   Map<String, dynamic> get _infoUser => widget.user;
-  final Future<List<dynamic>> _listDemd = rdvUserData() ;
   DateTime dayNow = DateTime.now();
 
 
@@ -55,7 +56,8 @@ class _CalendarSectionState extends State<CalendarSection> {
             children: [
 
               FutureBuilder<List<dynamic>>(
-                future: _listDemd,
+                
+                future: rdvUserData(token: ref.watch(accessTokenProvider), baseUrl: ref.watch(baseUrl)),
                 builder: (context, snapshot) {
 
                   if (snapshot.connectionState == ConnectionState.waiting) {

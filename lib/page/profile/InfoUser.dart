@@ -3,38 +3,35 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/appointment/take_appointment.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/map/googlemap.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 
-class InfoUser extends StatefulWidget {
+class InfoUser extends ConsumerStatefulWidget {
   final List<dynamic> data;
 
   const InfoUser({super.key, required this.data});
 
   @override
-  State<InfoUser> createState() => _InfoUserState();
+  ConsumerState<InfoUser> createState() => _InfoUserState();
 }
 
-class _InfoUserState extends State<InfoUser> {
+class _InfoUserState extends ConsumerState<InfoUser> {
 
   final _formKey = GlobalKey<FormState>();
   Map<String, dynamic> get _apropos => widget.data[0];
-  Map<String, dynamic> get _infoUser => widget.data[1]; 
   Future<List<dynamic>> get _listDoc => widget.data[2];
 
   DateTime dayNow = DateTime.now();
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
-  final Future<List<dynamic>> _listDemd = rdvUserData();
-  // DateTime? _selectedDate;
-  // String _time = '';
-  // String _symptome = '';
   bool isWaiting = false;
   late Future<Map<String,dynamic>> _etatRdv ;
 
@@ -44,41 +41,17 @@ class _InfoUserState extends State<InfoUser> {
 
 
 
-  // void resetForm() {
-  //   _formKey.currentState?.reset();
-  //   _dateController.clear();
-  //   _symptomeController.clear();
-  // }
+  void initRdState() async {
+    final int userId = await ref.read(user_data.future).then((val)=>val.id);
+    _etatRdv = verrifAppointment(_apropos['id'], userId);
+  }
+  
   
   @override
   void initState(){
     super.initState();
-    _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
+    initRdState();
   }
-  // void sendRdv() async{
-    // await takeAppointmentSimple(_apropos['id'],_selectedDate!, _symptome, _time, _apropos['id'], _infoUser['id']);
-  //   await takeAppointmentSimple(
-  //     nom: "Rakoto",
-  //     prenom: "Jean",
-  //     birthday: "2001-05-20",
-  //     sexe: "Homme",
-  //     tel: "0341234567",
-  //     email: "rakoto@gmail.com",
-  //     password: "1234",
-  //     address: "Lot II...",
-  //     city: "Antananarivo",
-  //     hour: "15:00",
-  //     date: "2025-12-12",
-  //     symptome: "Toux",
-  //     idDoctor: "3",
-  //   );
-
-  //   print('Try to reload');
-  //   setState(() {
-  //     _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
-  //   });
-  //   Navigator.pop(context);
-  // }
 
 Widget _buildBottomButton(Map<String, dynamic> state) {
   final Map<String, dynamic> buttons = {
@@ -135,10 +108,12 @@ Future<void> _navigation(Widget materialPage) async {
     context,
     MaterialPageRoute(builder: (_) => materialPage),
   );
+  final int userId = await ref.read(user_data.future).then((val)=>val.id);
+
 
   if (opened == true) {
     setState(() {
-      _etatRdv = verrifAppointment(_apropos['id'], _infoUser['id']);
+      _etatRdv = verrifAppointment(_apropos['id'], userId);
     });
   }
 }
@@ -178,7 +153,7 @@ Future<void> _navigation(Widget materialPage) async {
               }
 
               print('====> Reaload detected');
-               final _etaRdv = snapshot.data ?? {};
+              final _etaRdv = snapshot.data ?? {};
               
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -209,33 +184,6 @@ Future<void> _navigation(Widget materialPage) async {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                     
                       children: [
-                        // Container(
-                        //   height: 50,
-                        //   child: Column(
-                        //     children: [
-                        //       Text("1000+", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                        //       Text("patient"),
-                        //     ],
-                        //   ),
-                        // ),
-                        // Container(
-                        //   height: 50,
-                        //   child: Column(
-                        //     children: [
-                        //       Text("5ans", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                        //       Text("experience"),
-                        //     ],
-                        //   ),
-                        // ),
-                        // Container(
-                        //   height: 50,
-                        //   child: Column(
-                        //     children: [
-                        //       Text("9.000ar", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                        //       Text("Consultation"),
-                        //     ],
-                        //   ),
-                        // ),
                         
                       ],
                     ),
@@ -302,16 +250,18 @@ Future<void> _navigation(Widget materialPage) async {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                          Text("Specialisation"),
-                          Text("${_apropos['speciality']}", style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],),
+                            Text("Specialisation"),
+                            Text("${_apropos['speciality']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          ],
+                        ),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                          Text("Adess cabinet"),
-                          Text("${_apropos['addressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],),
+                            Text("Adess cabinet"),
+                            Text("${_apropos['addressCabinet']}", style: TextStyle(fontWeight: FontWeight.bold),)
+                          ],
+                        ),
                         const SizedBox(height: 7,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
