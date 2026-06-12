@@ -73,7 +73,7 @@ void _reloadDataCallendar() async {
   });
 }
   Future<Map<String, dynamic>> _loadData() async{
-    List<dynamic> daysNoWork = await getDayNoWork(id_user); 
+    List<dynamic> daysNoWork = await getDayNoWork(id: id_user, token: ref.read(accessTokenProvider), baseUrl: ref.read(baseUrl)); 
     print('daysNoworck => $daysNoWork');
     if(daysNoWork.isNotEmpty){
       // setState(() {

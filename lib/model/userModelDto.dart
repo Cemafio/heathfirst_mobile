@@ -6,8 +6,9 @@ class UserModelDto {
   final String? roles;
   final String? adress;
   final String? profil;
+  final String? date_naissance;
 
-  UserModelDto({this.id, this.firstname,this.profil, this.lastname, this.email,this.roles,this.adress});
+  UserModelDto({this.id, this.firstname,this.profil, this.lastname, this.email,this.roles,this.adress, this.date_naissance});
 
   factory UserModelDto.fromJson(Map<String, dynamic> json) {
     return UserModelDto(

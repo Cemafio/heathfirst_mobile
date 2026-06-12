@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-Future<void> sendEmailReminder(List<dynamic> tabEmail, String type) async {
+Future<void> sendEmailReminder(List<dynamic> tabEmail, String type, String baseUrl) async {
   final url = Uri.parse("$baseUrl/api/sendEmail"); 
   // Sur Android Emulator → backend local = 10.0.2.2
 
@@ -54,6 +54,7 @@ Future<List<dynamic>> rdvUserData({required String token, required String baseUr
     throw Exception('Erreur lors du chargement des rendez-vous (O_o)');
   } 
 }  
+
 Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
   final url = Uri.parse("$baseUrl/api/user");
   final response = await http.get(
@@ -73,10 +74,8 @@ Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
     throw Exception('Erreur lors du chargement des info user (O_o)');
   }
 }
-Future<Map<String, dynamic>> getProfilUser(id) async {
+Future<Map<String, dynamic>> getProfilUser({required int id,required String baseUrl, required String token}) async {
     final url = Uri.parse("$baseUrl/api/get_user_id/$id");
-    final pers = await SharedPreferences.getInstance();
-      final token = pers.getString('token');
 
       final response = await http.get(
         url,
@@ -152,10 +151,10 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
     return false;
   }
 }
-Future<List<dynamic>> getDayNoWork(int id) async {
+Future<List<dynamic>> getDayNoWork({required int id, required String baseUrl, required String token,}) async {
   final url = Uri.parse("$baseUrl/api/get_unvailable_days/get/$id");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
+  // final pers = await SharedPreferences.getInstance();
+  // final token = pers.getString('token');
   final response = await http.get(
     url,
     headers: {
@@ -226,7 +225,7 @@ Future<void> responseAppointment(int appointment, String status, int idPatient, 
 
   if(response.statusCode == 200 || response.statusCode == 204){
     print("✅ Rdv updated  (>_<)");
-    sendEmailReminder([idPatient,idDoc, status] ,'res_rdv');
+    sendEmailReminder([idPatient,idDoc, status] ,'res_rdv', baseUrl);
   }else{
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
@@ -306,7 +305,7 @@ Future<void> takeAppointment({required int docId, required String symptome, requ
   
   if(response.statusCode == 200 || response.statusCode == 201){
     print("✅ Rdv [$date] $hour envoyer  (>_<)");
-    sendEmailReminder([patientid, idDoc], 'env_rdv');
+    sendEmailReminder([patientid, idDoc], 'env_rdv', baseUrl);
   }else{
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  

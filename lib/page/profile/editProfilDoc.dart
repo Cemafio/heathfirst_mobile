@@ -88,16 +88,18 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
   void _setInitialValue () {
     // {@context: /api/contexts/Patient, @id: /api/patients/18, @type: Patient, HistoryMedical: xjfu, allergy: fju, MedicationInProgress: cju, id: 18, email: itadori@gmail.com, roles: [ROLE_PATIENT], LastName: ITADORY , FirstName: Yuji , DateOfBird: 2000-01-31T00:00:00+00:00, photo_profil: 1001354998-682da7e4e561f536585918.jpg, Address: Jdu 135, phone: 1468634863}
     final userDataStat = ref.read(userDataStatic);
-    _nameController.text = userDataStat.lastname!; 
-    _firstNameController.text = userDataStat.firstname!;
-    _emailController.text = userDataStat.email!;
-    _adrController.text = userDataStat.adress!;
+    _nameController.text = userDataStat.lastname??''; 
+    _firstNameController.text = userDataStat.firstname??'';
+    _emailController.text = userDataStat.email??'';
+    _adrController.text = userDataStat.adress??'';
     // _numController.text  = _infoUser['phone'];
     // _dateController.text = _infoUser['DateOfBird'];
     // _specialityController.text = _infoUser['Specialty'];
     // _adrCabinetController.text = _infoUser['AddressCabinet'];
     _networkImageUrl = "${ref.read(baseUrl)}/images/photos/${userDataStat.profil}";
     _photo = userDataStat.profil!;
+    print(userDataStat);
+
   }
 
   Widget build(BuildContext context) {
@@ -174,30 +176,30 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                       },
                       onSaved: (newValue) => _prenom = newValue!,
                     ),
-                    const SizedBox(height: 30),
-                    DropdownButtonFormField(
-                      value: _sexe,
-                      decoration: const InputDecoration(
-                        labelText: 'Sexe',
-                        prefixIcon: Icon(Icons.wc),
-                      ),
-                      items: ['Homme', 'Femme']
-                        .map((label) => DropdownMenuItem(
-                          value: label,
-                          child: Text(label),
-                        ))
-                        .toList(), 
+                    // const SizedBox(height: 30),
+                    // DropdownButtonFormField(
+                    //   value: _sexe,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Sexe',
+                    //     prefixIcon: Icon(Icons.wc),
+                    //   ),
+                    //   items: ['Homme', 'Femme']
+                    //     .map((label) => DropdownMenuItem(
+                    //       value: label,
+                    //       child: Text(label),
+                    //     ))
+                    //     .toList(), 
                       
-                      onChanged: (value){
-                        setState(() {
-                          _sexe = value!;
-                        });
-                      },
-                      validator: (value) => value == null ? 'Veuillez sélectionner une option' : null,
-                      onSaved: (newValue) {
-                        _sexe = newValue!;
-                      },
-                    ),
+                    //   onChanged: (value){
+                    //     setState(() {
+                    //       _sexe = value!;
+                    //     });
+                    //   },
+                    //   validator: (value) => value == null ? 'Veuillez sélectionner une option' : null,
+                    //   onSaved: (newValue) {
+                    //     _sexe = newValue!;
+                    //   },
+                    // ),
                     const SizedBox(height: 30),
                     TextFormField(
                       controller: _emailController,
@@ -215,22 +217,23 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                       },
                       onSaved: (newValue) => _identifiant = newValue!,
                     ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _numController,
-                      decoration: const InputDecoration(
-                        labelText: 'Numero de télephone',
-                        prefixIcon: Icon(Icons.phone_android_outlined),
-                      ),
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre numero de télephone';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _tel = newValue!,
-                    ),
+
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _numController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Numero de télephone',
+                    //     prefixIcon: Icon(Icons.phone_android_outlined),
+                    //   ),
+                    //   keyboardType: TextInputType.phone,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre numero de télephone';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _tel = newValue!,
+                    // ),
                     
                     const SizedBox(height: 30),
                     TextFormField(
@@ -248,21 +251,22 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                       onSaved: (newValue) => _adress = newValue!,
                     ),
                     
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _adrCabinetController,
-                      decoration: InputDecoration(
-                        labelText: 'Votre adresse de cabinet',
-                        prefixIcon: Icon(Icons.location_on_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre adresse de cabinet';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _adress_cabinet = newValue!,
-                    ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _adrCabinetController,
+                    //   decoration: InputDecoration(
+                    //     labelText: 'Votre adresse de cabinet',
+                    //     prefixIcon: Icon(Icons.location_on_outlined),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre adresse de cabinet';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _adress_cabinet = newValue!,
+                    // ),
+
                     const SizedBox(height: 30),
                     TextFormField(
                       controller: _specialityController,
@@ -278,23 +282,25 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                       },
                       onSaved: (newValue) => _speciality = newValue!,
                     ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _dateController,
-                      decoration: const InputDecoration(
-                        labelText: 'Date de naissance',
-                        prefixIcon: Icon(Icons.calendar_today),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre date de naissance';
-                        }
-                        return null;
-                      },
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
-                    ),
+
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _dateController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Date de naissance',
+                    //     prefixIcon: Icon(Icons.calendar_today),
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre date de naissance';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   readOnly: true,
+                    //   onTap: () => _selectDate(context),
+                    // ),
+
                     const SizedBox(height: 80),
                     Material(
                       color: Colors.transparent,

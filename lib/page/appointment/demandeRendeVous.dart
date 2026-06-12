@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
 class RendezvousSection extends ConsumerStatefulWidget {
   // Future<List<dynamic>> listDemd ;
-  final Map<String, dynamic> user;
-  RendezvousSection({super.key, required this.user});
+  // final Map<String, dynamic> user;
+  RendezvousSection({super.key});
 
   @override
   ConsumerState<RendezvousSection> createState() => _RendezvousSectionState();
@@ -17,7 +18,7 @@ class RendezvousSection extends ConsumerStatefulWidget {
 
 class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
   Future<List<dynamic>>? _list_demd;
-  Map<String, dynamic> get _infoUser => widget.user;
+  // Map<String, dynamic> get _infoUser => widget.user;
   Map<int, Map<String, dynamic>> _usersProfil = {};
   bool _loading = true;
   Timer? timer;
@@ -67,7 +68,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
         // I/flutter (14908): ...c178a0f-6825b5fc67609280435486.jpg"}{"@id":"\/api\/errors","@type":"hydr...
         
         final patientId = item['patient']['id'] as int;
-        final profil = await getProfilUser(patientId);
+        final profil = await getProfilUser(id: patientId, baseUrl: base_url, token: token);
         profils[patientId] = profil;
       }
 
@@ -87,6 +88,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
 
 
   Widget build(BuildContext context) {
+    final userStaticData = ref.watch(userDataStatic);
     if (_loading) {
       return Scaffold(
         appBar: AppBar(
@@ -123,7 +125,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
                     ),
                     borderRadius: BorderRadius.circular(100),
                     image: DecorationImage(
-                      image: NetworkImage('http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}'),
+                      image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${userStaticData.profil}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -143,7 +145,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
                   Container(
                     width: 250,
                     child: Text(
-                      "Bonjour ${_infoUser['LastName']} ${_infoUser['FirstName']}", 
+                      "Bonjour ${userStaticData.lastname} ${userStaticData.firstname}", 
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color.fromARGB(171, 0, 0, 0),
@@ -235,7 +237,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
                                       border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(100),
                                       image: DecorationImage(
-                                        image: NetworkImage("http://172.27.136.28:8000/images/photos/${userProfil?['profil']}"),
+                                        image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${userProfil?['profil']}"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

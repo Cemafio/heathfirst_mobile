@@ -197,12 +197,9 @@ class _HomepageState extends ConsumerState<HomePage> {
               ),
 
               const SizedBox(height: 25,),
-
-              // if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR') ?? false)
-              //   Acceuildoc(listDemd: _listDemd, infoUser: _infoUser) ,
               _userDataAsync.when(
                 data: (user){
-                  return ListDocSection(listDoc: _listDoc);
+                  return user.roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc(listDemd: _listDemd);
                 },
                 error: (error, stackTrace) => Text('$error'),
                 loading: ()=>Center(

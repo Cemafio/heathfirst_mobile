@@ -18,6 +18,7 @@ class RdvStreamService {
     _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
       final token = ref.read(accessTokenProvider);
       final base_url = ref.read(baseUrl);
+      
       final List<dynamic> dmd = await rdvUserData(token: token, baseUrl: base_url); // Ton fetch backend
       final newHash = dmd.toString(); // Signature des données
 

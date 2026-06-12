@@ -10,16 +10,16 @@ import 'package:table_calendar/table_calendar.dart';
 
 class Acceuildoc extends StatefulWidget {
   Future<List<dynamic>> listDemd ;
-  Map<String, dynamic> infoUser;
+  // Map<String, dynamic> infoUser;
 
-  Acceuildoc({super.key, required this.listDemd, required this.infoUser});
+  Acceuildoc({super.key, required this.listDemd});
 
   @override
   State<Acceuildoc> createState() => _AcceuildocState();
 }
 
 class _AcceuildocState extends State<Acceuildoc> {
-  Map<String, dynamic> get _infoUser => widget.infoUser;
+  // Map<String, dynamic> get _infoUser => widget.infoUser;
   Future<List<dynamic>> get _listDemd => widget.listDemd;
 
   @override
@@ -178,7 +178,7 @@ class _AcceuildocState extends State<Acceuildoc> {
                         ),
                         GestureDetector(
                           onTap:(){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection(user: _infoUser)));         
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection()));         
                           },
 
                           child:  Stack(

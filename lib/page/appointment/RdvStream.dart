@@ -7,8 +7,6 @@ import 'package:heathfirst_mobile/service/RdvStreamService.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
 class RendezvousStream extends ConsumerStatefulWidget {
-  // Future<List<dynamic>> listDemd ;
-  // final Map<String, dynamic> user;
   RendezvousStream({super.key});
 
   @override
@@ -87,7 +85,7 @@ class _RdvPageState extends ConsumerState<RendezvousStream> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(100),
                                 image: DecorationImage(
-                                  image: NetworkImage("http://172.25.69.28:8000/images/photos/${rdv['patient']['photo']}"),
+                                  image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${rdv['patient']['photo']}"),
                                   fit: BoxFit.cover,
                                 ),
                               ),

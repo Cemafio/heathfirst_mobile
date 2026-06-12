@@ -73,7 +73,10 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
           lastname: userData['last_name'],
           firstname: userData['first_name'],
           profil: userData['photo_profil'],
-          roles: userData['roles'][0] 
+          roles: userData['roles'][0],
+          email: userData['email'],
+          adress: userData['adress'],
+          date_naissance: userData['Date_naissance']['date']
         );
 
         print("✅ Authentification réussie !");
