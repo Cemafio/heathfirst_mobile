@@ -292,7 +292,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
                                         print("Donner envoyer => ${demande[index]}");
-                                        await responseAppointment(demande[index]['id'], 'refused', patient['id'], doc['id']);
+                                        await responseAppointment(demande[index]['id'], 'refused', patient['id'], doc['id'],ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                         reloadRdv();
                                       },
                                       child: const Text('refuser', style: TextStyle(color: Colors.red)),
@@ -305,7 +305,7 @@ class _RendezvousSectionState extends ConsumerState<RendezvousSection> {
                                         final date = demande[index]['date']; 
                                         // print("${demande[index]['patient']['id']} et idDoc: ${demande[index]['doctor']['id']} et date: ${demande[index]['date']}");
                                         print("Donner envoyer => ${demande[index]}");
-                                        await responseAppointment(demande[index]['id'], 'accepted', patient['id'], doc['id']);
+                                        await responseAppointment(demande[index]['id'], 'accepted', patient['id'], doc['id'],ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                         reloadRdv();
                                       },
                                       child: const Text('accepter'),

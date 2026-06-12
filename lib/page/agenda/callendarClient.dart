@@ -1,20 +1,23 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CallendarClient extends StatefulWidget {
-  final Map<String, dynamic> user;
+class CallendarClient extends ConsumerStatefulWidget {
+  // final Map<String, dynamic> user;
 
-  const CallendarClient({super.key, required this.user});
+  const CallendarClient({super.key});
 
   @override
-  State<CallendarClient> createState() => _CallendarClientState();
+  ConsumerState<CallendarClient> createState() => _CallendarClientState();
 }
 
-class _CallendarClientState extends State<CallendarClient> {
-  Map<String, dynamic> get _infoUser => widget.user;
+class _CallendarClientState extends ConsumerState<CallendarClient> {
+  // Map<String, dynamic> get _infoUser => widget.user;
   late List<dynamic> _appointment;
   bool isMarkedRealyEmpty = false;
 
@@ -36,7 +39,9 @@ class _CallendarClientState extends State<CallendarClient> {
 
   void _seeAptClient() async {
     try {
-      _appointment = await seeStatusClientRdv(_infoUser['id']);
+      if(ref.read(userDataStatic).id == null) return;
+      
+      _appointment = await seeStatusClientRdv(ref.read(userDataStatic).id!, ref.read(baseUrl), ref.read(accessTokenProvider));
 
       for (var item in _appointment[0]) {
         final dateStr = item['date'].split(' ')[0];

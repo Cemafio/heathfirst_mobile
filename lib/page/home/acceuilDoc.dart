@@ -133,7 +133,7 @@ class _AcceuildocState extends State<Acceuildoc> {
                         }
                       }
 
-                      return Callendaronly(data: data, infoUser: _infoUser, idUser: rdv[0]['doctor']['id'], heigh: 35,page: 'home',);
+                      return Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 35,page: 'home',);
                     },
                   ) 
               ])

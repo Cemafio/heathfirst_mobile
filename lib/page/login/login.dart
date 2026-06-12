@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/model/userModelDto.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/singIn/incription_doc.dart';
 import 'package:heathfirst_mobile/page/singIn/inscription_patient.dart';
@@ -35,7 +36,7 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
   late Map<String, dynamic> _infoUser;
 
   Future<void> authentification(String email, String pass) async{
-    final url = Uri.parse("http://172.25.69.28:8000/api/login");
+    final url = Uri.parse("${ref.read(baseUrl)}/api/login");
 
     setState(() => isLoading = true);
 
@@ -63,15 +64,21 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
         }
 
         final token = data['token'];
+        final userData = data['user'];
         if (token == null) throw Exception("Token introuvable");
 
         ref.read(accessTokenProvider.notifier).state = token;
+        ref.read(userDataStatic.notifier).state = UserModelDto(
+          id: userData['id'],
+          lastname: userData['last_name'],
+          firstname: userData['first_name'],
+          profil: userData['photo_profil'],
+          roles: userData['roles'][0] 
+        );
 
         print("✅ Authentification réussie !");
-        print(ref.read(accessTokenProvider));
+        print(response.body);
 
-        // Récupération info user
-        _infoUser = await userInfo(ref.read(baseUrl), token);
 
         setState(() {
           isLoading = false;
@@ -81,7 +88,7 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => HomePage(user: _infoUser)),
+          MaterialPageRoute(builder: (_) => HomePage()),
         );
         return;
       }

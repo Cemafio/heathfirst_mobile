@@ -1,19 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 
-class TakeAppointment extends StatefulWidget {
+class TakeAppointment extends ConsumerStatefulWidget {
   final Map<String, dynamic> docInfo;
   const TakeAppointment({super.key, required this.docInfo});
 
   @override
-  State<TakeAppointment> createState() => _TakeAppointmentState();
+  ConsumerState<TakeAppointment> createState() => _TakeAppointmentState();
 }
 
-class _TakeAppointmentState extends State<TakeAppointment> {
+class _TakeAppointmentState extends ConsumerState<TakeAppointment> {
   Map<String, dynamic> get _docInfo => widget.docInfo;
   bool isLoaded = false;
   final _formKey = GlobalKey<FormState>();
@@ -322,7 +324,7 @@ class _TakeAppointmentState extends State<TakeAppointment> {
                               });
 
                               print( " $_nom,$_prenom, $_date_de_naissance,$_sexe, $_tel,$_identifiant, $_adress, $_symptome,$_date_de_rdv, $_time");
-                              await takeAppointmentSimple(nom: _nom,prenom: _prenom,birthday:  _date_de_naissance,sexe:  _sexe,tel:  _tel,email:  _identifiant,address:  _adress,city:  _city,hour:  _time,date:  _date_de_rdv,symptome:  _symptome,idDoctor:  _docInfo['id']);
+                              await takeAppointmentSimple(nom: _nom,prenom: _prenom,birthday:  _date_de_naissance,sexe:  _sexe,tel:  _tel,email:  _identifiant,address:  _adress,city:  _city,hour:  _time,date:  _date_de_rdv,symptome:  _symptome,idDoctor:  _docInfo['id'], baseUrl: ref.watch(baseUrl), token: ref.read(accessTokenProvider));
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Rendez-vous envoyée')),

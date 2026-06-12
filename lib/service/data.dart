@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<void> sendEmailReminder(List<dynamic> tabEmail, String type) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/sendEmail"); 
+  final url = Uri.parse("$baseUrl/api/sendEmail"); 
   // Sur Android Emulator → backend local = 10.0.2.2
 
   final body = jsonEncode({
@@ -74,7 +74,7 @@ Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
   }
 }
 Future<Map<String, dynamic>> getProfilUser(id) async {
-    final url = Uri.parse("http://172.25.69.28:8000/api/get_user_id/$id");
+    final url = Uri.parse("$baseUrl/api/get_user_id/$id");
     final pers = await SharedPreferences.getInstance();
       final token = pers.getString('token');
 
@@ -120,7 +120,7 @@ Future<List<dynamic>> fetchDataDoc({required String token, required String urlBa
 }
 //----------------------------------------------------------------- 
 Future<bool> addDayNoWork(DateTime date,String reason) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/unavailabledays/add");
+  final url = Uri.parse("$baseUrl/api/unavailabledays/add");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final body = {
@@ -153,7 +153,7 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
   }
 }
 Future<List<dynamic>> getDayNoWork(int id) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/get_unvailable_days/get/$id");
+  final url = Uri.parse("$baseUrl/api/get_unvailable_days/get/$id");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.get(
@@ -176,10 +176,10 @@ Future<List<dynamic>> getDayNoWork(int id) async {
     return [];
   }
 }
-Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
-  final url = Uri.parse('http://172.25.69.28:8000/api/unavailable_days/delete');
+Future<void> deleteDaysNoWork (int idDoc, DateTime date, String baseUrl, String token) async {
+  // final pers = await SharedPreferences.getInstance();
+  // final token = pers.getString('token');
+  final url = Uri.parse('$baseUrl/api/unavailable_days/delete');
   final response = await http.delete(
     url,
     headers: {
@@ -203,10 +203,10 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date) async {
     throw Exception("❌ Erreur to delete unvalaible day $idDoc [$date] : status ${response.statusCode} ${response.body}  (O_o)");
   }
 }
-Future<void> responseAppointment(int appointment, String status, int idPatient, int idDoc) async {
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
-  final url = Uri.parse('http://172.25.69.28:8000/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
+Future<void> responseAppointment(int appointment, String status, int idPatient, int idDoc, String baseUrl, String token) async {
+  // final pers = await SharedPreferences.getInstance();
+  // final token = pers.getString('token');
+  final url = Uri.parse('$baseUrl/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
   final response = await http.patch(
     url,
     headers: {
@@ -245,12 +245,11 @@ Future<void> takeAppointmentSimple({
   required String date,
   required String symptome,
   required int idDoctor,
+  required String baseUrl,
+  required String token,
 }) async {
 
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-
-  final url = Uri.parse("http://172.25.69.28:8000/api/validate/get_appointement");
+  final url = Uri.parse("$baseUrl/api/validate/get_appointement");
 
   final body = {
     "idDoctor": idDoctor,
@@ -263,7 +262,6 @@ Future<void> takeAppointmentSimple({
     "sexe": sexe,
     "numberphone": tel,
     "email": email,
-    // "password": password,
     "address": address,
     "city": city,
     "symptome": symptome,
@@ -313,10 +311,10 @@ Future<void> takeAppointment({required int docId, required String symptome, requ
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
 }
-Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/verrifRdvExist");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
+Future<Map<String, dynamic>> verrifAppointment({required int idDoc, required int patientId, required String baseUrl, required String token}) async {
+  final url = Uri.parse("$baseUrl/api/verrifRdvExist");
+  // final pers = await SharedPreferences.getInstance();
+  // final token = pers.getString('token');
   final response = await http.post(
     url,
     headers: {
@@ -343,7 +341,7 @@ Future<Map<String, dynamic>> verrifAppointment(int idDoc, int patientId) async {
   }
 }
 Future<void> editProfil(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/edit_profil");
+  final url = Uri.parse("$baseUrl/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   var request = http.MultipartRequest("POST", url);
@@ -389,7 +387,7 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
   }
 }
 Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/edit_profil");
+  final url = Uri.parse("$baseUrl/api/edit_profil");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
 
@@ -434,10 +432,8 @@ Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naiss
     throw Exception("❌ ${response.statusCode} ${responseData.body}  (O_o)");
   }
 }
-Future<List<dynamic>> seeStatusClientRdv(int patientId) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/see_status_client_rdv");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
+Future<List<dynamic>> seeStatusClientRdv(int patientId, String baseUrl, String token) async {
+  final url = Uri.parse("$baseUrl/api/see_status_client_rdv");
   final response = await http.post(
     url,
     headers: {
@@ -462,7 +458,7 @@ Future<List<dynamic>> seeStatusClientRdv(int patientId) async {
   }
 }
 Future<void> editLocation(int idDoc, String lat, String long, String role) async {
-  final url = Uri.parse("http://172.25.69.28:8000/api/edit_location");
+  final url = Uri.parse("$baseUrl/api/edit_location");
   final pers = await SharedPreferences.getInstance();
   final token = pers.getString('token');
   final response = await http.patch(
@@ -495,11 +491,13 @@ Future<List<dynamic>> recherche(
   String specialty,
   String address,
   int page,
+  String baseUrl,
+  String token
 ) async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
+  // final prefs = await SharedPreferences.getInstance();
+  // final token = prefs.getString('token');
 
-  String baseUrl = "http://172.25.69.28:8000/api/search";
+  String Url = "$baseUrl/api/search";
 
   // Paramètres dynamiques
   Map<String, String> queryParams = {
@@ -518,7 +516,7 @@ Future<List<dynamic>> recherche(
   }
 
   // Construction automatique de l'URL propre
-  final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+  final uri = Uri.parse(Url).replace(queryParameters: queryParams);
 
   print("🌐 URL finale = $uri");
 

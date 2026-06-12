@@ -1,25 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 // import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 
-class AjouterCabinetPage extends StatefulWidget {
-  final Map<String, dynamic> user;
+class AjouterCabinetPage extends ConsumerStatefulWidget {
+  // final Map<String, dynamic> user;
 
-  AjouterCabinetPage({super.key, required this.user});
+  AjouterCabinetPage({super.key});
   @override 
   _AjouterCabinetPageState createState() => _AjouterCabinetPageState();
 }
 
-class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
+class _AjouterCabinetPageState extends ConsumerState<AjouterCabinetPage> {
   GoogleMapController? _mapController;
   LatLng? _selectedPosition;
   String? _cabinetName;
   String _address = "Pas encore sélectionné";
-  Map<String, dynamic> get  user => widget.user;
+  // Map<String, dynamic> get  user => widget.user;
   final TextEditingController _nameController = TextEditingController();
 
   // 1) Récupérer la position actuelle
@@ -77,7 +79,7 @@ class _AjouterCabinetPageState extends State<AjouterCabinetPage> {
       return;
     }
 
-    await editLocation(user['id'], _selectedPosition!.latitude.toString(), _selectedPosition!.longitude.toString(), user['roles'][0]);
+    await editLocation(ref.read(userDataStatic).id!, _selectedPosition!.latitude.toString(), _selectedPosition!.longitude.toString(), ref.read(userDataStatic).roles!);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Localisation ajouter avec succée")),
     );

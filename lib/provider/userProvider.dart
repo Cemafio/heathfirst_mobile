@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:heathfirst_mobile/model/userModelDto.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/model/user_model.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
@@ -25,3 +27,9 @@ final user_data = FutureProvider<UserModel>((ref) async {
     throw Exception('Erreur lors du chargement des infos user');
   }
 });
+
+final userDataStatic = StateProvider<UserModelDto>(
+  (ref) {
+    return UserModelDto();
+  }
+);

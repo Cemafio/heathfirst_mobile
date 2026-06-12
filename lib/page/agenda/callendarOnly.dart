@@ -3,27 +3,30 @@ import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 
-class Callendaronly extends StatefulWidget {
+class Callendaronly extends ConsumerStatefulWidget {
   final Map<DateTime, List<String>> data;
-  final Map<String, dynamic> infoUser;
+  // final Map<String, dynamic> infoUser;
   final int idUser;
   final double heigh;
   final String page;
-  const Callendaronly({super.key, required this.infoUser,required this.data, required this.idUser, required this.heigh, required this.page});
+  const Callendaronly({super.key,required this.data, required this.idUser, required this.heigh, required this.page});
 
   @override
-  State<Callendaronly> createState() => _CallendaronlyState();
+  ConsumerState<Callendaronly> createState() => _CallendaronlyState();
 }
 
-class _CallendaronlyState extends State<Callendaronly> {
+class _CallendaronlyState extends ConsumerState<Callendaronly> {
   Map<DateTime, List<String>> programmes = {};
   late final Map<DateTime, List<String>> _data = widget.data;
   List<DateTime> _markedDays = [];
@@ -40,7 +43,7 @@ class _CallendaronlyState extends State<Callendaronly> {
   int get id_user => widget.idUser;
   double get height => widget.heigh;
   String get _page => widget.page;
-  Map<String, dynamic> get _infoUser => widget.infoUser;
+  // Map<String, dynamic> get _infoUser => widget.infoUser;
   
 
   DateTime dayNow = DateTime.now();
@@ -239,7 +242,7 @@ void _reloadDataCallendar() async {
 
         const SizedBox(height: 10,),
         //Ajout nouveaux temp libre
-        if(_infoUser['roles'][0] != 'ROLE_PATIENT' && _page != 'home')
+        if(ref.watch(userDataStatic).id != 'ROLE_PATIENT' && _page != 'home')
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -355,7 +358,7 @@ void _reloadDataCallendar() async {
                                 });
                                 if (_formKey.currentState!.validate()) {
                                   try {
-                                    await deleteDaysNoWork(_infoUser['id'], dayNow);
+                                    await deleteDaysNoWork(ref.watch(userDataStatic).id!, dayNow, ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                     
                                     // Calcul du temps écoulé
                                     final elapsed = DateTime.now().difference(startTime).inMilliseconds;

@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/model/userModelDto.dart';
 import 'package:heathfirst_mobile/page/profile/editProfil.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/editProfilDoc.dart';
 import 'package:heathfirst_mobile/page/setting/aboutApp.dart';
 import 'package:heathfirst_mobile/page/setting/security.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Settingpage extends StatefulWidget {
-  final Map<String, dynamic> user;
-  Settingpage({super.key, required this.user});
+class Settingpage extends ConsumerStatefulWidget {
+  // final Map<String, dynamic> user;
+  Settingpage({super.key});
 
   @override
-  State<Settingpage> createState() => _SettingpageState();
+  ConsumerState<Settingpage> createState() => _SettingpageState();
 }
 
-class _SettingpageState extends State<Settingpage> {
-  Map<String,dynamic> get _user => widget.user;
+class _SettingpageState extends ConsumerState<Settingpage> {
+  // Map<String,dynamic> get _user => widget.user;
 
   @override
 
@@ -34,6 +38,8 @@ class _SettingpageState extends State<Settingpage> {
     }
   }
   Widget build(BuildContext context) {
+    final UserModelDto userStatic = ref.watch(userDataStatic);
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 229, 229),
       body: SafeArea(
@@ -126,7 +132,7 @@ class _SettingpageState extends State<Settingpage> {
                               color: Colors.black26,
                             ),
                             image: DecorationImage(
-                              image: NetworkImage("http://172.25.69.28:8000/images/photos/${_user['photo_profil']}"),
+                              image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${userStatic.profil}"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -138,7 +144,7 @@ class _SettingpageState extends State<Settingpage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                                 Text(
-                                  '${_user['LastName']} ${_user['FirstName']}',
+                                  '${userStatic.lastname} ${userStatic.firstname}',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
@@ -147,7 +153,7 @@ class _SettingpageState extends State<Settingpage> {
                                 ),
                               
                               Text(
-                                "${_user['email']}",
+                                "${userStatic.email}",
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
@@ -179,7 +185,7 @@ class _SettingpageState extends State<Settingpage> {
                   children: [
                     GestureDetector(
                       onTap: (){
-                        Widget route = (_user['roles'][0] == 'ROLE_PATIENT') ? Editprofil(infoUser: _user) : EditprofilDoc(infoUser: _user);
+                        Widget route = (userStatic.roles == 'ROLE_PATIENT') ? Editprofil() : EditprofilDoc();
                         _navigation(route);
                       },
                       child: Container(

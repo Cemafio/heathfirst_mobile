@@ -26,15 +26,13 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:heathfirst_mobile/utils/string_extension.dart';
 
 class HomePage extends ConsumerStatefulWidget {
-  final Map<String, dynamic> user;
-  HomePage({super.key, required this.user});
+  HomePage({super.key});
 
   @override
   ConsumerState<HomePage> createState() => _HomepageState();
 }
 
 class _HomepageState extends ConsumerState<HomePage> {
-  Map<String, dynamic> get _infoUser => widget.user;
   late Future<List<dynamic>> _listDoc;
   late Future<List<dynamic>> _listDemd;
 
@@ -113,6 +111,7 @@ class _HomepageState extends ConsumerState<HomePage> {
   @override
     Widget build(BuildContext context) {
     final _userDataAsync = ref.watch(user_data);
+    final _userDataStatic = ref.watch(userDataStatic);
 
     return Scaffold(
       // backgroundColor: Color.fromARGB(255, 237, 237, 237),
@@ -130,7 +129,7 @@ class _HomepageState extends ConsumerState<HomePage> {
         actions: [
           GestureDetector(
             onTap:(){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SearchPage(user: _infoUser, listDoc: _listDoc)));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SearchPage(listDoc: _listDoc)));
             },
 
             child: Container(
@@ -233,71 +232,60 @@ class _HomepageState extends ConsumerState<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children:[
-                  _userDataAsync.when(
-                    data: (user){
-                      String _profilUser = '${ref.watch(baseUrl)}/images/photos/${user.profil}';
-                      return GestureDetector(
-                        onTap:(){
-                          // Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
-                        },
+                  GestureDetector(
+                    onTap:(){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
+                    },
 
-                        child: (_infoUser['photo_profil'] != null)
-                        ? Container(
-                            width: 80,
-                            height: 80,
-                            margin: const EdgeInsets.only(bottom: 5),
+                    child: (ref.watch(userDataStatic).profil != null)
+                    ? Container(
+                        width: 80,
+                        height: 80,
+                        margin: const EdgeInsets.only(bottom: 5),
 
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                width: sqrt1_2,
-                                color: const Color(0xFF81C784),
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage(_profilUser),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : Container(
-                          width: 80,
-                          height: 80,
-                          margin: const EdgeInsets.only(bottom: 5),
-
-                          decoration: BoxDecoration(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            width: sqrt1_2,
                             color: const Color(0xFF81C784),
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              width: sqrt1_2,
-                              color: const Color(0xFF81C784),
-                            ),
                           ),
-
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                user.lastname.toString().uperFirstChart(),
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold
-                                ),
-                              )
-                            ],
+                          image: DecorationImage(
+                            image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${_userDataStatic.profil}'),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      );
-                    },
-                    error: (error, stackTrace) => Text('$error'), 
-                    loading: () => Center(
-                      child: CircularProgressIndicator(),
+                      )
+                    : Container(
+                      width: 80,
+                      height: 80,
+                      margin: const EdgeInsets.only(bottom: 5),
+
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF81C784),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          width: sqrt1_2,
+                          color: const Color(0xFF81C784),
+                        ),
+                      ),
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _userDataStatic.lastname.toString().uperFirstChart(),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                  
-              
               
                   const SizedBox(width: 5,),
-                  Text("${_infoUser['LastName']} ${_infoUser['FirstName']}",
+                  Text("${_userDataStatic.lastname} ${_userDataStatic.firstname}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14
@@ -327,18 +315,17 @@ class _HomepageState extends ConsumerState<HomePage> {
                     leading: const Icon(Icons.home_rounded),
                     title: const Text("Acceuil"),
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(user: _infoUser,)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
                     }
                   ),
                   ListTile(
                     leading: const Icon(Icons.event),
                     title: const Text("Agenda"),
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => (_infoUser['roles'][0] == 'ROLE_DOCTOR') ? CalendarSection(user: _infoUser,) : CallendarClient(user: _infoUser)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => (ref.watch(userDataStatic).roles == 'ROLE_DOCTOR') ? CalendarSection() : CallendarClient()));
                     }
                   ),
-                  if((_infoUser['roles'] as List?)?.contains('ROLE_PATIENT')?? false)
-
+                  if(_userDataStatic.roles == 'ROLE_PATIENT')...[
                     ListTile(
                       leading: const Icon(Icons.map_outlined),
                       title: const Text("Localisation"),
@@ -346,15 +333,19 @@ class _HomepageState extends ConsumerState<HomePage> {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => GoogleMapPage(allDoc: [_listDoc,''])));
                       }
                     ),
-                  if((_infoUser['roles'] as List?)?.contains('ROLE_DOCTOR')?? false)
+
+                  ],
+
+                  if(_userDataStatic.roles == 'ROLE_DOCTOR')...[
                     ListTile(
                       leading: const Icon(Icons.supervised_user_circle),
                       title: const Text("Rendez-vous"),
                       onTap: (){
-                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection(user: _infoUser)));
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousStream()));
                       }
                     ),
+                  ],
+
                   ListTile(
                     leading: const Icon(Icons.logout_outlined),
                     title: const Text("Déconnexion"),

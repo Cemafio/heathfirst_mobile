@@ -10,21 +10,22 @@ import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarSection extends ConsumerStatefulWidget {
-  final Map<String, dynamic> user;
-  CalendarSection({super.key, this.user = const {}});
+  // final Map<String, dynamic> user;
+  CalendarSection({super.key});
 
   @override
   ConsumerState<CalendarSection> createState() => _CalendarSectionState();
 }
 
 class _CalendarSectionState extends ConsumerState<CalendarSection> {
-  Map<String, dynamic> get _infoUser => widget.user;
+  // Map<String, dynamic> get _infoUser => widget.user;
   DateTime dayNow = DateTime.now();
 
 
@@ -79,7 +80,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                   final rdv = snapshot.data!;
                   print('ListDemande => $rdv');
                   if (rdv.isEmpty) {
-                    return CallendardocrdvVide(infoUser: _infoUser, idUser: _infoUser['id'], heigh: 60, page: 'agenda');
+                    return CallendardocrdvVide(idUser: ref.watch(userDataStatic).id!, heigh: 60, page: 'agenda');
                   }
 
                   Map<DateTime, List<String>> data = {};
@@ -99,7 +100,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                   }
                   return Column(
                     children: [
-                        Callendaronly(data: data, infoUser: _infoUser, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
+                        Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
                     ],
                   );
                 },

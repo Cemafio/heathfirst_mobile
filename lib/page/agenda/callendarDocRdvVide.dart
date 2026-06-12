@@ -5,25 +5,28 @@ import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 
-class CallendardocrdvVide extends StatefulWidget {
-    final Map<String, dynamic> infoUser;
+class CallendardocrdvVide extends ConsumerStatefulWidget {
+    // final Map<String, dynamic> infoUser;
   final int idUser;
   final double heigh;
   final String page;
-  const CallendardocrdvVide({super.key, required this.infoUser, required this.idUser, required this.heigh, required this.page});
+  const CallendardocrdvVide({super.key, required this.idUser, required this.heigh, required this.page});
 
   @override
-  State<CallendardocrdvVide> createState() => _CallendardocrdvVideState();
+  ConsumerState<CallendardocrdvVide> createState() => _CallendardocrdvVideState();
 }
 
-class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
+class _CallendardocrdvVideState extends ConsumerState<CallendardocrdvVide> {
   Map<DateTime, List<String>> programmes = {};
   List<DateTime> _markedDays = [];
   String? _reason;
@@ -36,7 +39,7 @@ class _CallendardocrdvVideState extends State<CallendardocrdvVide> {
   int get id_user => widget.idUser;
   double get height => widget.heigh;
   String get _page => widget.page;
-  Map<String, dynamic> get _infoUser => widget.infoUser;
+  // Map<String, dynamic> get _infoUser => widget.infoUser;
   bool isdaySelectedMarked = false;
   bool isMarkedRealyEmpty = false;
   // bool isLoaded = false;
@@ -175,7 +178,7 @@ void _reloadDataCallendar() async {
 
         const SizedBox(height: 10,),
         //Ajout nouveaux temp libre
-        if(_infoUser['roles'][0] != 'ROLE_PATIENT' && _page != 'home')
+        if(ref.watch(userDataStatic).roles != 'ROLE_PATIENT' && _page != 'home')
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -286,7 +289,7 @@ void _reloadDataCallendar() async {
                                 });
                                 if (_formKey.currentState!.validate()) {
                                   try {
-                                    await deleteDaysNoWork(_infoUser['id'], dayNow);
+                                    await deleteDaysNoWork(ref.watch(userDataStatic).id!, dayNow,ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                     
                                     // Calcul du temps écoulé
                                     final elapsed = DateTime.now().difference(startTime).inMilliseconds;

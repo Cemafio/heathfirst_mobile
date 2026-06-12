@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/appointment/take_appointment.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/map/googlemap.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
@@ -42,8 +43,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
 
 
   void initRdState() async {
-    final int userId = await ref.read(user_data.future).then((val)=>val.id);
-    _etatRdv = verrifAppointment(_apropos['id'], userId);
+    _etatRdv = verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl),token: ref.read(accessTokenProvider));
   }
   
   
@@ -108,12 +108,10 @@ Future<void> _navigation(Widget materialPage) async {
     context,
     MaterialPageRoute(builder: (_) => materialPage),
   );
-  final int userId = await ref.read(user_data.future).then((val)=>val.id);
-
 
   if (opened == true) {
     setState(() {
-      _etatRdv = verrifAppointment(_apropos['id'], userId);
+      _etatRdv = verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
     });
   }
 }
@@ -129,7 +127,7 @@ Future<void> _navigation(Widget materialPage) async {
       bottomNavigationBar: 
      
           FutureBuilder(
-            future: _etatRdv, 
+            future: verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider)), 
             builder: (context, snapshot){
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SizedBox(
@@ -203,7 +201,7 @@ Future<void> _navigation(Widget materialPage) async {
                           color: const Color(0xFF81C784),
                         ),
                           image: DecorationImage(
-                            image: NetworkImage("http://172.25.69.28:8000/images/photos/${_apropos['photo_doc']}"),
+                            image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${_apropos['photo_doc']}"),
                             fit: BoxFit.cover,
                           ),
                       ),

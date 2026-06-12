@@ -1,26 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 
-class EditprofilDoc extends StatefulWidget {
-  Map<String, dynamic> infoUser;
-  EditprofilDoc({super.key, required this.infoUser});
+class EditprofilDoc extends ConsumerStatefulWidget {
+  // Map<String, dynamic> infoUser;
+  EditprofilDoc({super.key});
 
   @override 
-  State<EditprofilDoc> createState() => _EditprofilDocState();
+  ConsumerState<EditprofilDoc> createState() => _EditprofilDocState();
 }
 
-class _EditprofilDocState extends State<EditprofilDoc> {
+class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   File? _selectedImage;
   String? _networkImageUrl;
-  Map<String, dynamic> get _infoUser => widget.infoUser;
+  // Map<String, dynamic> get _infoUser => widget.infoUser;
 
   final TextEditingController _dateController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
@@ -80,22 +83,21 @@ class _EditprofilDocState extends State<EditprofilDoc> {
   void initState () {
     super.initState();
     _setInitialValue();
-    print(_infoUser);
-
   }
+
   void _setInitialValue () {
     // {@context: /api/contexts/Patient, @id: /api/patients/18, @type: Patient, HistoryMedical: xjfu, allergy: fju, MedicationInProgress: cju, id: 18, email: itadori@gmail.com, roles: [ROLE_PATIENT], LastName: ITADORY , FirstName: Yuji , DateOfBird: 2000-01-31T00:00:00+00:00, photo_profil: 1001354998-682da7e4e561f536585918.jpg, Address: Jdu 135, phone: 1468634863}
-
-    _nameController.text = _infoUser['LastName']; 
-    _firstNameController.text = _infoUser['FirstName'];
-    _emailController.text = _infoUser['email'];
-    _adrController.text = _infoUser['Address'];
-    _numController.text  = _infoUser['phone'];
-    _dateController.text = _infoUser['DateOfBird'];
-    _specialityController.text = _infoUser['Specialty'];
-    _adrCabinetController.text = _infoUser['AddressCabinet'];
-    _networkImageUrl = "http://172.27.136.28:8000/images/photos/${_infoUser['photo_profil']}";
-    _photo = _infoUser['photo_profil'];
+    final userDataStat = ref.read(userDataStatic);
+    _nameController.text = userDataStat.lastname!; 
+    _firstNameController.text = userDataStat.firstname!;
+    _emailController.text = userDataStat.email!;
+    _adrController.text = userDataStat.adress!;
+    // _numController.text  = _infoUser['phone'];
+    // _dateController.text = _infoUser['DateOfBird'];
+    // _specialityController.text = _infoUser['Specialty'];
+    // _adrCabinetController.text = _infoUser['AddressCabinet'];
+    _networkImageUrl = "${ref.read(baseUrl)}/images/photos/${userDataStat.profil}";
+    _photo = userDataStat.profil!;
   }
 
   Widget build(BuildContext context) {
@@ -306,8 +308,8 @@ class _EditprofilDocState extends State<EditprofilDoc> {
                           if (isValide) {
                             _formKey.currentState!.save();
                             try {
-                              print("Donner envoyer: ${_infoUser['id']},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress,$_speciality, $_adress_cabinet");
-                              await editProfilDoc( _infoUser['id'],_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _adress,_speciality, _adress_cabinet,'doctor');
+                              print("Donner envoyer: ${ref.watch(userDataStatic).id},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress,$_speciality, $_adress_cabinet");
+                              await editProfilDoc( ref.watch(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _adress,_speciality, _adress_cabinet,'doctor');
                               // ScaffoldMessenger.of(context).showSnackBar(
                               //   SnackBar(content: Text('Profil mis à jour !')),
                               // );

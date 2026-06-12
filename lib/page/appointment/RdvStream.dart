@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/rdvProvider.dart';
 import 'package:heathfirst_mobile/service/RdvStreamService.dart';
 import 'package:heathfirst_mobile/service/data.dart';
@@ -159,7 +160,7 @@ class _RdvPageState extends ConsumerState<RendezvousStream> {
                                     _loadingRdvId = rdv['id'];
                                   });
 
-                                  await responseAppointment(rdv['id'], 'refused', patient['id'], doc['id']);
+                                  await responseAppointment(rdv['id'], 'refused', patient['id'], doc['id'], ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                   await Future.delayed(const Duration(seconds: 6));
 
                                   setState(() {
@@ -179,7 +180,7 @@ class _RdvPageState extends ConsumerState<RendezvousStream> {
                                     _loadingRdvId = rdv['id'];
                                   });
 
-                                  await responseAppointment(rdv['id'], 'accepted', patient['id'], doc['id']);
+                                  await responseAppointment(rdv['id'], 'accepted', patient['id'], doc['id'], ref.watch(baseUrl), ref.watch(accessTokenProvider));
                                   await Future.delayed(const Duration(seconds: 5));
 
                                   setState(() {

@@ -2,27 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
-class SearchPage extends StatefulWidget {
-  final Map<String, dynamic> user;
+class SearchPage extends ConsumerStatefulWidget {
   final Future<List<dynamic>> listDoc;
 
   const SearchPage({
     super.key, 
-    required this.user,
     required this.listDoc,
   });
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  ConsumerState<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  Map<String, dynamic> get _infoUser => widget.user;
+class _SearchPageState extends ConsumerState<SearchPage> {
+  // Map<String, dynamic> get _infoUser => widget.user;
   Future<List<dynamic>> get _listDoc=> widget.listDoc;
   List<dynamic> doc_cheched = [];
   bool isLoaded = false;
@@ -36,12 +36,12 @@ class _SearchPageState extends State<SearchPage> {
       return {
         'id': list['id'],
         'name' : "${list['LastName']} ${list['FirstName']}",
-        'lastName' : list['LastName'],
-        'firstName' : list['FirstName'],
-        'specialty' : list['Specialty'],
+        'last_name' : list['LastName'],
+        'first_name' : list['FirstName'],
+        'speciality' : list['Specialty'],
         'Address' : list['Address'],
-        'AddressCabinet' : list['AddressCabinet'],
-        'photoProfil' : list['photoProfil'],
+        'addressCabinet' : list['AddressCabinet'],
+        'photo_doc' : list['photoProfil'],
         'phone' : list['phome'],
         'email' : list['email'],
       };
@@ -52,9 +52,9 @@ class _SearchPageState extends State<SearchPage> {
     });
 
     List<dynamic> newList = [];
-    List<dynamic> listCherche = await recherche(value,'','',1);
-    List<dynamic> listChercheAddress = await recherche('','',value,1);
-    List<dynamic> listChercheSpeciality = await recherche('',value,'',1);
+    List<dynamic> listCherche = await recherche(value,'','',1, ref.read(baseUrl), ref.read(accessTokenProvider));
+    List<dynamic> listChercheAddress = await recherche('','',value,1,ref.read(baseUrl), ref.read(accessTokenProvider));
+    List<dynamic> listChercheSpeciality = await recherche('',value,'',1,ref.read(baseUrl), ref.read(accessTokenProvider));
 
 
     if (listCherche.isEmpty) {
@@ -130,7 +130,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   GestureDetector(
                     onTap:(){
-                      // Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  HomePage(user: _infoUser,)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  HomePage()));
                     },
 
                     child: 
@@ -176,7 +176,7 @@ class _SearchPageState extends State<SearchPage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => InfoUser(data: [doc,_infoUser, _listDoc]),
+                              builder: (context) => InfoUser(data: [doc, _listDoc]),
                             ),
                           );
                         },
@@ -195,7 +195,7 @@ class _SearchPageState extends State<SearchPage> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: Image.network(
-                                    "http://172.25.69.28:8000/images/photos/${doc_cheched[index]['photoProfil']}",
+                                    "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -221,7 +221,7 @@ class _SearchPageState extends State<SearchPage> {
                                           size: 15),
                                           const SizedBox(width: 3),
                                       Text(
-                                        doc_cheched[index]['specialty'],
+                                        doc_cheched[index]['speciality'],
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -238,7 +238,7 @@ class _SearchPageState extends State<SearchPage> {
                                           size: 15),
                                           const SizedBox(width: 3),
                                       Text(
-                                        doc_cheched[index]['AddressCabinet'],
+                                        doc_cheched[index]['addressCabinet'],
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,

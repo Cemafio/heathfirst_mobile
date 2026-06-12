@@ -1,25 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_places_flutter/model/place_details.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class Editprofil extends StatefulWidget {
-  Map<String, dynamic> infoUser;
-  Editprofil({super.key, required this.infoUser});
+class Editprofil extends ConsumerStatefulWidget {
+  // Map<String, dynamic> infoUser;
+  Editprofil({super.key});
 
   @override
-  State<Editprofil> createState() => _EditprofilState();
+  ConsumerState<Editprofil> createState() => _EditprofilState();
 }
 
-class _EditprofilState extends State<Editprofil> {
+class _EditprofilState extends ConsumerState<Editprofil> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   File? _selectedImage;
   String? _networkImageUrl;
-  Map<String, dynamic> get _infoUser => widget.infoUser;
+  // Map<String, dynamic> get _infoUser => widget.infoUser;
 
   final TextEditingController _dateController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
@@ -83,17 +87,17 @@ class _EditprofilState extends State<Editprofil> {
   }
 
   void _setInitialValue () {
-    _nameController.text = _infoUser['LastName']; 
-    _firstNameController.text = _infoUser['FirstName'];
-    _emailController.text = _infoUser['email'];
-    _adrController.text = _infoUser['Address'];
-    _numController.text  = _infoUser['phone'];
-    _dateController.text = _infoUser['DateOfBird'];
-    _medocController.text = _infoUser['MedicationInProgress'];
-    _alegieController.text = _infoUser['allergy']??'';
-    _antecMedocController.text= _infoUser['HistoryMedical']??'';
-    _networkImageUrl = "http://172.25.69.28:8000/images/photos/${_infoUser['photo_profil']}";
-    _photo = _infoUser['photo_profil']??'';
+    _nameController.text = ref.read(userDataStatic).lastname!; 
+    _firstNameController.text = ref.read(userDataStatic).firstname!;
+    _emailController.text = ref.read(userDataStatic).email!;
+    _adrController.text = ref.read(userDataStatic).adress!;
+    // _numController.text  = ref.read(userDataStatic).!;
+    // _dateController.text = _infoUser['DateOfBird'];
+    // _medocController.text = _infoUser['MedicationInProgress'];
+    // _alegieController.text = _infoUser['allergy']??'';
+    // _antecMedocController.text= _infoUser['HistoryMedical']??'';
+    _networkImageUrl = "${ref.watch(baseUrl)}/images/photos/${ref.read(userDataStatic).profil!}";
+    _photo = ref.read(userDataStatic).profil!;
   }
 
   Widget build(BuildContext context) {
@@ -122,7 +126,7 @@ class _EditprofilState extends State<Editprofil> {
                             fit: BoxFit.cover
                           )
                         )
-                      : (_infoUser['photo_profil'] != null)
+                      : (_photo != '')
                         ? ClipOval(
                             child: Image.network(
                               _networkImageUrl!,
@@ -333,7 +337,7 @@ class _EditprofilState extends State<Editprofil> {
                             _formKey.currentState!.save();
                             try {
 
-                              await editProfil( _infoUser['id'],_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client');
+                              await editProfil( ref.read(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client');
                               
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Profil mis à jour !')),
