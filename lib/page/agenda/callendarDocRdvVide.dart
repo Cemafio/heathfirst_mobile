@@ -17,10 +17,10 @@ import 'package:http/http.dart' as http;
 
 class CallendardocrdvVide extends ConsumerStatefulWidget {
     // final Map<String, dynamic> infoUser;
-  final int idUser;
+  // final int idUser;
   final double heigh;
   final String page;
-  const CallendardocrdvVide({super.key, required this.idUser, required this.heigh, required this.page});
+  const CallendardocrdvVide({super.key, required this.heigh, required this.page});
 
   @override
   ConsumerState<CallendardocrdvVide> createState() => _CallendardocrdvVideState();
@@ -36,7 +36,6 @@ class _CallendardocrdvVideState extends ConsumerState<CallendardocrdvVide> {
   TextEditingController _reasonController = TextEditingController();
   bool isLoaded = false;
 
-  int get id_user => widget.idUser;
   double get height => widget.heigh;
   String get _page => widget.page;
   // Map<String, dynamic> get _infoUser => widget.infoUser;
@@ -73,7 +72,7 @@ void _reloadDataCallendar() async {
   });
 }
   Future<Map<String, dynamic>> _loadData() async{
-    List<dynamic> daysNoWork = await getDayNoWork(id: id_user, token: ref.read(accessTokenProvider), baseUrl: ref.read(baseUrl)); 
+    List<dynamic> daysNoWork = await getDayNoWork(id: ref.read(userDataStatic).id!, token: ref.read(accessTokenProvider), baseUrl: ref.read(baseUrl)); 
     print('daysNoworck => $daysNoWork');
     if(daysNoWork.isNotEmpty){
       // setState(() {

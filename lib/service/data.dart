@@ -153,8 +153,6 @@ Future<bool> addDayNoWork(DateTime date,String reason) async {
 }
 Future<List<dynamic>> getDayNoWork({required int id, required String baseUrl, required String token,}) async {
   final url = Uri.parse("$baseUrl/api/get_unvailable_days/get/$id");
-  // final pers = await SharedPreferences.getInstance();
-  // final token = pers.getString('token');
   final response = await http.get(
     url,
     headers: {
@@ -165,13 +163,14 @@ Future<List<dynamic>> getDayNoWork({required int id, required String baseUrl, re
   if (response.statusCode == 401) {
     throw Exception("unauthorized");
   }
+  if(response.statusCode == 404) return [];
 
   if(response.statusCode == 200){
     print("✅ unvailable day obtained   (>_<)");
     final data = jsonDecode(response.body);
     return data;
   }else{
-    print("❌ : status ${response.statusCode} ${response.body}  (O_o)");
+    print("❌ : status ${response.statusCode} ${jsonDecode(response.body)['error']} (O_o)");
     return [];
   }
 }
@@ -312,8 +311,7 @@ Future<void> takeAppointment({required int docId, required String symptome, requ
 }
 Future<Map<String, dynamic>> verrifAppointment({required int idDoc, required int patientId, required String baseUrl, required String token}) async {
   final url = Uri.parse("$baseUrl/api/verrifRdvExist");
-  // final pers = await SharedPreferences.getInstance();
-  // final token = pers.getString('token');
+
   final response = await http.post(
     url,
     headers: {

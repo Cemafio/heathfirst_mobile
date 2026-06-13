@@ -58,10 +58,12 @@ Widget _buildBottomButton(Map<String, dynamic> state) {
     'none': {
       'text': 'Prendre rendez-vous',
       'color': Color(0xFF548856),
+      'borderColor': Color(0xFF548856),
     },
     'accepted': {
       'text': 'Rendez-vous accepté',
-      'color': const Color.fromARGB(0, 139, 195, 74),
+      'color': const Color.fromARGB(255, 139, 195, 74),
+      'borderColor': Color.fromARGB(0, 101, 133, 102),
     },
     'refused': {
       'text': 'Rendez-vous refusé',
@@ -70,6 +72,7 @@ Widget _buildBottomButton(Map<String, dynamic> state) {
     'pending': {
       'text': 'Rendez-vous en attente',
       'color': Colors.grey,
+      'borderColor': Color.fromARGB(0, 84, 136, 86),
     },
   };
   
@@ -86,16 +89,17 @@ Widget _buildBottomButton(Map<String, dynamic> state) {
     },
     child: Container(
       height: 60,
+      margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: item['color']),
+        border: Border.all(color: item['borderColor']),
       ),
       child: Center(
         child: Text(
-          item['text'],
+          item['text']??'vide',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: item['color'],
+            color: item['color']??Colors.red,
           ),
         ),
       ),
@@ -124,42 +128,40 @@ Future<void> _navigation(Widget materialPage) async {
       ),
 
       // 🔒 Bouton fixé en bas
-      bottomNavigationBar: 
-     
-          FutureBuilder(
-            future: verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider)), 
-            builder: (context, snapshot){
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return SizedBox(
-                  width: double.infinity,
-                  child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
-              }
-              if (snapshot.hasError) {
-                if (snapshot.error.toString().contains("unauthorized")) {
-                  Future.microtask(() {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => LoginMobile()),
-                    );
-                  });
-                }
-                return Center(child: Text('Erreur : ${snapshot.error}'));
-              }
-              // 3️⃣ Si aucune data
-              if (!snapshot.hasData || snapshot.data == null) {
-                return const Text("Aucune donnée disponible");
-              }
+      bottomNavigationBar: FutureBuilder(
+        future: verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider)), 
 
-              print('====> Reaload detected');
-              final _etaRdv = snapshot.data ?? {};
-              
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: _buildBottomButton(_etaRdv)
-              );
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox(
+              width: double.infinity,
+              child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
+          }
+          if (snapshot.hasError) {
+            if (snapshot.error.toString().contains("unauthorized")) {
+              Future.microtask(() {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => LoginMobile()),
+                );
+              });
             }
-          ), 
+            return Center(child: Text('Erreur : ${snapshot.error}'));
+          }
+          // 3️⃣ Si aucune data
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Text("Aucune donnée disponible");
+          }
+
+          print('====> Reaload detected');
+          final _etaRdv = snapshot.data ?? {};
           
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: _buildBottomButton(_etaRdv)
+          );
+        }
+      ), 
 
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -207,7 +209,6 @@ Future<void> _navigation(Widget materialPage) async {
                       ),
                     ),
                   ),
-
                 ]
               ),
               const SizedBox(height: 80,),
@@ -307,7 +308,7 @@ Future<void> _navigation(Widget materialPage) async {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text('Localisation du cabinet'),
-                            Text('Antananarivo - ${_apropos['AddressCabinet']}'),
+                            Text('Antananarivo - ${_apropos['addressCabinet']}'),
                           ],
                         ),
                         const SizedBox(width: 10,),

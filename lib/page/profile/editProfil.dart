@@ -111,7 +111,7 @@ class _EditprofilState extends ConsumerState<Editprofil> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             
-            const SizedBox(height: 80),
+            const SizedBox(height: 30),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -188,30 +188,30 @@ class _EditprofilState extends ConsumerState<Editprofil> {
                       onSaved: (newValue) => _prenom = newValue!,
                     ),
                     const SizedBox(height: 30),
-                    DropdownButtonFormField(
-                      value: _sexe,
-                      decoration: const InputDecoration(
-                        labelText: 'Sexe',
-                        prefixIcon: Icon(Icons.wc),
-                      ),
-                      items: ['Homme', 'Femme']
-                        .map((label) => DropdownMenuItem(
-                          value: label,
-                          child: Text(label),
-                        ))
-                        .toList(), 
+                    // DropdownButtonFormField(
+                    //   value: _sexe,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Sexe',
+                    //     prefixIcon: Icon(Icons.wc),
+                    //   ),
+                    //   items: ['Homme', 'Femme']
+                    //     .map((label) => DropdownMenuItem(
+                    //       value: label,
+                    //       child: Text(label),
+                    //     ))
+                    //     .toList(), 
                       
-                      onChanged: (value){
-                        setState(() {
-                          _sexe = value!;
-                        });
-                      },
-                      validator: (value) => value == null ? 'Veuillez sélectionner une option' : null,
-                      onSaved: (newValue) {
-                        _sexe = newValue!;
-                      },
-                    ),
-                    const SizedBox(height: 30),
+                    //   onChanged: (value){
+                    //     setState(() {
+                    //       _sexe = value!;
+                    //     });
+                    //   },
+                    //   validator: (value) => value == null ? 'Veuillez sélectionner une option' : null,
+                    //   onSaved: (newValue) {
+                    //     _sexe = newValue!;
+                    //   },
+                    // ),
+                    // const SizedBox(height: 30),
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
@@ -228,22 +228,22 @@ class _EditprofilState extends ConsumerState<Editprofil> {
                       },
                       onSaved: (newValue) => _identifiant = newValue!,
                     ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _numController,
-                      decoration: const InputDecoration(
-                        labelText: 'Numero de télephone',
-                        prefixIcon: Icon(Icons.phone_android_outlined),
-                      ),
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre numero de télephone';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _tel = newValue!,
-                    ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _numController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Numero de télephone',
+                    //     prefixIcon: Icon(Icons.phone_android_outlined),
+                    //   ),
+                    //   keyboardType: TextInputType.phone,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre numero de télephone';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _tel = newValue!,
+                    // ),
                     const SizedBox(height: 30),
                     TextFormField(
                       controller: _antecMedocController,
@@ -305,23 +305,23 @@ class _EditprofilState extends ConsumerState<Editprofil> {
                       },
                       onSaved: (newValue) => _adress = newValue!,
                     ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _dateController,
-                      decoration: const InputDecoration(
-                        labelText: 'Date de naissance',
-                        prefixIcon: Icon(Icons.calendar_today),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre date de naissance';
-                        }
-                        return null;
-                      },
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
-                    ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _dateController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Date de naissance',
+                    //     prefixIcon: Icon(Icons.calendar_today),
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre date de naissance';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   readOnly: true,
+                    //   onTap: () => _selectDate(context),
+                    // ),
                     
                     const SizedBox(height: 80),
                     Material(

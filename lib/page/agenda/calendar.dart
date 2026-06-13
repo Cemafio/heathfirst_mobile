@@ -78,9 +78,9 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                   }
 
                   final rdv = snapshot.data!;
-                  print('ListDemande => $rdv');
+                  // print('ListDemande => $rdv');
                   if (rdv.isEmpty) {
-                    return CallendardocrdvVide(idUser: ref.watch(userDataStatic).id!, heigh: 60, page: 'agenda');
+                    return CallendardocrdvVide( heigh: 60, page: 'agenda');
                   }
 
                   Map<DateTime, List<String>> data = {};
@@ -99,7 +99,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                     }
                   }
                   return Column(
-                    children: [
+                    children: [ 
                         Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
                     ],
                   );
