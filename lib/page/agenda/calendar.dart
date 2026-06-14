@@ -10,6 +10,7 @@ import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/rdvProvider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
   }
 
   Widget build(BuildContext context) {
+    final rdvAsync = ref.watch(rdvAsyncProvider);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 229, 229),
       appBar: AppBar(
@@ -49,36 +51,19 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
         child: Container(
           padding: EdgeInsets.all(20),
           width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(top: 20),
+          // margin: EdgeInsets.only(top: 10),
 
           child: Column(
             mainAxisSize: MainAxisSize.min,
 
             children: [
+              rdvAsync.when(
+                loading: () => Container(
+                  padding: EdgeInsets.all(70), 
+                  child: const CircularProgressIndicator(strokeWidth: 3.0,)
+                ),
 
-              FutureBuilder<List<dynamic>>(
-                
-                future: rdvUserData(token: ref.watch(accessTokenProvider), baseUrl: ref.watch(baseUrl)),
-                builder: (context, snapshot) {
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return  Container(padding: EdgeInsets.all(70), child: const CircularProgressIndicator(strokeWidth: 3.0,));
-                  }
-
-                  if (snapshot.hasError) {
-                    if (snapshot.error.toString().contains("unauthorized")) {
-                      Future.microtask(() {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => LoginMobile()),
-                        );
-                      });
-                    }
-                    return Center(child: Text('Erreur : ${snapshot.error}'));
-                  }
-
-                  final rdv = snapshot.data!;
-                  // print('ListDemande => $rdv');
+                data: (rdv){
                   if (rdv.isEmpty) {
                     return CallendardocrdvVide( heigh: 60, page: 'agenda');
                   }
@@ -98,12 +83,17 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                       data[date] = [text];
                     }
                   }
+
                   return Column(
                     children: [ 
                         Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
                     ],
                   );
                 },
+
+                error: (err, st){
+                  return Text('Erreur de chargement');
+                }
               ),
             ],
           ),

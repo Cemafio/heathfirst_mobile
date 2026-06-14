@@ -118,10 +118,9 @@ Future<List<dynamic>> fetchDataDoc({required String token, required String urlBa
   }
 }
 //----------------------------------------------------------------- 
-Future<bool> addDayNoWork(DateTime date,String reason) async {
+Future<bool> addDayNoWork(DateTime date,String reason,{required String token, required String baseUrl}) async {
   final url = Uri.parse("$baseUrl/api/unavailabledays/add");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
+
   final body = {
     'date': date.toIso8601String(),
     'reason': reason,

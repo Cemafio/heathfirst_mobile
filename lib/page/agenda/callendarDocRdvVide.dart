@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/days_no_work_provider.dart';
+import 'package:heathfirst_mobile/provider/rdvProvider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
@@ -239,8 +241,12 @@ void _reloadDataCallendar() async {
                                       isLoaded = true; // arrêter le loading
                                     });
                                     try {
-                                      await addDayNoWork(dayNow, _reason!.trim());
-
+                                      await addDayNoWork(dayNow, _reason!.trim(), baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
+                                      print('Try to pop this showBox');
+                                      ref.refresh(daysNoWorkAsync);
+                                      ref.refresh(rdvAsyncProvider);
+                                      Navigator.of(context).pop();
+                                      _reasonController.text = '';
                                       // Calcul du temps écoulé
                                       final elapsed = DateTime.now().difference(startTime).inMilliseconds;
                                       // Si moins de 2000ms écoulées → attendre le reste
