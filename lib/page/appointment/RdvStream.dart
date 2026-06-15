@@ -61,8 +61,6 @@ class _RdvPageState extends ConsumerState<RendezvousStream> {
                   final rdv = rdvList[index];
                   final bool isLoading = _loadingRdvId == rdv['id'];
 
-                  // print(rdv);
-
                   return Stack(
                     children: [
                       Container(

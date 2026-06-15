@@ -242,10 +242,7 @@ void _reloadDataCallendar() async {
                                     });
                                     try {
                                       await addDayNoWork(dayNow, _reason!.trim(), baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
-                                      print('Try to pop this showBox');
-                                      ref.refresh(daysNoWorkAsync);
-                                      ref.refresh(rdvAsyncProvider);
-                                      Navigator.of(context).pop();
+                                      
                                       _reasonController.text = '';
                                       // Calcul du temps écoulé
                                       final elapsed = DateTime.now().difference(startTime).inMilliseconds;

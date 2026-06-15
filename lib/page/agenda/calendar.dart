@@ -86,7 +86,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
 
                   return Column(
                     children: [ 
-                        Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
+                      Callendaronly(data: data, idUser: rdv[0]['doctor']['id'], heigh: 60,page: 'agenda')
                     ],
                   );
                 },

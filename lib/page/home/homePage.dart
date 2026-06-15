@@ -166,46 +166,61 @@ class _HomepageState extends ConsumerState<HomePage> {
 
           child: Column(
             children: [
-              const Text(
-                'Bienvenue sur ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  letterSpacing: 3,
-                  color: Color.fromARGB(171, 0, 0, 0),
+              SizedBox(
+                height: 150,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    const Text(
+                      'Bienvenue sur ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        letterSpacing: 3,
+                        color: Color.fromARGB(171, 0, 0, 0),
+                      ),
+                    ),
+                    const Text(
+                      'Health First',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        letterSpacing: 3,
+                        color: Color(0xFF548856),
+                      ),
+                    ),
+                    const SizedBox(height: 20,),
+                    const Text(
+                      'Vous aider à garder la forme est notre objectif.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15,
+                        letterSpacing: 3,
+                        color: Color.fromARGB(171, 0, 0, 0),
+                        
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Text(
-                'Health First',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  letterSpacing: 3,
-                  color: Color(0xFF548856),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Vous aider à garder la forme est notre objectif.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  letterSpacing: 3,
-                  color: Color.fromARGB(171, 0, 0, 0),
-                  
-                ),
-              ),
+              
 
               const SizedBox(height: 25,),
-              _userDataAsync.when(
-                data: (user){
-                  return user.roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc(listDemd: _listDemd);
-                },
-                error: (error, stackTrace) => Text('$error'),
-                loading: ()=>Center(
-                  child: CircularProgressIndicator(),
-                )
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height - 300,
+
+                child: _userDataAsync.when(
+                  data: (user){
+                    return user.roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc();
+                  },
+                  error: (error, stackTrace) => Text('$error'),
+                  loading: ()=>Center(
+                    child: CircularProgressIndicator(),
+                  )
+                ),
               ),
+              
                 
             ],
           ),

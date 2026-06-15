@@ -1,26 +1,25 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
-import 'package:heathfirst_mobile/page/appointment/demandeRendeVous.dart';
-import 'package:heathfirst_mobile/page/login/login.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heathfirst_mobile/page/home/categorie.dart';
+import 'package:heathfirst_mobile/page/widget/card_user.dart';
+import 'package:heathfirst_mobile/provider/demande_rdv_provider.dart';
+import 'package:intl/intl.dart';
 
+class Acceuildoc extends ConsumerStatefulWidget {
 
-class Acceuildoc extends StatefulWidget {
-  Future<List<dynamic>> listDemd ;
-  // Map<String, dynamic> infoUser;
-
-  Acceuildoc({super.key, required this.listDemd});
+ const Acceuildoc({super.key});
 
   @override
-  State<Acceuildoc> createState() => _AcceuildocState();
+  ConsumerState<Acceuildoc> createState() => _AcceuildocState();
 }
 
-class _AcceuildocState extends State<Acceuildoc> {
-  // Map<String, dynamic> get _infoUser => widget.infoUser;
-  Future<List<dynamic>> get _listDemd => widget.listDemd;
+class _AcceuildocState extends ConsumerState<Acceuildoc> {
+  String formatDate(String dateString) {
+    final date = DateTime.parse(dateString);
+    String result = DateFormat('d MMMM', 'fr_FR').format(date);
+
+    return result[0].toUpperCase() + result.substring(1);
+  }
 
   @override
   void initState(){
@@ -30,134 +29,58 @@ class _AcceuildocState extends State<Acceuildoc> {
   
  
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-
-        child: Column(
-          children: [
-            // ------------------------[List Rdv]-------------------------------
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(10),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20)
-              ),
-
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    height: 60,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 5 
-                    ),
-                    width: double.infinity,
-                    margin: EdgeInsets.only(bottom: 5),
-
-
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Demande de rendez-vous',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                            color: const Color.fromARGB(158, 0, 0, 0)
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap:(){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousSection()));         
-                          },
-
-                          child:  Stack(
-                            clipBehavior: Clip.none,//ceci enleve le hidden overflow
-                            children: [
-                              const Icon(Icons.app_registration_rounded, size: 30,),
-                              FutureBuilder<List<dynamic>>(
-                                  future: _listDemd,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Positioned(
-                                        top: -10,
-                                        right: -5,
-                                        child: Container(), // Affiche rien pendant le chargement
-                                      );
-                                    }
-
-                                    if (snapshot.hasError) {
-                                      if (snapshot.error.toString().contains("unauthorized")) {
-                                        Future.microtask(() {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(builder: (_) => LoginMobile()),
-                                          );
-                                        });
-                                      }
-                                      return Positioned(
-                                        top: -10,
-                                        right: -5,
-                                        child: Container(), // Affiche rien en cas d’erreur
-                                      );
-                                    }
-                                    final list = snapshot.data?? [];
-                                    
-                                    
-                                    return   Positioned(
-                                      top: -10,
-                                      right: -5,
-
-                                      child: Container(
-                                        height: 20.w,
-                                        width: 20.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(10.w)),
-
-                                          color: list.isNotEmpty? const Color.fromARGB(255, 232, 99, 99) : Color.fromARGB(0, 232, 99, 99) 
-                                        ),
-                                      
-                                        child: Center(
-                                          child: list.isNotEmpty
-                                          ? Text(
-                                              '${list.length}',  
-                                              style: TextStyle(
-                                                color: list.isNotEmpty? Colors.white : const Color.fromARGB(0, 255, 255, 255),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold
-                                              ),
-                                            )
-                                          : Text(
-                                              '..',  
-                                              style: TextStyle(
-                                                color: list.isNotEmpty? Colors.white : const Color.fromARGB(0, 255, 255, 255),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold
-                                              ),
-                                            )
-                                        )
-                                      )
-                                    );
-                            
-                                  },
-                                ),
-                            ],
-                          )
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+    final demandeAsync = ref.watch(dmdAsyncProvider);
+    
+    return demandeAsync.when(
+      loading: () => Center(
+        child: CircularProgressIndicator(),
       ),
-    ) 
-    ;
+      error: (err, state){
+        return Text('Erreur de chargement');
+      },
+      data: (dmd){
+        print(dmd);
+        List<Map<String,Object>> listCategory = [{
+              'type': 'Tous',
+              'choice': true
+        }];
+        for (var d in dmd) {
+          listCategory.add(
+            {
+              'type': formatDate(d['date']),
+              'choice': false
+            }
+          );
+        }
+
+        return SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Column(
+            children: [
+              if(listCategory.isNotEmpty)...[
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: CategorieSection(category: listCategory),
+                ),
+                
+              ],
+              const SizedBox(height: 15,),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index){
+                    final dmdPatient = dmd[index]['patient'];
+                    // print('ici =>${dmdPatient['firstname']}, ${dmdPatient['lastname']}, ${dmd[index]['information']['symptome']}, ${dmd[index]['date']}, ${dmdPatient['photo']}');
+                    return CardUserWidget(firstName: dmdPatient['firstname'],lastName: dmdPatient['lastname'], symptome: dmd[index]['information']['symptome'],dateTime: dmd[index]['date'],photo: dmdPatient['photo'], heurRdv: dmd[index]['information']['hour'],);
+                  }
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    );
   }
 }
