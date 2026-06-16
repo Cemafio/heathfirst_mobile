@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-class CategorieSection extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heathfirst_mobile/provider/category_provider.dart';
+class CategorieSection extends ConsumerStatefulWidget {
   final List<Map<String,Object>> category;
   CategorieSection({super.key, required this.category });
 
   @override
-  State<CategorieSection> createState() => _CategorieSectionState();
+  ConsumerState<CategorieSection> createState() => _CategorieSectionState();
 }
 
-class _CategorieSectionState extends State<CategorieSection> {
+class _CategorieSectionState extends ConsumerState<CategorieSection> {
   bool choice = true;
 
   List<Map<String,Object>> get categorie  => widget.category;
@@ -15,6 +17,8 @@ class _CategorieSectionState extends State<CategorieSection> {
 
   @override
   Widget build(BuildContext context) {
+    final categorySelected = ref.watch(selectedDocCategoryProvider);
+    
     return ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: categorie.length, // Le nombre d'éléments dans la liste
@@ -22,10 +26,11 @@ class _CategorieSectionState extends State<CategorieSection> {
               return GestureDetector(
                   onTap: () {
                     setState(() {
-
-                      for (var i = 0; i < categorie.length; i++) {
-                        categorie[i]['choice'] = i==index;
-                      }
+                      ref.watch(selectedDocCategoryProvider.notifier).state = categorie[index]['type'].toString();
+                      
+                      // for (var i = 0; i < categorie.length; i++) {
+                      //   categorie[i]['choice'] = i==index;
+                      // }
                     });
                   },
               child: AnimatedContainer(
@@ -44,7 +49,7 @@ class _CategorieSectionState extends State<CategorieSection> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
-                    color: (categorie[index]['choice']) != true? Colors.white : Color(0xFF548856),
+                    color: categorie[index]['type'].toString() != categorySelected? Colors.white : Color(0xFF548856),
 
                   ),
 
@@ -64,10 +69,11 @@ class _CategorieSectionState extends State<CategorieSection> {
                           fontSize: 11,
 
                           color: (
-                            (categorie[index]['choice'])!= true)
+                            (categorie[index]['type'].toString() != categorySelected)
                             ?Color.fromARGB(242, 37, 37, 37)
                             :Color(0xFF548856)
                           ),
+                        )
                       ),
                     ],
                     const SizedBox(height: 5,),
@@ -80,10 +86,11 @@ class _CategorieSectionState extends State<CategorieSection> {
                         letterSpacing: 2.0,
                         fontSize: 11,
                         color: (
-                          (categorie[index]['choice'])!= true)
+                          (categorie[index]['type'].toString() != categorySelected)
                           ?Color.fromARGB(242, 37, 37, 37)
                           :Color(0xFF548856)
                         ),
+                      )
                     ),
 
                   ],

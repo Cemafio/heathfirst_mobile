@@ -1,21 +1,23 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
   
 
-class PatientInscription extends StatefulWidget {
+class PatientInscription extends ConsumerStatefulWidget {
   const PatientInscription({super.key});
 
   @override
-  State<PatientInscription> createState() => _PatientInscriptionState();
+  ConsumerState<PatientInscription> createState() => _PatientInscriptionState();
 }
 
-class _PatientInscriptionState extends State<PatientInscription> {
+class _PatientInscriptionState extends ConsumerState<PatientInscription> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   File? _selectedImage;
@@ -36,7 +38,7 @@ class _PatientInscriptionState extends State<PatientInscription> {
   String _date_de_naissance = '';
 
   Future<void> inscriptionPatient(String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String pass, String adress, String medoc_en_cours, String roles ) async {
-    final url = Uri.parse("http://172.27.136.28:8000/api/registration");
+    final url = Uri.parse("${ref.read(baseUrl)}/api/registration");
 
     var request = http.MultipartRequest("POST", url);
 

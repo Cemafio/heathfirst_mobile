@@ -44,9 +44,13 @@ class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
   @override
   Widget build(BuildContext context) {
     final _userDataStatic = ref.watch(userDataStatic);
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      margin: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(30)

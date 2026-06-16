@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/home/categorie.dart';
 import 'package:heathfirst_mobile/page/widget/card_user.dart';
+import 'package:heathfirst_mobile/provider/category_provider.dart';
 import 'package:heathfirst_mobile/provider/demande_rdv_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -38,20 +39,28 @@ class _AcceuildocState extends ConsumerState<Acceuildoc> {
       error: (err, state){
         return Text('Erreur de chargement');
       },
+
       data: (dmd){
-        print(dmd);
-        List<Map<String,Object>> listCategory = [{
-              'type': 'Tous',
-              'choice': true
-        }];
+        // print(dmd);
+        final Set<String> dates = {'Tous'};
+
         for (var d in dmd) {
-          listCategory.add(
-            {
-              'type': formatDate(d['date']),
-              'choice': false
-            }
-          );
+          dates.add(formatDate(d['date']));
         }
+
+        final listCategory = dates.map((e) => {
+          'type': e,
+          'choice': e == 'Tous',
+        }).toList();
+
+
+        String selectedCategory = ref.watch(selectedDocCategoryProvider);
+        List filteredDmd = selectedCategory == 'Tous'
+          ? dmd
+          : dmd.where((e) {
+              print('$selectedCategory == ${formatDate(e['date'])}');
+              return formatDate(e['date']) == selectedCategory;
+            }).toList();
 
         return SizedBox(
           width: double.infinity,
@@ -66,13 +75,13 @@ class _AcceuildocState extends ConsumerState<Acceuildoc> {
                 ),
                 
               ],
+
               const SizedBox(height: 15,),
               Expanded(
                 child: ListView.builder(
-                  itemCount: 1,
+                  itemCount: filteredDmd.length,
                   itemBuilder: (context, index){
-                    final dmdPatient = dmd[index]['patient'];
-                    // print('ici =>${dmdPatient['firstname']}, ${dmdPatient['lastname']}, ${dmd[index]['information']['symptome']}, ${dmd[index]['date']}, ${dmdPatient['photo']}');
+                    final dmdPatient = filteredDmd[index]['patient'];
                     return CardUserWidget(firstName: dmdPatient['firstname'],lastName: dmdPatient['lastname'], symptome: dmd[index]['information']['symptome'],dateTime: dmd[index]['date'],photo: dmdPatient['photo'], heurRdv: dmd[index]['information']['hour'],);
                   }
                 ),

@@ -57,7 +57,7 @@ class _TakeAppointmentState extends ConsumerState<TakeAppointment> {
       });
     }
   }
-    Future<void> _selectDateRdv(BuildContext context) async{
+  Future<void> _selectDateRdv(BuildContext context) async{
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime(DateTime.now().year, DateTime.now().month),
@@ -274,6 +274,7 @@ class _TakeAppointmentState extends ConsumerState<TakeAppointment> {
                       },
                       readOnly: true,
                       onTap: () => _selectDateRdv(context),
+                      onSaved: (newValue) => _symptome = newValue!,
                     ),
                     const SizedBox(height: 20),
                     MaterialButton(
@@ -343,7 +344,6 @@ class _TakeAppointmentState extends ConsumerState<TakeAppointment> {
                               setState(() {
                                 isLoaded = false;
                               });
-
                             }
                           }
                         },
