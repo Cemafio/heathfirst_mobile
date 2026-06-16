@@ -3,8 +3,9 @@ import 'package:lottie/lottie.dart';
 
 class EmptyStateWidget extends StatefulWidget {
   final String? txt;
+  final String? txtBold;
   final String? lottiName;
-  const EmptyStateWidget({super.key, this.txt, this.lottiName});
+  const EmptyStateWidget({super.key, this.txt, this.lottiName, this.txtBold,});
 
   @override
   State<EmptyStateWidget> createState() => _EmptyStateWidgetState();
@@ -47,7 +48,23 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget> with TickerProvider
           ),
           child: Text(
             textAlign: TextAlign.center,
-            widget.txt ?? "Aucune donnée disponible pour le moment. Réessayez dans quelques instants.",
+            widget.txtBold ?? "Aucune donnée disponible.",
+            style: TextStyle(
+              fontSize: 15,
+              letterSpacing: 1,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(171, 0, 0, 0),
+            ),         
+          ),
+        ),
+        SizedBox(height: 6,),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 200
+          ),
+          child: Text(
+            textAlign: TextAlign.center,
+            widget.txt ?? "Réessayez dans quelques instants.s'il vous plait",
             style: TextStyle(
               fontSize: 13,
               letterSpacing: 1,

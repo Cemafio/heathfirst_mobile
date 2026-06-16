@@ -44,6 +44,20 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
   DateTime dayNow = DateTime.now();
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
+  final Map months = {
+  1: 'Jan',
+  2: 'Fév',
+  3: 'Mar',
+  4: 'Avr',
+  5: 'Mai',
+  6: 'Jun',
+  7: 'Jul',
+  8: 'Aoû',
+  9: 'Sep',
+  10: 'Oct',
+  11: 'Nov',
+  12: 'Déc',
+};
 
   // late Future<List<dynamic>> _daysNoWorks = getDayNoWork(id: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
 
@@ -232,10 +246,10 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
                         const Text("Aucun planing trouver", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black54),),
                       
                       if(_getEventsForDay(dayNow).isNotEmpty)
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text("Programe du jours", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
+                            Text("Programe du ${dayNow.day} ${months[dayNow.month]}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
                           ],
                         ),
                     

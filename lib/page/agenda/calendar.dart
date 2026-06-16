@@ -67,10 +67,13 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                   if (rdv.isEmpty) {
                     return CallendardocrdvVide( heigh: 60, page: 'agenda');
                   }
-
+                  final List rdvAccepted = rdv
+                    .where((r) => r['status'] =='accepted')
+                    .toList();
+                  // print("Ici => $rdvAccepted");
                   Map<DateTime, List<String>> data = {};
 
-                  for (var item in rdv) {
+                  for (var item in rdvAccepted) {
                     final dateStr = item['date'].split(' ')[0];
                     final heure = item['date'].split(' ')[1];
                     final patient = item['patient']['firstname'];

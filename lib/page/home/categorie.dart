@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/provider/category_provider.dart';
 class CategorieSection extends ConsumerStatefulWidget {
-  final List<Map<String,Object>> category;
+  final List<String> category;
   CategorieSection({super.key, required this.category });
 
   @override
@@ -12,7 +12,7 @@ class CategorieSection extends ConsumerStatefulWidget {
 class _CategorieSectionState extends ConsumerState<CategorieSection> {
   bool choice = true;
 
-  List<Map<String,Object>> get categorie  => widget.category;
+  List<String> get categorie  => widget.category;
   
 
   @override
@@ -26,11 +26,7 @@ class _CategorieSectionState extends ConsumerState<CategorieSection> {
               return GestureDetector(
                   onTap: () {
                     setState(() {
-                      ref.watch(selectedDocCategoryProvider.notifier).state = categorie[index]['type'].toString();
-                      
-                      // for (var i = 0; i < categorie.length; i++) {
-                      //   categorie[i]['choice'] = i==index;
-                      // }
+                      ref.watch(selectedDocCategoryProvider.notifier).state = categorie[index].toString();
                     });
                   },
               child: AnimatedContainer(
@@ -49,7 +45,7 @@ class _CategorieSectionState extends ConsumerState<CategorieSection> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
-                    color: categorie[index]['type'].toString() != categorySelected? Colors.white : Color(0xFF548856),
+                    color: categorie[index].toString() != categorySelected? Colors.white : Color(0xFF548856),
 
                   ),
 
@@ -60,16 +56,17 @@ class _CategorieSectionState extends ConsumerState<CategorieSection> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if(categorie[index]['type'].toString() != 'Tous')...[
+
+                    if(categorie[index].toString() != 'Tous' && categorie[index].toString().split(' ').length > 1)...[
                       Text(
-                        categorie[index]['type'].toString().split(' ')[1],
+                        categorie[index].toString().split(' ')[1],
                         style: TextStyle(
                           fontWeight:  FontWeight.bold,
                           letterSpacing: 2.0,
                           fontSize: 11,
 
                           color: (
-                            (categorie[index]['type'].toString() != categorySelected)
+                            (categorie[index].toString() != categorySelected)
                             ?Color.fromARGB(242, 37, 37, 37)
                             :Color(0xFF548856)
                           ),
@@ -78,15 +75,15 @@ class _CategorieSectionState extends ConsumerState<CategorieSection> {
                     ],
                     const SizedBox(height: 5,),
                     Text(
-                      (categorie[index]['type'].toString() == 'Tous')
-                        ?categorie[index]['type'].toString() 
-                        :categorie[index]['type'].toString().split(' ')[0],
+                      (categorie[index].toString() == 'Tous' && categorie[index].toString().split(' ').length <= 1)
+                        ?categorie[index].toString() 
+                        :categorie[index].toString().split(' ')[0],
                       style: TextStyle(
                         fontWeight:  FontWeight.bold,
                         letterSpacing: 2.0,
                         fontSize: 11,
                         color: (
-                          (categorie[index]['type'].toString() != categorySelected)
+                          (categorie[index].toString() != categorySelected)
                           ?Color.fromARGB(242, 37, 37, 37)
                           :Color(0xFF548856)
                         ),

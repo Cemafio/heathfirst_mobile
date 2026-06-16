@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heathfirst_mobile/page/widget/loading_fusion.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/demande_rdv_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/utils/string_extension.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -14,7 +16,11 @@ class CardUserWidget extends ConsumerStatefulWidget {
   final String dateTime;
   final String photo;
   final String heurRdv;
-  const CardUserWidget({super.key, required this.photo, required this.firstName, required this.lastName, required this.symptome, required this.dateTime, required this.heurRdv});
+  final List<bool> isLoad;
+  final void Function(Map<String, dynamic> dmd, String status) responseRdv;  
+  final Map<String, dynamic> dmdData;
+
+  const CardUserWidget({super.key, required this.isLoad,required this.dmdData,required this.responseRdv,required this.photo, required this.firstName, required this.lastName, required this.symptome, required this.dateTime, required this.heurRdv});
 
   @override
   ConsumerState<CardUserWidget> createState() => _CardUserWidgetState();
@@ -22,6 +28,10 @@ class CardUserWidget extends ConsumerStatefulWidget {
 
 class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
   bool isTextShow = false;
+  bool isLoadingAccept = false;
+  bool isLoadingRefuse = false;
+
+  // List<bool> get isLoad => widget.isLoad;
   String get symptomText => widget.symptome;
   String get first_name => widget.firstName;
   String get last_name => widget.lastName;
@@ -44,6 +54,7 @@ class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
   @override
   Widget build(BuildContext context) {
     final _userDataStatic = ref.watch(userDataStatic);
+
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
@@ -181,20 +192,31 @@ class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
                 child: Row(
                   children: [
                     TextButton(
-                      onPressed: (){
-                
+                      onPressed: () async {
+                        widget.responseRdv(widget.dmdData, 'refused');
                       }, 
-                      child: Text('refuser', style: TextStyle(
-                        color: Colors.red
-                      ),),
+
+                      child: LoadingFusBtn(
+                        isLoaded: isLoadingRefuse, 
+                        wid: Text('refuser', style: TextStyle(
+                          color: Colors.red
+                        ),
+                        )
+                      )
                     ),
+
                     TextButton(
-                      onPressed: (){
-                
+                      onPressed: () async {
+                        widget.responseRdv(widget.dmdData, 'accepted');
+
                       }, 
-                      child: Text('accepter'),
+                      child:LoadingFusBtn(
+                        isLoaded: ref.watch(responseLoadingProvider)[widget.dmdData['id']] ?? false, 
+                        wid: Text(
+                          'accepter',
+                        )
+                      ),
                     ),
- 
                   ],
                 ),
               )
