@@ -8,9 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/appointment/take_appointment.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/map/googlemap.dart';
+import 'package:heathfirst_mobile/page/widget/clientFormRdv.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/rdvProvider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -39,8 +42,13 @@ class _InfoUserState extends ConsumerState<InfoUser> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _symptomeController = TextEditingController();
   bool isLoaded = false;
+  DateTime selectedDay = DateTime.now();
+  String selectedTime = '';
 
-
+  List<DateTime> dates = List.generate(
+    30,
+    (index) => DateTime.now().add(Duration(days: index)),
+  );
 
   void initRdState() async {
     _etatRdv = verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl),token: ref.read(accessTokenProvider));
@@ -53,73 +61,96 @@ class _InfoUserState extends ConsumerState<InfoUser> {
     initRdState();
   }
 
-Widget _buildBottomButton(Map<String, dynamic> state) {
-  final Map<String, dynamic> buttons = {
-    'none': {
-      'text': 'Prendre rendez-vous',
-      'color': Color(0xFF548856),
-      'borderColor': Color(0xFF548856),
-    },
-    'accepted': {
-      'text': 'Rendez-vous accepté',
-      'color': const Color.fromARGB(255, 139, 195, 74),
-      'borderColor': Color.fromARGB(0, 101, 133, 102),
-    },
-    'refused': {
-      'text': 'Rendez-vous refusé',
-      'color': const Color.fromARGB(0, 255, 82, 82),
-    },
-    'pending': {
-      'text': 'Rendez-vous en attente',
-      'color': Colors.grey,
-      'borderColor': Color.fromARGB(0, 84, 136, 86),
-    },
-  };
-  
-  // 🔒 Sécurisation totale du state
-  final existe = state['existe'];
-  final response = state['response'];
-  final item = buttons[response] ?? buttons['none']!;
+  Widget _buildBottomButton(Map<String, dynamic> state) {
+    final Map<String, dynamic> buttons = {
+      'none': {
+        'text': 'Prendre rendez-vous',
+        'color': Color(0xFF548856),
+        'borderColor': Color(0xFF548856),
+      },
+      'accepted': {
+        'text': 'Rendez-vous accepté',
+        'color': const Color.fromARGB(255, 139, 195, 74),
+        'borderColor': Color.fromARGB(0, 101, 133, 102),
+      },
+      'refused': {
+        'text': 'Rendez-vous refusé',
+        'color': const Color.fromARGB(0, 255, 82, 82),
+      },
+      'pending': {
+        'text': 'Rendez-vous en attente',
+        'color': Colors.grey,
+        'borderColor': Color.fromARGB(0, 84, 136, 86),
+      },
+    };
 
-  return InkWell(
-    onTap: (){
-      if(existe == false) {
-        _navigation(TakeAppointment(docInfo: _apropos));
-      }
-    },
-    child: Container(
-      height: 60,
-      margin: EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: item['borderColor']),
-      ),
-      child: Center(
-        child: Text(
-          item['text']??'vide',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: item['color']??Colors.red,
+    
+    // 🔒 Sécurisation totale du state
+    final existe = state['existe'];
+    final response = state['response'];
+    final item = buttons[response] ?? buttons['none']!;
+
+    return InkWell(
+      onTap: (){
+        if(existe == false) {
+          _navigation(TakeAppointment(docInfo: _apropos));
+        }
+      },
+      child: Container(
+        height: 60,
+        margin: EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: item['borderColor']),
+        ),
+        child: Center(
+          child: Text(
+            item['text']??'vide',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: item['color']??Colors.red,
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }                                                                       
 
-Future<void> _navigation(Widget materialPage) async {
-  final opened = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => materialPage),
-  );
+  Future<void> _navigation(Widget materialPage) async {
+    final opened = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => materialPage),
+    );
 
-  if (opened == true) {
+    if (opened == true) {
+      setState(() {
+        _etatRdv = verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
+      });
+    }
+  }
+
+  void selectedDayAction(DateTime date){
     setState(() {
-      _etatRdv = verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
+      selectedDay = date;
     });
   }
-}
+  void selectedTimeAction(String time){
+    setState(() {
+      selectedTime = time;
+    });
+  }
+  void showBottomForm(){
+    showModalBottomSheet(
+      context: context, 
+      builder: (context){
+        return ClientFormRdv();
+      }
+    );
+  }
+
   Widget build(BuildContext context) {
+    final verrifRdv = ref.watch(verrifRdvAsync);
+    final rdvAsync = ref.watch(rdvAsyncProvider);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 241, 241, 241),
       appBar: AppBar(
@@ -127,34 +158,34 @@ Future<void> _navigation(Widget materialPage) async {
         title: const Text("Apropos", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(171, 0, 0, 0),),),
       ),
 
-      // 🔒 Bouton fixé en bas
-      bottomNavigationBar: FutureBuilder(
-        future: verrifAppointment(idDoc: _apropos['id'],patientId: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider)), 
+      
 
-        builder: (context, snapshot){
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-              width: double.infinity,
-              child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,)));
+      // 🔒 Bouton fixé en bas
+      bottomNavigationBar: 
+      verrifRdv.when(
+        loading: ()=> SizedBox(
+          width: double.infinity,
+          child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,))
+        ),
+
+        error: (error, stackTrace) {
+          if (error.toString().contains("unauthorized")) {
+            Future.microtask(() {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => LoginMobile()),
+              );
+            });
           }
-          if (snapshot.hasError) {
-            if (snapshot.error.toString().contains("unauthorized")) {
-              Future.microtask(() {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => LoginMobile()),
-                );
-              });
-            }
-            return Center(child: Text('Erreur : ${snapshot.error}'));
-          }
-          // 3️⃣ Si aucune data
-          if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('Erreur : $error'));
+        },
+
+        data: (verrifRdv){
+          if (verrifRdv.isEmpty) {
             return const Text("Aucune donnée disponible");
           }
 
-          print('====> Reaload detected');
-          final _etaRdv = snapshot.data ?? {};
+          final _etaRdv = verrifRdv;
           
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -332,9 +363,19 @@ Future<void> _navigation(Widget materialPage) async {
                           ),
                         ),
                     ])
-                  )
-                ],
+                  ),
+                  
 
+                  IconButton(
+                    onPressed: () => showBottomForm(), 
+                    icon: Icon(
+                      Icons.add,
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
+                    ), 
+                  ),
+                ],
               )
             ]) 
         ),

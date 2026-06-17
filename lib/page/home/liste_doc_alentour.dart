@@ -4,6 +4,7 @@ import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/doc_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/service/data.dart';
 
@@ -37,20 +38,18 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
 
   @override
   Widget build(BuildContext context) {
+    final listDocAsync = ref.read(docAsyncProvider); 
+
     return Column(
       children: [
-        FutureBuilder(
-          future: _listDoc,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                margin: EdgeInsets.only(top: 100),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
+        listDocAsync.when(
+          loading: () => Container(
+            margin: EdgeInsets.only(top: 100),
+            child: Center(child: CircularProgressIndicator()),
+          ),
 
-            if (snapshot.hasError) {
-              if (snapshot.error.toString().contains("unauthorized")) {
+          error: (err, state){
+              if (err.toString().contains("unauthorized")) {
                 Future.microtask(() {
                   Navigator.pushReplacement(
                     context,
@@ -58,14 +57,19 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                   );
                 });
               }
-              if(snapshot.error.toString().contains("Null")){
+
+              if(err.toString().contains("Null")){
                 return Center(
                   child: EmptyStateWidget()
                 );
               }
-            }
 
-            final docList = snapshot.data!;
+            return Text('Erreur de chargement');
+          },
+
+          data: (list_D) {
+
+            final docList = list_D;
             print(docList[0]);
             // Ajouter les spécialités sans dupliquer
             for (var doc in docList) {
@@ -137,8 +141,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                         .toString();
 
                     // Filtrage
-                    final specialty =
-                        (doc['speciality'] ?? doc['Speciality']).toString();
+                    final specialty = (doc['speciality'] ?? doc['Speciality']).toString();
 
                     if (activeFilter != "Tous" && specialty != activeFilter) {
                       return SizedBox.shrink();
@@ -155,15 +158,16 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                       },
                       child: Container(
                         height: 120,
-                        margin: EdgeInsets.only(bottom: 10),
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        margin: EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(30)
                         ),
+
                         child: Row(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 80,
                               height: 80,
                               child: ClipRRect(

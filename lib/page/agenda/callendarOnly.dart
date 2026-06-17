@@ -45,26 +45,23 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
   int justDay = DateTime.now().day;
   int justMonth = DateTime.now().month;
   final Map months = {
-  1: 'Jan',
-  2: 'Fév',
-  3: 'Mar',
-  4: 'Avr',
-  5: 'Mai',
-  6: 'Jun',
-  7: 'Jul',
-  8: 'Aoû',
-  9: 'Sep',
-  10: 'Oct',
-  11: 'Nov',
-  12: 'Déc',
-};
-
-  // late Future<List<dynamic>> _daysNoWorks = getDayNoWork(id: ref.read(userDataStatic).id!, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
+    1: 'Jan',
+    2: 'Fév',
+    3: 'Mar',
+    4: 'Avr',
+    5: 'Mai',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aoû',
+    9: 'Sep',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Déc',
+  };
 
   @override
   void initState() {
     super.initState();
-     print("INIT STATE CALENDAR");
      _reloadDataCallendar();
   }
 
@@ -87,7 +84,6 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
   
   Future<Map<String, dynamic>> _loadData() async{
     List<dynamic> daysNoWork = await getDayNoWork(id: id_user, baseUrl: ref.read(baseUrl), token: ref.read(accessTokenProvider));
-    // print('daysNoworck => $daysNoWork\n');
     if(daysNoWork.isNotEmpty){
         final marked = daysNoWork.map<DateTime>((e) {
           return DateTime.parse(e['date']);
@@ -262,7 +258,8 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
                               children: [
                                 const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
                                 const SizedBox(width: 10,),
-                                Text(event,
+                                Text(
+                                  event,
                                 style: const TextStyle(
                                   fontSize: 15
                                 ),),
@@ -275,8 +272,6 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
                 ) ,
               ),
               const SizedBox(height: 10,),
-              //Ajout nouveaux temp libre
-              // if(ref.watch(userDataStatic).roles != 'ROLE_PATIENT' && _page != 'home')
                 
             ],
           )

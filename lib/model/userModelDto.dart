@@ -7,8 +7,9 @@ class UserModelDto {
   final String? adress;
   final String? profil;
   final String? date_naissance;
+  final String? sexe;
 
-  UserModelDto({this.id, this.firstname,this.profil, this.lastname, this.email,this.roles,this.adress, this.date_naissance});
+  UserModelDto({this.id, this.firstname,this.profil, this.lastname, this.email,this.roles,this.adress, this.date_naissance,this.sexe});
 
   factory UserModelDto.fromJson(Map<String, dynamic> json) {
     return UserModelDto(
@@ -18,7 +19,8 @@ class UserModelDto {
       email: json['email'],
       roles: json['roles'][0],
       adress: json['Address'],
-      profil: json['photo_profil'] 
+      profil: json['photo_profil'], 
+      sexe: json['sexe']
     );
   }
 

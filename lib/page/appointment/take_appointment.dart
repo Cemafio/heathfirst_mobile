@@ -31,7 +31,6 @@ class _TakeAppointmentState extends ConsumerState<TakeAppointment> {
   String _tel = '';
   String _sexe = '';
   String _identifiant = '';
-  String _pass = '';
   String _adress = '';
   String _date_de_naissance = '';
   String _date_de_rdv = '';
