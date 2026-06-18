@@ -210,18 +210,9 @@ class _HomepageState extends ConsumerState<HomePage> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height - 300,
 
-                child: _userDataAsync.when(
-                  data: (user){
-                    return user.roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc();
-                  },
-                  error: (error, stackTrace) => Text('$error'),
-                  loading: ()=>Center(
-                    child: CircularProgressIndicator(),
-                  )
-                ),
+                child: ref.watch(userDataStatic).roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc()
               ),
               
-                
             ],
           ),
         ), 
@@ -347,17 +338,6 @@ class _HomepageState extends ConsumerState<HomePage> {
                     ),
 
                   ],
-
-                  if(_userDataStatic.roles == 'ROLE_DOCTOR')...[
-                    ListTile(
-                      leading: const Icon(Icons.supervised_user_circle),
-                      title: const Text("Rendez-vous"),
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RendezvousStream()));
-                      }
-                    ),
-                  ],
-
                   ListTile(
                     leading: const Icon(Icons.logout_outlined),
                     title: const Text("Déconnexion"),

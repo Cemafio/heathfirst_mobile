@@ -39,8 +39,6 @@ class _InfoUserState extends ConsumerState<InfoUser> {
   bool isWaiting = false;
   late Future<Map<String,dynamic>> _etatRdv ;
 
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _symptomeController = TextEditingController();
   bool isLoaded = false;
   DateTime selectedDay = DateTime.now();
   String selectedTime = '';
@@ -93,7 +91,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
     return InkWell(
       onTap: (){
         if(existe == false) {
-          _navigation(TakeAppointment(docInfo: _apropos));
+          showBottomForm();        
         }
       },
       child: Container(
@@ -163,37 +161,37 @@ class _InfoUserState extends ConsumerState<InfoUser> {
 
       // 🔒 Bouton fixé en bas
       bottomNavigationBar: 
-      verrifRdv.when(
-        loading: ()=> SizedBox(
-          width: double.infinity,
-          child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,))
-        ),
+        verrifRdv.when(
+          loading: ()=> SizedBox(
+            width: double.infinity,
+            child: Center(child:const CircularProgressIndicator(strokeWidth: 3.0,))
+          ),
 
-        error: (error, stackTrace) {
-          if (error.toString().contains("unauthorized")) {
-            Future.microtask(() {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => LoginMobile()),
-              );
-            });
+          error: (error, stackTrace) {
+            if (error.toString().contains("unauthorized")) {
+              Future.microtask(() {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => LoginMobile()),
+                );
+              });
+            }
+            return Center(child: Text('Erreur : $error'));
+          },
+
+          data: (verrifRdv){
+            if (verrifRdv.isEmpty) {
+              return const Text("Aucune donnée disponible");
+            }
+
+            final _etaRdv = verrifRdv;
+            
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: _buildBottomButton(_etaRdv)
+            );
           }
-          return Center(child: Text('Erreur : $error'));
-        },
-
-        data: (verrifRdv){
-          if (verrifRdv.isEmpty) {
-            return const Text("Aucune donnée disponible");
-          }
-
-          final _etaRdv = verrifRdv;
-          
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: _buildBottomButton(_etaRdv)
-          );
-        }
-      ), 
+        ), 
 
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -337,12 +335,17 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                           ),
                         ),
                         const SizedBox(width: 10,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('Localisation du cabinet'),
-                            Text('Antananarivo - ${_apropos['addressCabinet']}'),
-                          ],
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: 180
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Localisation du cabinet'),
+                              Text('${_apropos['addressCabinet']}'),
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 10,),
                         GestureDetector(
@@ -368,15 +371,6 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                   ),
                   
 
-                  IconButton(
-                    onPressed: () => showBottomForm(), 
-                    icon: Icon(
-                      Icons.add,
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
-                    ), 
-                  ),
                 ],
               )
             ]) 

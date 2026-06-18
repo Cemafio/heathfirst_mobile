@@ -45,7 +45,9 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
         listDocAsync.when(
           loading: () => Container(
             margin: EdgeInsets.only(top: 100),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+              child: CircularProgressIndicator()
+            ),
           ),
 
           error: (err, state){
@@ -70,7 +72,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
           data: (list_D) {
 
             final docList = list_D;
-            print(docList[0]);
+            // print(docList[0]);
             // Ajouter les spécialités sans dupliquer
             for (var doc in docList) {
               final spec = (doc['speciality'] ?? doc['Speciality'])?.toString() ?? "";

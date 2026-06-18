@@ -8,6 +8,7 @@ import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
+import 'package:heathfirst_mobile/provider/doc_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
@@ -30,65 +31,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
 
   Future<void> _chercheFunction (String value) async{
+    ref.read(searchProvider.notifier).state = value; 
     print('✅ valeur entrer:'+ value);
-
-    Map<String, dynamic> buildDoctor(Map<String, dynamic> list) {
-      return {
-        'id': list['id'],
-        'name' : "${list['LastName']} ${list['FirstName']}",
-        'last_name' : list['LastName'],
-        'first_name' : list['FirstName'],
-        'speciality' : list['Specialty'],
-        'Address' : list['Address'],
-        'addressCabinet' : list['AddressCabinet'],
-        'photo_doc' : list['photoProfil'],
-        'phone' : list['phome'],
-        'email' : list['email'],
-      };
-    }
-
-    setState(() {
-      isLoaded = true;
-    });
-
-    List<dynamic> newList = [];
-    List<dynamic> listCherche = await recherche(value,'','',1, ref.read(baseUrl), ref.read(accessTokenProvider));
-    List<dynamic> listChercheAddress = await recherche('','',value,1,ref.read(baseUrl), ref.read(accessTokenProvider));
-    List<dynamic> listChercheSpeciality = await recherche('',value,'',1,ref.read(baseUrl), ref.read(accessTokenProvider));
-
-
-    if (listCherche.isEmpty) {
-
-      if(listChercheSpeciality.isNotEmpty){
-        for (var list in listChercheSpeciality) {
-          print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
-          newList.add(buildDoctor(list));
-        }
-      }else if(listChercheAddress.isNotEmpty){
-        for (var list in listChercheAddress) {
-          print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
-          newList.add(buildDoctor(list));
-        }
-      }
-    }else{
-      for (var list in listCherche) {
-        print("✅ (>_<) Profil rechercher : ${list['LastName']} ${list['FirstName']}");
-        newList.add(buildDoctor(list));
-      }
-    }
-
-    setState(() {
-      doc_cheched = newList;
-      isLoaded = false;
-    });
-    // else{
-    //   print('Auccun donner correspond a notre recherche');
-    // }
 
   }
 
   @override
   Widget build(BuildContext context) {
+    final resultChearch = ref.watch(filteredDoctorsProvider);
+    print("result => ${resultChearch}");
     return Scaffold(
       
       appBar: AppBar(
@@ -146,7 +97,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       ),
       backgroundColor: Color.fromARGB(255, 229, 229, 229),
       body: 
-        Container(
+        SizedBox(
           width: MediaQuery.of(context).size.width,
 
           child: SingleChildScrollView(
@@ -162,15 +113,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   ),
           
                 if(isLoaded == false)...[
-                  if(doc_cheched.isEmpty)
+                  if(resultChearch.isEmpty)
                   EmptyStateWidget(lottiName: 'empty_search',),
           
-                  if(doc_cheched.isNotEmpty)
+                  if(resultChearch.isNotEmpty)
                   ListView.builder(
-                    itemCount: doc_cheched.length,
+                    itemCount: resultChearch.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index){
-                      var doc = doc_cheched[index];
+                      var doc = resultChearch[index];
           
                       return GestureDetector(
                         onTap: () {
@@ -206,7 +157,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    doc_cheched[index]['name'],
+                                    resultChearch[index]['last_name'],
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
@@ -221,7 +172,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           size: 15),
                                           const SizedBox(width: 3),
                                       Text(
-                                        doc_cheched[index]['speciality'],
+                                        resultChearch[index]['speciality'],
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -238,7 +189,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                           size: 15),
                                           const SizedBox(width: 3),
                                       Text(
-                                        doc_cheched[index]['addressCabinet'],
+                                        resultChearch[index]['addressCabinet'],
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,

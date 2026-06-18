@@ -2,20 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
   
-class DocInscription extends StatefulWidget {
+class DocInscription extends ConsumerStatefulWidget {
   const DocInscription({super.key});
 
   @override
-  State<DocInscription> createState() => _DocInscriptionState();
+  ConsumerState<DocInscription> createState() => _DocInscriptionState();
 }
 
-class _DocInscriptionState extends State<DocInscription> {
+class _DocInscriptionState extends ConsumerState<DocInscription> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   File? _selectedImage;
@@ -36,7 +38,7 @@ class _DocInscriptionState extends State<DocInscription> {
 
 
   Future<void> inscriptionPatient(String nom,String prenom,String date_de_naissance,String photo,String sexe,String tel,String  ident, String pass, String adress, String roles, String speciality, String  adressCabinet) async {
-    final url = Uri.parse("http://172.25.69.28:8000/api/registration");
+    final url = Uri.parse("${ref.read(baseUrl)}/api/registration");
 
     var request = http.MultipartRequest("POST", url);
 
@@ -56,7 +58,7 @@ class _DocInscriptionState extends State<DocInscription> {
     // Fichier image
     request.files.add(await http.MultipartFile.fromPath(
       'photo_profil',
-      photo, // exemple: "/data/user/0/com.example.project_1/cache/temp.jpg"
+      photo,
     ));
     request.fields['Speciality'] = speciality;
 
@@ -64,12 +66,10 @@ class _DocInscriptionState extends State<DocInscription> {
     final responseData = await http.Response.fromStream(response);
 
     if(response.statusCode == 200){
-      // Inscription réussie
       print("✅ Utilisateur inscrit !  (>_<)");
       print(responseData.body);
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginMobile()));
     }else{
-      // Erreur (ex: validation)
       print("❌ Erreur : ${response.statusCode} (O_o)");
       print(responseData.body);
       throw Exception('Erreur lors de l’inscription  (O_o)');

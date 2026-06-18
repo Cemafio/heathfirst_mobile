@@ -273,6 +273,7 @@ class _ClientFormRdvState extends ConsumerState<ClientFormRdv> {
           
           const SizedBox(height: 20,),
           SimpelBtn(
+            t: 'Envoyer',
             isLoaded: isLoaded,
             
             action: () async {
