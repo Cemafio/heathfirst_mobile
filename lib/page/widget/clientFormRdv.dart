@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/widget/MyTextFieldWidget.dart';
 import 'package:heathfirst_mobile/page/widget/simple_btn.dart';
+import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/rdvProvider.dart';
+import 'package:heathfirst_mobile/provider/userProvider.dart';
+import 'package:heathfirst_mobile/service/data.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ClientFormRdv extends ConsumerStatefulWidget {
   // final List<DateTime> dates;
   // final DateTime selectedDay;
-  // final String selectedTime;
-  const ClientFormRdv({super.key});
+  final Map<String, dynamic> docInfo;
+  const ClientFormRdv({super.key, required this.docInfo});
 
   @override
   ConsumerState<ClientFormRdv> createState() => _ClientFormRdvState();
@@ -23,17 +26,32 @@ class _ClientFormRdvState extends ConsumerState<ClientFormRdv> {
   );
   DateTime selectedDay = DateTime.now();
   String selectedTime = '';
+  String errorTime = '';
+  String symptome = '';
+  bool isLoaded = false;
+  
+  final _formKey = GlobalKey<FormState>();
+
+  void changeValueFunction (String value, String type) {
+    setState(() {
+      symptome = value;
+    });
+    print(symptome);
+  }
 
   @override
   Widget build(BuildContext context) {
     final rdvAsync = ref.watch(rdvAsyncProvider);
+    final userDataStat = ref.watch(userDataStatic);
 
     return Container(
-      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.57,
+
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
 
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
@@ -127,12 +145,23 @@ class _ClientFormRdvState extends ConsumerState<ClientFormRdv> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                "Heurs",
+                "heurs",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
+              if(errorTime != '')...[
+                const SizedBox(width: 10,),
+                Text(
+                  "($errorTime)",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red
+                  ),
+                ),
+              ]
             ],
           ),
 
@@ -234,10 +263,66 @@ class _ClientFormRdvState extends ConsumerState<ClientFormRdv> {
           ),
 
           const SizedBox(height: 20,),
-          Mytextfieldwidget(label: 'Votre symptome', actionSaved: (){}),
+          Form(
+            key: _formKey,
+            child: Mytextfieldwidget(
+              label: 'Symptome', 
+              actionSaved: changeValueFunction
+            )
+          ),
           
           const SizedBox(height: 20,),
-          SimpelBtn(action: (){})
+          SimpelBtn(
+            isLoaded: isLoaded,
+            
+            action: () async {
+              if(selectedTime == ''){
+                setState(() {
+                  errorTime = "Veuillier choisir l'heur s'il vous plais";
+                });
+              }else{
+                setState(() {
+                  errorTime = "";
+                });
+              }
+
+              final isValide = _formKey.currentState!.validate();
+              _formKey.currentState!.save();
+
+              String date = "${selectedDay.year}-${selectedDay.month.toString().padLeft(2,'0')}-${selectedDay.day.toString().padLeft(2,'0')}";
+
+              if(isValide){
+                try {
+                  setState(() {
+                    isLoaded = true;
+                  });
+
+                  // print( " ${userDataStat.phone}");
+                  await takeAppointmentSimple(nom: ref.read(userDataStatic).firstname!,prenom: ref.read(userDataStatic).lastname!,birthday:  ref.read(userDataStatic).date_naissance!,sexe:  ref.read(userDataStatic).sexe!,tel:  userDataStat.phone!,email:  ref.read(userDataStatic).email!,address:  userDataStat.adress!,city:  userDataStat.adress!,hour:  selectedTime,date:  date, symptome:  symptome,idDoctor: widget.docInfo['id'], baseUrl: ref.watch(baseUrl), token: ref.read(accessTokenProvider));
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Rendez-vous envoyée')),
+                  );
+
+                  Navigator.pop(context, true);
+                  setState(() {
+                    symptome = '';
+                    selectedTime = '';
+                  });
+                } catch (e) {
+                  print(e);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erreur : ${e.toString()}')),
+                  );
+                }finally{
+                  setState(() {
+                    isLoaded = false;
+                  });
+                }
+              }
+
+            }
+          )
         ],
       ),
     );

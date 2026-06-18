@@ -142,8 +142,9 @@ class _InfoUserState extends ConsumerState<InfoUser> {
   void showBottomForm(){
     showModalBottomSheet(
       context: context, 
+       isScrollControlled: true, // IMPORTANT
       builder: (context){
-        return ClientFormRdv();
+        return ClientFormRdv(docInfo: _apropos,);
       }
     );
   }
@@ -255,6 +256,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                     ),
                   ),
               ],),
+
               Column(
                 children: [
                   Container(

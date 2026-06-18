@@ -30,12 +30,9 @@ class _MytextfieldwidgetState extends State<Mytextfieldwidget> {
             
               obscureText: widget.label == 'Password' && widget.obscuredText == true,
               
-              style: TextStyle(
-                color: Colors.white
-              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return "Enter your ${widget.label.toLowerCase()}";
+                  return "Entrer votre ${widget.label.toLowerCase()}";
                 }
             
                 return null;

@@ -76,11 +76,13 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
           roles: userData['roles'][0],
           email: userData['email'],
           adress: userData['adress'],
-          date_naissance: userData['Date_naissance']['date']
+          sexe: userData['sexe'],
+          date_naissance: userData['Date_naissance']['date'],
+          phone: userData['phone']
         );
 
         print("✅ Authentification réussie !");
-        // print(response.body);
+        print(ref.read(userDataStatic));
 
 
         setState(() {
@@ -241,7 +243,7 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
 
       children: [
-        const Text('HEALTH FIRST', style: TextStyle(
+        const Text('Healfy', style: TextStyle(
           color: Color(0xFF548856),
           fontWeight: FontWeight.bold,
           fontSize: 18,
