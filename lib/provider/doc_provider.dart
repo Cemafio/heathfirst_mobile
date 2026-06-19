@@ -7,7 +7,7 @@ final docAsyncProvider = FutureProvider(
   (ref) async {
     final token = ref.read(accessTokenProvider);
     final base_url = ref.read(baseUrl);
-    print('-----=[Doc async]=------ \n token: $token \n base url : $baseUrl');
+    print('-----=[Doc async]=------');
     
     return await fetchDataDoc(token: token, urlBase: base_url);
   }

@@ -44,7 +44,6 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
       children: [
         listDocAsync.when(
           loading: () {
-            print('Loading doc list ...');
             return Container(
               margin: EdgeInsets.only(top: 100),
               child: Center(
@@ -75,7 +74,6 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
           data: (list_D) {
 
             final docList = list_D;
-            print(docList[0]);
             // Ajouter les spécialités sans dupliquer
             for (var doc in docList) {
               final spec = (doc['speciality'] ?? doc['Speciality'])?.toString() ?? "";
@@ -218,7 +216,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.location_city_rounded,
+                                      Icons.location_on_outlined,
                                       color: Color(0xFF548856),
                                       size: 15
                                     ),
