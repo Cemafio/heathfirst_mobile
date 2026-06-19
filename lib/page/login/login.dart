@@ -243,7 +243,7 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
 
       children: [
-        const Text('Healfy', style: TextStyle(
+        const Text('Salma', style: TextStyle(
           color: Color(0xFF548856),
           fontWeight: FontWeight.bold,
           fontSize: 18,

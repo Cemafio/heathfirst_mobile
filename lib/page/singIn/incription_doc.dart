@@ -67,7 +67,7 @@ class _DocInscriptionState extends ConsumerState<DocInscription> {
 
     if(response.statusCode == 200){
       print("✅ Utilisateur inscrit !  (>_<)");
-      print(responseData.body);
+      // print(responseData.body);
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginMobile()));
     }else{
       print("❌ Erreur : ${response.statusCode} (O_o)");
@@ -128,11 +128,11 @@ class _DocInscriptionState extends ConsumerState<DocInscription> {
                       : Container(
                           width: 100,
                           height: 100,
-                          child: const Icon(Icons.camera_alt),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(50.w)),
                             color: Colors.grey[300],
                           ),
+                          child: const Icon(Icons.camera_alt),
                         ),
                 ),
                 const SizedBox(height: 10),

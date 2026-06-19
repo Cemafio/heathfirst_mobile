@@ -38,17 +38,20 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
 
   @override
   Widget build(BuildContext context) {
-    final listDocAsync = ref.read(docAsyncProvider); 
+    final listDocAsync = ref.watch(docAsyncProvider); 
 
     return Column(
       children: [
         listDocAsync.when(
-          loading: () => Container(
-            margin: EdgeInsets.only(top: 100),
-            child: Center(
-              child: CircularProgressIndicator()
-            ),
-          ),
+          loading: () {
+            print('Loading doc list ...');
+            return Container(
+              margin: EdgeInsets.only(top: 100),
+              child: Center(
+                child: CircularProgressIndicator()
+              ),
+            );
+          },
 
           error: (err, state){
               if (err.toString().contains("unauthorized")) {
@@ -72,7 +75,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
           data: (list_D) {
 
             final docList = list_D;
-            // print(docList[0]);
+            print(docList[0]);
             // Ajouter les spécialités sans dupliquer
             for (var doc in docList) {
               final spec = (doc['speciality'] ?? doc['Speciality'])?.toString() ?? "";
@@ -86,7 +89,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
               children: [
                 // ------------------------ FILTRE HORIZONTAL ------------------------
                 SizedBox(
-                  height: 35, // <---- FIX du bug !
+                  height: 35,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: categorie.length,
@@ -102,9 +105,11 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 300),
                           margin: const EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 5.0),
+                            vertical: 2.0, horizontal: 5.0
+                          ),
                           padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 7),
+                            vertical: 5, horizontal: 7
+                          ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: categorie[index]['choice'] as bool

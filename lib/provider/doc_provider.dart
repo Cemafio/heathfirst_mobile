@@ -7,6 +7,7 @@ final docAsyncProvider = FutureProvider(
   (ref) async {
     final token = ref.read(accessTokenProvider);
     final base_url = ref.read(baseUrl);
+    print('-----=[Doc async]=------ \n token: $token \n base url : $baseUrl');
     
     return await fetchDataDoc(token: token, urlBase: base_url);
   }
@@ -15,9 +16,7 @@ final docAsyncProvider = FutureProvider(
 final searchProvider = StateProvider<String>((ref) => '');
 
 final filteredDoctorsProvider = Provider((ref){
-
    final doctors = ref.watch(docAsyncProvider).value ?? [];
-
    final query = ref.watch(searchProvider).toLowerCase();
 
    return doctors.where((doc){

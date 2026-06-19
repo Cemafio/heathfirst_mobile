@@ -181,7 +181,7 @@ class _HomepageState extends ConsumerState<HomePage> {
                       ),
                     ),
                     const Text(
-                      'Health First',
+                      'Salma',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
@@ -210,7 +210,9 @@ class _HomepageState extends ConsumerState<HomePage> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height - 300,
 
-                child: ref.watch(userDataStatic).roles == 'ROLE_PATIENT'? ListDocSection(listDoc: _listDoc) : Acceuildoc()
+                child: ref.watch(userDataStatic).roles == 'ROLE_PATIENT'
+                  ? ListDocSection(listDoc: _listDoc) 
+                  : Acceuildoc()
               ),
               
             ],
