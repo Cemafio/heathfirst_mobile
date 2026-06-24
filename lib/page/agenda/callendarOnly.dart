@@ -94,7 +94,7 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
       };
       // });
     }else{
-      print('Pas de jours feré');
+      // print('Pas de jours feré');
       setState(() {
         isMarkedRealyEmpty = true;
       });
@@ -126,158 +126,157 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
   Widget build(BuildContext context) {
     final _dayNoWorkAsync = ref.watch(daysNoWorkAsync);
     return _dayNoWorkAsync.when(
-      loading: () => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))
-      ), 
+      loading: () {
+        // print();
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))
+        );
+      }, 
+
       error: (error, stackTrace) => Text('Erreur de chargement, $error'),
       
       data: (dayNoWrk){
-        return _markedDays.isNotEmpty
-        ? Column(
+        return Column(
+          children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () => showBottomForm(), 
-                  icon: Icon(
-                    isdaySelectedMarked ? Icons.delete_outline_outlined : Icons.add,
-                    color: isdaySelectedMarked ? Colors.red : null,
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
-                  ), 
+              IconButton(
+                onPressed: () => showBottomForm(), 
+                icon: Icon(
+                  isdaySelectedMarked ? Icons.delete_outline_outlined : Icons.add,
+                  color: isdaySelectedMarked ? Colors.red : null,
                 ),
-              ],
-            ),
-            const SizedBox(height: 10,),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromARGB(0, 255, 255, 255)
-                ),
-              
-                child:  
-                  Stack(
-                    children: [
-                      AbsorbPointer(
-                        absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
-                        child: TableCalendar(
-                          locale: 'en_US',
-                          rowHeight: height,
-                          headerStyle: HeaderStyle(
-                            formatButtonVisible: false,
-                            titleCentered: true,
-                          ),
-                          focusedDay: dayNow,
-                          firstDay: DateTime.utc(2000, 1, 1),
-                          lastDay: DateTime.utc(2030, 1, 30),
-                          selectedDayPredicate: (day) => isSameDay(day, dayNow),
-                          calendarBuilders: CalendarBuilders(
-                            defaultBuilder: (context, day, focusedDay) {
-                              if (_markedDays.isNotEmpty) {
-                                final isMarked = _markedDays.any((d) => isSameDay(d, day));
-                                if (isMarked) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
+                ), 
+              ),
+            ],
+          ),
+          const SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(0, 255, 255, 255)
+              ),
+            
+              child:  
+                Stack(
+                  children: [
+                    AbsorbPointer(
+                      absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
+                      child: TableCalendar(
+                        locale: 'en_US',
+                        rowHeight: height,
+                        headerStyle: HeaderStyle(
+                          formatButtonVisible: false,
+                          titleCentered: true,
+                        ),
+                        focusedDay: dayNow,
+                        firstDay: DateTime.utc(2000, 1, 1),
+                        lastDay: DateTime.utc(2030, 1, 30),
+                        selectedDayPredicate: (day) => isSameDay(day, dayNow),
+                        calendarBuilders: CalendarBuilders(
+                          defaultBuilder: (context, day, focusedDay) {
+                            if (_markedDays.isNotEmpty) {
+                              final isMarked = _markedDays.any((d) => isSameDay(d, day));
+                              if (isMarked) {
+                                return Container(
+                                  margin: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${day.day}',
+                                      style: const TextStyle(color: Colors.white),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        '${day.day}',
-                                        style: const TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  );
-                                }
+                                  ),
+                                );
                               }
-                              return null;
-                            },
-                          ),
-                          onDaySelected: (selectedDay, focusedDay) {
-                            if (isLoaded || isLoadedDel) return;
-              
-                            setState(() {
-                              dayNow = selectedDay;
-                              if (_markedDays.isNotEmpty) {
-                                final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
-                                if (isdayMarked) {
-                                  // print('${dayNoWrk[2]['date'].split('T')[0]} et selected day= ${selectedDay.toString().split(' ')[0]}');
-                                  isdaySelectedMarked = true;
-                                  _reasonController = TextEditingController(text: dayNoWrk
-                                    .where(
-                                      (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
-                                    ).toList()[0]['reason']
-                                    .toString());
-                                } else {
-                                  isdaySelectedMarked = false;
-                                  _reasonController = TextEditingController();
-                                }
-                              }
-                            });
+                            }
+                            return null;
                           },
-                          eventLoader: _getEventsForDay,
                         ),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          if (isLoaded || isLoadedDel) return;
+            
+                          setState(() {
+                            dayNow = selectedDay;
+                            if (_markedDays.isNotEmpty) {
+                              final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
+                              if (isdayMarked) {
+                                // print('${dayNoWrk[2]['date'].split('T')[0]} et selected day= ${selectedDay.toString().split(' ')[0]}');
+                                isdaySelectedMarked = true;
+                                _reasonController = TextEditingController(text: dayNoWrk
+                                  .where(
+                                    (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
+                                  ).toList()[0]['reason']
+                                  .toString());
+                              } else {
+                                isdaySelectedMarked = false;
+                                _reasonController = TextEditingController();
+                              }
+                            }
+                          });
+                        },
+                        eventLoader: _getEventsForDay,
                       ),
-                  ],
-                  )
-                ),
-
-                const SizedBox(height: 10,),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  width: double.infinity,
-
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 241, 241, 241),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.black26)
                     ),
-                  child: Column(
-                    children: [
-                      if(_getEventsForDay(dayNow).isEmpty)
-                        const Text("Aucun planing trouver", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black54),),
-                      
-                      if(_getEventsForDay(dayNow).isNotEmpty)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text("Programe du ${dayNow.day} ${months[dayNow.month]}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
-                          ],
-                        ),
+                ],
+                )
+              ),
+
+              const SizedBox(height: 10,),
+              Container(
+                padding: const EdgeInsets.all(20),
+                width: double.infinity,
+
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 241, 241, 241),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.black26)
+                  ),
+                child: Column(
+                  children: [
+                    if(_getEventsForDay(dayNow).isEmpty)
+                      const Text("Aucun planing trouver", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black54),),
                     
                     if(_getEventsForDay(dayNow).isNotEmpty)
-                      const SizedBox(height: 20,),
-                      ..._getEventsForDay(dayNow).map(
-                        (event) => Row(
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
-                                const SizedBox(width: 10,),
-                                Text(
-                                  event,
-                                style: const TextStyle(
-                                  fontSize: 15
-                                ),),
-                              ],
-                            )
-                          ],
-                        )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("Programe du ${dayNow.day} ${months[dayNow.month]}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
+                        ],
                       ),
-                  ],
-                ) ,
-              ),
-              const SizedBox(height: 10,),
-                
-            ],
-          )
-        : Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(70), child: const Center(child:CircularProgressIndicator(strokeWidth: 3.0,))
+                  
+                  if(_getEventsForDay(dayNow).isNotEmpty)
+                    const SizedBox(height: 20,),
+                    ..._getEventsForDay(dayNow).map(
+                      (event) => Row(
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
+                              const SizedBox(width: 10,),
+                              Text(
+                                event,
+                              style: const TextStyle(
+                                fontSize: 15
+                              ),),
+                            ],
+                          )
+                        ],
+                      )
+                    ),
+                ],
+              ) ,
+            ),
+            const SizedBox(height: 10,),
+              
+          ],
         );
       }
     );

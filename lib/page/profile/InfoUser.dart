@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heathfirst_mobile/page/appointment/take_appointment.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/page/map/googlemap.dart';
+import 'package:heathfirst_mobile/page/widget/badge_premiume.dart';
 import 'package:heathfirst_mobile/page/widget/clientFormRdv.dart';
 import 'package:heathfirst_mobile/page/widget/expanded_widget.dart';
 import 'package:heathfirst_mobile/page/widget/simple_btn.dart';
@@ -161,37 +162,40 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 150,
                     padding: const EdgeInsets.all(10),
 
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
 
                         // Photo
-                        Container(
-                          width: 110,
-                          height: 130,
-
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              width: 1,
-                              color: const Color(0xFF81C784),
-                            ),
-
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 15,
-                                offset: Offset(0, 5),
-                                color: Colors.black12,
-                              )
-                            ],
-
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                "${ref.watch(baseUrl)}/images/photos/${_apropos['photo_doc']}",
+                        Hero(
+                          tag: 'ProfilDoc',
+                          child: Container(
+                            width: 110,
+                            height: 130,
+                          
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                width: 1,
+                                color: const Color(0xFF81C784),
                               ),
-                              fit: BoxFit.cover,
+                          
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  color: Colors.black12,
+                                )
+                              ],
+                          
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  "${ref.watch(baseUrl)}/images/photos/${_apropos['photo_doc']}",
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -245,6 +249,25 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                               const SizedBox(height: 6),
                               Row(
                                 children: [
+                                  const Icon(
+                                    Icons.work_outline,
+                                    size: 18,
+                                    color: Color(0xFF548856),
+                                  ),
+
+                                  const SizedBox(width: 5),
+
+                                 Text(
+                                    _apropos['experience'] != null
+                                      ? "${_apropos['experience']} ans d'expérience"
+                                      : "Expérience non renseignée",
+                                  )
+                                ],
+                              ),
+
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
                                   Icon(
                                     Icons.star,
                                     size: 16,
@@ -282,6 +305,9 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                                   ),
                                 ],
                               ),
+
+                              const SizedBox(height: 5),
+                              PremiumBadge()
                             ],
                           ),
                         ),
@@ -292,6 +318,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                   
                 ]
               ),
+
               const SizedBox(height: 6,),
               Row(
                 children: [

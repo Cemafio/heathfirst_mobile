@@ -47,8 +47,8 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'email': email,
-          'password': pass,
+          "email": email,
+          "password": pass,
         }),
       ).timeout(Duration(seconds: 20));
 

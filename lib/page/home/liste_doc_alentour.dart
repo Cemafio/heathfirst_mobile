@@ -172,14 +172,17 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
 
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.network(
-                                  "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
-                                  fit: BoxFit.cover,
+                            Hero(
+                              tag: 'ProfilDoc',
+                              child: SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(
+                                    "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
