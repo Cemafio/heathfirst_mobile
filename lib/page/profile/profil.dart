@@ -124,51 +124,78 @@ class _ProfilSectionState extends ConsumerState<ProfilSection> {
                       Positioned(
                         bottom: -70,
                         left: 130,
-                        child: (user.profil != '')
-                          ? Container(
-                            width: 130,
-                            height: 130,
-                            margin: const EdgeInsets.only(bottom: 5),
+                        child: Container(
+                          width: 130,
+                          height: 130,
+                          margin: const EdgeInsets.only(bottom: 5),
 
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                width: sqrt1_2,
-                                color: const Color(0xFF81C784),
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${user.profil}"),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                          : Container(
-                            width: 130,
-                            height: 130,
-                            margin: const EdgeInsets.only(bottom: 5),
-
-                            decoration: BoxDecoration(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF81C784),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              width: sqrt1_2,
                               color: const Color(0xFF81C784),
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                width: sqrt1_2,
-                                color: const Color(0xFF81C784),
-                              ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  user.lastname.toString().uperFirstChart(),
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                )
-                              ],
-                            ),
+                          ),
+
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                user.lastname.toString().uperFirstChart(),
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        // (user.profil != '')
+                        //   ? Container(
+                        //     width: 130,
+                        //     height: 130,
+                        //     margin: const EdgeInsets.only(bottom: 5),
+
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(100),
+                        //       border: Border.all(
+                        //         width: sqrt1_2,
+                        //         color: const Color(0xFF81C784),
+                        //       ),
+                        //       image: DecorationImage(
+                        //         image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${user.profil}"),
+                        //         fit: BoxFit.cover,
+                        //       ),
+                        //     ),
+                        //   )
+                        //   : Container(
+                        //     width: 130,
+                        //     height: 130,
+                        //     margin: const EdgeInsets.only(bottom: 5),
+
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFF81C784),
+                        //       borderRadius: BorderRadius.circular(100),
+                        //       border: Border.all(
+                        //         width: sqrt1_2,
+                        //         color: const Color(0xFF81C784),
+                        //       ),
+                        //     ),
+                        //     child: Column(
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       children: [
+                        //         Text(
+                        //           user.lastname.toString().uperFirstChart(),
+                        //           style: TextStyle(
+                        //             fontSize: 30,
+                        //             fontWeight: FontWeight.bold
+                        //           ),
+                        //         )
+                        //       ],
+                        //     ),
                             
-                          )
+                        //   )
                       ),
                       Positioned(
                         top: 40,

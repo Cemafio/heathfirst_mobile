@@ -112,6 +112,11 @@ class _HomepageState extends ConsumerState<HomePage> {
     Widget build(BuildContext context) {
     final _userDataAsync = ref.watch(user_data);
     final _userDataStatic = ref.watch(userDataStatic);
+    final profil = ref.watch(userDataStatic).profil;
+
+    final hasPhoto = profil != null &&
+        profil.toString().trim().isNotEmpty &&
+        profil.toString() != 'null';
 
     return Scaffold(
       // backgroundColor: Color.fromARGB(255, 237, 237, 237),
@@ -239,28 +244,11 @@ class _HomepageState extends ConsumerState<HomePage> {
                 children:[
                   GestureDetector(
                     onTap:(){
+                      //  print(profil);
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ProfilSection()));
                     },
 
-                    child: (ref.watch(userDataStatic).profil != null)
-                    ? Container(
-                        width: 80,
-                        height: 80,
-                        margin: const EdgeInsets.only(bottom: 5),
-
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            width: sqrt1_2,
-                            color: const Color(0xFF81C784),
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${_userDataStatic.profil}'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      )
-                    : Container(
+                    child: Container(
                       width: 80,
                       height: 80,
                       margin: const EdgeInsets.only(bottom: 5),
@@ -287,6 +275,26 @@ class _HomepageState extends ConsumerState<HomePage> {
                         ],
                       ),
                     ),
+                    // (hasPhoto)
+                    // ? Container(
+                    //     width: 80,
+                    //     height: 80,
+                    //     margin: const EdgeInsets.only(bottom: 5),
+
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(100),
+                    //       border: Border.all(
+                    //         width: sqrt1_2,
+                    //         color: const Color(0xFF81C784),
+                    //       ),
+                    //       image: DecorationImage(
+                    //         image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${_userDataStatic.profil}'),
+                    //         fit: BoxFit.cover,
+                    //       ),
+                    //     ),
+                    //   )
+                    // : 
+                    
                   ),
               
                   const SizedBox(width: 5,),

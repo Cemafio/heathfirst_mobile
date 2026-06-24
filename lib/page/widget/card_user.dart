@@ -70,25 +70,26 @@ class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-        (widget.photo != '')
-          ? Container(
-              width: 80,
-              height: 80,
-              margin: const EdgeInsets.only(bottom: 5),
+        // (widget.photo != '')
+        //   ? Container(
+        //       width: 80,
+        //       height: 80,
+        //       margin: const EdgeInsets.only(bottom: 5),
 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(
-                  width: sqrt1_2,
-                  color: const Color(0xFF81C784),
-                ),
-                image: DecorationImage(
-                  image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${widget.photo}'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            )
-          : Container(
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(100),
+        //         border: Border.all(
+        //           width: sqrt1_2,
+        //           color: const Color(0xFF81C784),
+        //         ),
+        //         image: DecorationImage(
+        //           image: NetworkImage('${ref.watch(baseUrl)}/images/photos/${widget.photo}'),
+        //           fit: BoxFit.cover,
+        //         ),
+        //       ),
+        //     )
+        //   : 
+          Container(
             width: 80,
             height: 80,
             margin: const EdgeInsets.only(bottom: 5),
