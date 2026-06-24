@@ -114,32 +114,31 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
           children: [
             
             const SizedBox(height: 80),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _selectedImage != null
-                      ? ClipOval(child:Image.file(_selectedImage!, width: 100, height: 100, fit: BoxFit.cover))
-                      : (_networkImageUrl != null)
-                        ? ClipOval(child: Image.network(_networkImageUrl!,width: 100,height: 100,fit: BoxFit.cover))
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     GestureDetector(
+            //       onTap: _pickImage,
+            //       child: _selectedImage != null
+            //           ? ClipOval(child:Image.file(_selectedImage!, width: 100, height: 100, fit: BoxFit.cover))
+            //           : (_networkImageUrl != null)
+            //             ? ClipOval(child: Image.network(_networkImageUrl!,width: 100,height: 100,fit: BoxFit.cover))
                         
-                        : Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(50.w)),
-                            color: Colors.grey[300],
-                          ),
+            //             : Container(
+            //               width: 100,
+            //               height: 100,
+            //               decoration: BoxDecoration(
+            //                 borderRadius: BorderRadius.all(Radius.circular(50.w)),
+            //                 color: Colors.grey[300],
+            //               ),
   
-                          child: const Icon(Icons.camera_alt),
-                        ),
-                ),
-                const SizedBox(height: 10),
-                const Text('Photo de profil'),
-              ],
-            ),
-            const SizedBox(height: 30,),
+            //               child: const Icon(Icons.camera_alt),
+            //             ),
+            //     ),
+            //     const SizedBox(height: 10),
+            //     const Text('Photo de profil'),
+            //   ],
+            // ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 50.w),
               child: Form(
@@ -267,21 +266,21 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                     //   onSaved: (newValue) => _adress_cabinet = newValue!,
                     // ),
 
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _specialityController,
-                      decoration: const InputDecoration(
-                        labelText: 'Votre Specialiter',
-                        prefixIcon: Icon(Icons.folder_special_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre specialité';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _speciality = newValue!,
-                    ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _specialityController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Votre Specialiter',
+                    //     prefixIcon: Icon(Icons.folder_special_outlined),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre specialité';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _speciality = newValue!,
+                    // ),
 
                     // const SizedBox(height: 30),
                     // TextFormField(
@@ -315,10 +314,14 @@ class _EditprofilDocState extends ConsumerState<EditprofilDoc> {
                             _formKey.currentState!.save();
                             try {
                               print("Donner envoyer: ${ref.watch(userDataStatic).id},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress,$_speciality, $_adress_cabinet");
-                              await editProfilDoc( ref.watch(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _adress,_speciality, _adress_cabinet,'doctor');
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   SnackBar(content: Text('Profil mis à jour !')),
-                              // );
+                              await editProfilDoc( ref.watch(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel,_identifiant, _adress,_speciality, _adress_cabinet,'doctor', ref.read(accessTokenProvider), ref.read(baseUrl));
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Profil mis à jour !')),
+                              );
+                              
+                              ref.refresh(user_data);
+                              
                               Navigator.pop(context, true);
                             } catch (e) {
                               print(e);

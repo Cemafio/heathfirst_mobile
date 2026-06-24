@@ -72,13 +72,12 @@ class _SimpelBtnState extends State<SimpelBtn> {
                   fontSize: widget.sizetx ?? 13,
                 ),
               )
-              :
-              SizedBox(
+              : SizedBox(
                 height: 20,
                 width: 20,
                 child: Center(
                   child: CircularProgressIndicator(
-                    color: Colors.white,
+                    color: Color(0xFF548856),
                     strokeWidth: 2,
                   ),
                 ),

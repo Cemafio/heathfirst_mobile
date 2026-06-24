@@ -10,8 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ClientFormRdv extends ConsumerStatefulWidget {
-  // final List<DateTime> dates;
-  // final DateTime selectedDay;
   final Map<String, dynamic> docInfo;
   const ClientFormRdv({super.key, required this.docInfo});
 
@@ -310,6 +308,8 @@ class _ClientFormRdvState extends ConsumerState<ClientFormRdv> {
                     symptome = '';
                     selectedTime = '';
                   });
+                  ref.refresh(verrifRdvAsync);
+
                 } catch (e) {
                   print(e);
                   ScaffoldMessenger.of(context).showSnackBar(

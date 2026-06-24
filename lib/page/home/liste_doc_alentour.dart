@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
@@ -5,8 +7,10 @@ import 'package:heathfirst_mobile/page/profile/InfoUser.dart';
 import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/doc_provider.dart';
+import 'package:heathfirst_mobile/utils/string_extension.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/service/data.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ListDocSection extends ConsumerStatefulWidget {
   final Future<List<dynamic>> listDoc;
@@ -174,17 +178,41 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                           children: [
                             Hero(
                               tag: 'ProfilDoc',
-                              child: SizedBox(
+                              child: Container(
                                 width: 80,
                                 height: 80,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.network(
-                                    "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
-                                    fit: BoxFit.cover,
+                                margin: const EdgeInsets.only(bottom: 5),
+
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF81C784),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    width: sqrt1_2,
+                                    color: const Color(0xFF81C784),
                                   ),
                                 ),
+
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    HugeIcon(
+                                      icon: HugeIcons.strokeRoundedDoctor01,
+                                      size: 30,
+                                    ),
+                                  ],
+                                ),
                               ),
+                                // SizedBox(
+                                //   width: 80,
+                                //   height: 80,
+                                //   child: ClipRRect(
+                                //     borderRadius: BorderRadius.circular(50),
+                                //     child: Image.network(
+                                //       "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
+                                //       fit: BoxFit.cover,
+                                //     ),
+                                //   ),
+                                // ),
                             ),
                             const SizedBox(width: 20),
                             Column(

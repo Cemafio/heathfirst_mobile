@@ -279,6 +279,7 @@ Future<void> takeAppointmentSimple({
     print("❌ Erreur (${response.statusCode}) : ${response.body}");
   }
 }
+
 Future<void> takeAppointment({required int docId, required String symptome, required DateTime date, required String hour, required int idDoc, required int patientid, required String token, required String baseUrl}) async{
   final url = Uri.parse('$baseUrl/api/validate/get_appointement');
   print('Date => ${date.toIso8601String().split(' ')[0]}');
@@ -308,6 +309,7 @@ Future<void> takeAppointment({required int docId, required String symptome, requ
     throw Exception("❌ ${response.statusCode} ${response.body}  (O_o)");
   }  
 }
+
 Future<Map<String, dynamic>> verrifAppointment({required int idDoc, required int patientId, required String baseUrl, required String token}) async {
   final url = Uri.parse("$baseUrl/api/verrifRdvExist");
 
@@ -336,10 +338,9 @@ Future<Map<String, dynamic>> verrifAppointment({required int idDoc, required int
     throw Exception("❌ Erreur to verrif this appointment: status ${response.statusCode} ${response.body}  (O_o)");
   }
 }
-Future<void> editProfil(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles) async {
+
+Future<void> editProfil(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String ant_medoc,String allergie,String  ident, String adress, String medoc_en_cours, String roles, String token, String baseUrl) async {
   final url = Uri.parse("$baseUrl/api/edit_profil");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
   var request = http.MultipartRequest("POST", url);
 
   request.fields['id'] = id.toString();
@@ -382,10 +383,9 @@ Future<void> editProfil(int id, String nom,String prenom,String date_de_naissanc
     throw Exception("❌ ${response.statusCode} ${responseData.body}  (O_o)");
   }
 }
-Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles) async {
+
+Future<void> editProfilDoc(int id, String nom,String prenom,String date_de_naissance,String? photo,String sexe,String tel,String  ident, String adress,String speciality, String  adressCabinet ,String roles, String token, String baseUrl) async {
   final url = Uri.parse("$baseUrl/api/edit_profil");
-  final pers = await SharedPreferences.getInstance();
-  final token = pers.getString('token');
 
   var request = http.MultipartRequest("POST", url);
 

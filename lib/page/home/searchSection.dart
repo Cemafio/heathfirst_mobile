@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +11,7 @@ import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/doc_provider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   final Future<List<dynamic>> listDoc;
@@ -139,18 +141,43 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(
+                              Container(
                                 width: 65,
                                 height: 65,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.network(
-                                    "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
-                                    fit: BoxFit.cover,
+
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF81C784),
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(
+                                    width: sqrt1_2,
+                                    color: const Color(0xFF81C784),
                                   ),
                                 ),
+
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    HugeIcon(
+                                      icon: HugeIcons.strokeRoundedDoctor01,
+                                      size: 30,
+                                    ),
+                                  ],
+                                ),
                               ),
+                              // SizedBox(
+                              //   width: 65,
+                              //   height: 65,
+                              //   child: ClipRRect(
+                              //     borderRadius: BorderRadius.circular(50),
+                              //     child: Image.network(
+                              //       "${ref.watch(baseUrl)}/images/photos/${doc['photo_doc']}",
+                              //       fit: BoxFit.cover,
+                              //     ),
+                              //   ),
+                              // ),
                               const SizedBox(width: 20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +208,6 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                       )
                                     ],
                                   ),
-                                  SizedBox(height: 0),
                                   Row(
                                     children: [
                                       Icon(Icons.location_city_rounded,

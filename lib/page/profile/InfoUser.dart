@@ -73,7 +73,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
       'accepted': {
         'text': 'Accepté',
         'color': const Color.fromARGB(255, 139, 195, 74),
-        'borderColor': Color.fromARGB(0, 101, 133, 102),
+        'borderColor': const Color.fromARGB(255, 139, 195, 74),
       },
       'refused': {
         'text': 'Refusé',
@@ -91,10 +91,12 @@ class _InfoUserState extends ConsumerState<InfoUser> {
     final existe = state['existe'];
     final response = state['response'];
     final item = buttons[response] ?? buttons['none']!;
+    print(existe);
 
     return SimpelBtn(
-      // h: 60,
-      w: 170,
+      h: 40,
+      w: 200,
+      r: 15,
       t: item['text']??'vide',
       txc: item['color']??Colors.red,
       st: item['borderColor'],
@@ -137,7 +139,7 @@ class _InfoUserState extends ConsumerState<InfoUser> {
       context: context, 
        isScrollControlled: true, // IMPORTANT
       builder: (context){
-        return ClientFormRdv(docInfo: _apropos,);
+        return ClientFormRdv(docInfo: _apropos);
       }
     );
   }
@@ -174,31 +176,55 @@ class _InfoUserState extends ConsumerState<InfoUser> {
                           child: Container(
                             width: 110,
                             height: 130,
-                          
+                            margin: const EdgeInsets.only(bottom: 5),
+
                             decoration: BoxDecoration(
+                              color: const Color(0xFF81C784),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                width: 1,
+                                width: sqrt1_2,
                                 color: const Color(0xFF81C784),
                               ),
-                          
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  color: Colors.black12,
-                                )
-                              ],
-                          
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  "${ref.watch(baseUrl)}/images/photos/${_apropos['photo_doc']}",
-                                ),
-                                fit: BoxFit.cover,
-                              ),
                             ),
+
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                HugeIcon(
+                                  icon: HugeIcons.strokeRoundedDoctor01,
+                                  size: 30,
+                                ),
+                              ],
+                            ),
+                          )
+                            // Container(
+                            //   width: 110,
+                            //   height: 130,
+                            
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(20),
+                            //     border: Border.all(
+                            //       width: 1,
+                            //       color: const Color(0xFF81C784),
+                            //     ),
+                            
+                            //     boxShadow: [
+                            //       BoxShadow(
+                            //         blurRadius: 15,
+                            //         offset: Offset(0, 5),
+                            //         color: Colors.black12,
+                            //       )
+                            //     ],
+                            
+                            //     image: DecorationImage(
+                            //       image: NetworkImage(
+                            //         "${ref.watch(baseUrl)}/images/photos/${_apropos['photo_doc']}",
+                            //       ),
+                            //       fit: BoxFit.cover,
+                            //     ),
+                            //   ),
+                            // ),
                           ),
-                        ),
 
                         const SizedBox(width: 20),
 

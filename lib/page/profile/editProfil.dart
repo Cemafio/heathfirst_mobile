@@ -112,45 +112,45 @@ class _EditprofilState extends ConsumerState<Editprofil> {
           children: [
             
             const SizedBox(height: 30),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _selectedImage != null
-                      ? ClipOval(
-                          child:Image.file(
-                            _selectedImage!, 
-                            width: 100, 
-                            height: 100, 
-                            fit: BoxFit.cover
-                          )
-                        )
-                      : (_photo != '')
-                        ? ClipOval(
-                            child: Image.network(
-                              _networkImageUrl!,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover
-                            )
-                          )
-                        : Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(50.w)),
-                            color: Colors.grey[300],
-                          ),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     GestureDetector(
+            //       onTap: _pickImage,
+            //       child: _selectedImage != null
+            //           ? ClipOval(
+            //               child:Image.file(
+            //                 _selectedImage!, 
+            //                 width: 100, 
+            //                 height: 100, 
+            //                 fit: BoxFit.cover
+            //               )
+            //             )
+            //           : (_photo != '')
+            //             ? ClipOval(
+            //                 child: Image.network(
+            //                   _networkImageUrl!,
+            //                   width: 100,
+            //                   height: 100,
+            //                   fit: BoxFit.cover
+            //                 )
+            //               )
+            //             : Container(
+            //               width: 100,
+            //               height: 100,
+            //               decoration: BoxDecoration(
+            //                 borderRadius: BorderRadius.all(Radius.circular(50.w)),
+            //                 color: Colors.grey[300],
+            //               ),
   
-                          child: const Icon(Icons.camera_alt),
-                        ),
-                ),
-                const SizedBox(height: 10),
-                const Text('Photo de profil'),
-              ],
-            ),
-            const SizedBox(height: 30,),
+            //               child: const Icon(Icons.camera_alt),
+            //             ),
+            //     ),
+            //     const SizedBox(height: 10),
+            //     const Text('Photo de profil'),
+            //   ],
+            // ),
+            // const SizedBox(height: 30,),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 50.w),
               child: Form(
@@ -244,51 +244,51 @@ class _EditprofilState extends ConsumerState<Editprofil> {
                     //   },
                     //   onSaved: (newValue) => _tel = newValue!,
                     // ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _antecMedocController,
-                      decoration: const InputDecoration(
-                        labelText: 'Antecedant medicament',
-                        prefixIcon: Icon(Icons.local_pharmacy),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre Votre anetecedant medoc';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _ant_medoc = newValue!,
-                    ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _alegieController,
-                      decoration: const InputDecoration(
-                        labelText: 'Alergie',
-                        prefixIcon: Icon(Icons.warning_amber),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre alergie';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _allergie = newValue!,
-                    ),
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: _medocController,
-                      decoration: const InputDecoration(
-                        labelText: 'Medicament en cours',
-                        prefixIcon: Icon(Icons.medical_information),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre medicament en cours';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _medoc_en_cours = newValue!,
-                    ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _antecMedocController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Antecedant medicament',
+                    //     prefixIcon: Icon(Icons.local_pharmacy),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre Votre anetecedant medoc';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _ant_medoc = newValue!,
+                    // ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _alegieController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Alergie',
+                    //     prefixIcon: Icon(Icons.warning_amber),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre alergie';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _allergie = newValue!,
+                    // ),
+                    // const SizedBox(height: 30),
+                    // TextFormField(
+                    //   controller: _medocController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Medicament en cours',
+                    //     prefixIcon: Icon(Icons.medical_information),
+                    //   ),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Veuillez entrer votre medicament en cours';
+                    //     }
+                    //     return null;
+                    //   },
+                    //   onSaved: (newValue) => _medoc_en_cours = newValue!,
+                    // ),
                     
                     const SizedBox(height: 30),
                     TextFormField(
@@ -336,12 +336,15 @@ class _EditprofilState extends ConsumerState<Editprofil> {
                           if (isValide) {
                             _formKey.currentState!.save();
                             try {
+                              print("Donner envoyer: ${ref.watch(userDataStatic).id},$_nom,$_prenom, $_date_de_naissance, $_photo, $_sexe, $_tel, $_identifiant, $_adress");
 
-                              await editProfil( ref.read(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client');
+                              await editProfil( ref.read(userDataStatic).id!,_nom,_prenom, _date_de_naissance, _photo, _sexe, _tel, _ant_medoc, _allergie,_identifiant, _adress,_medoc_en_cours,'client',ref.read(accessTokenProvider), ref.read(baseUrl));
                               
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Profil mis à jour !')),
                               );
+                              ref.refresh(user_data);
+                              
                               Navigator.pop(context, true);
                             } catch (e) {
                               print(e);
