@@ -266,7 +266,6 @@ class _ProfilSectionState extends ConsumerState<ProfilSection> {
                                 child: InkWell(
                                   onTap: (){
                                     _openEditProfil();
-                                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) => (infoUser['roles'][0] == 'ROLE_PATIENT') ?Editprofil(infoUser: infoUser,) :EditprofilDoc(infoUser: infoUser)));
                                   },
                                   child: 
                                     Container(

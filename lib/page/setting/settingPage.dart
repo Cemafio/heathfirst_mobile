@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +11,7 @@ import 'package:heathfirst_mobile/page/setting/aboutApp.dart';
 import 'package:heathfirst_mobile/page/setting/security.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
+import 'package:heathfirst_mobile/utils/string_extension.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -117,26 +120,53 @@ class _SettingpageState extends ConsumerState<Settingpage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
+                    
+                    SizedBox(
                       // width: 300,
                       child: Row(children: [
                         Container(
                           width: 60,
                           height: 60,
-                          margin: const EdgeInsets.only(bottom: 5),
-
+                        
                           decoration: BoxDecoration(
+                            color: const Color(0xFF81C784),
                             borderRadius: BorderRadius.circular(100),
                             border: Border.all(
-                              width: 2,
-                              color: Colors.black26,
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${userStatic.profil}"),
-                              fit: BoxFit.cover,
+                              width: sqrt1_2,
+                              color: const Color(0xFF81C784),
                             ),
                           ),
+                        
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                userStatic.lastname.toString().uperFirstChart(),
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              )
+                            ],
+                          ),
                         ),
+                        // Container(
+                        //   width: 60,
+                        //   height: 60,
+                        //   margin: const EdgeInsets.only(bottom: 5),
+
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(100),
+                        //     border: Border.all(
+                        //       width: 2,
+                        //       color: Colors.black26,
+                        //     ),
+                        //     image: DecorationImage(
+                        //       image: NetworkImage("${ref.watch(baseUrl)}/images/photos/${userStatic.profil}"),
+                        //       fit: BoxFit.cover,
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(width: 10,),
                         SizedBox(
                           width: 250,
