@@ -63,9 +63,9 @@ class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
                   decoration: BoxDecoration(
                     // color: Color.fromARGB(125, 91, 217, 101),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.black54
-                    )
+                    // border: Border.all(
+                    //   color: Colors.black54
+                    // )
                   ),
                   child: Center(
                     child: Text(

@@ -8,7 +8,6 @@ import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CallendarClient extends ConsumerStatefulWidget {
@@ -45,7 +44,6 @@ class _CallendarClientState extends ConsumerState<CallendarClient> {
       if(ref.read(userDataStatic).id == null) return;
       
       _appointment = await seeStatusClientRdv(ref.read(userDataStatic).id!, ref.read(baseUrl), ref.read(accessTokenProvider));
-      print(_appointment);
       for (var item in _appointment[0]) {
         final dateStr = item['date'].split(' ')[0];
         final doctor = "${item['doctorLastName']}";
@@ -144,6 +142,22 @@ class _CallendarClientState extends ConsumerState<CallendarClient> {
                         lastDay: DateTime.utc(2030, 1, 30),
                         selectedDayPredicate: (day) => isSameDay(day, dayNow),
                     
+                        calendarStyle: CalendarStyle(
+                          selectedDecoration: BoxDecoration(
+                            color: Color(0xFF548856), // couleur sélection
+                            shape: BoxShape.circle,
+                          ),
+
+                          todayDecoration: BoxDecoration(
+                            color: Color.fromARGB(139, 89, 138, 90), // couleur du jour actuel
+                            shape: BoxShape.circle,
+                          ),
+
+                          selectedTextStyle: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         onDaySelected: (selectedDay, focusedDay) {
                           setState(() {
                             dayNow = selectedDay;
@@ -180,7 +194,7 @@ class _CallendarClientState extends ConsumerState<CallendarClient> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _selectedAppointment.length,
                   itemBuilder: (context, index) {
-                    print(_selectedAppointment[index]['info']['hour']);
+
                     return CardEventCallendar(
                       name: '${_selectedAppointment[index]['doctorLastName']} ${_selectedAppointment[index]['doctorFirstName']}',
                       speciality: _selectedAppointment[index]['doctorSpeciality'],

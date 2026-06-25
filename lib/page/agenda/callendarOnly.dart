@@ -19,7 +19,8 @@ class Callendaronly extends ConsumerStatefulWidget {
   final int idUser;
   final double heigh;
   final String page;
-  const Callendaronly({super.key,required this.data, required this.idUser, required this.heigh, required this.page});
+  final List patienInfo;
+  const Callendaronly({super.key,required this.data, required this.idUser, required this.heigh, required this.page, required this.patienInfo});
 
   @override
   ConsumerState<Callendaronly> createState() => _CallendaronlyState();
@@ -38,7 +39,8 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
   bool isLoaded = false;
   bool isLoadedDel = false;
   bool isdaySelectedMarked = false;
-
+  List<dynamic> _selectedAppointment = [];
+  bool isCallendarExpanded = false;
   int get id_user => widget.idUser;
   double get height => widget.heigh;
   String get _page => widget.page;
@@ -141,87 +143,141 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
       data: (dayNoWrk){
         return Column(
           children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: () => showBottomForm(), 
-                icon: Icon(
-                  isdaySelectedMarked ? Icons.delete_outline_outlined : Icons.add,
-                  color: isdaySelectedMarked ? Colors.red : null,
-                ),
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
-                ), 
-              ),
-            ],
-          ),
-          const SizedBox(height: 10,),
+          
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color.fromARGB(0, 255, 255, 255)
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+                color: const Color.fromARGB(255, 255, 255, 255)
               ),
             
-              child: AbsorbPointer(
-                absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
-                child: TableCalendar(
-                  locale: 'en_US',
-                  rowHeight: height,
-                  headerStyle: HeaderStyle(
-                    formatButtonVisible: false,
-                    titleCentered: true,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () => showBottomForm(), 
+                        icon: Icon(
+                          isdaySelectedMarked ? Icons.delete_outline_outlined : Icons.add,
+                          color: isdaySelectedMarked ? Colors.red : null,
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 215, 215, 215))
+                        ), 
+                      ),
+                      const SizedBox(width: 10,)
+                    ],
                   ),
-                  focusedDay: dayNow,
-                  firstDay: DateTime.utc(2000, 1, 1),
-                  lastDay: DateTime.utc(2030, 1, 30),
-                  selectedDayPredicate: (day) => isSameDay(day, dayNow),
-                  calendarBuilders: CalendarBuilders(
-                    defaultBuilder: (context, day, focusedDay) {
-                      if (_markedDays.isNotEmpty) {
-                        final isMarked = _markedDays.any((d) => isSameDay(d, day));
-                        if (isMarked) {
-                          return Container(
-                            margin: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${day.day}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                      return null;
-                    },
+                  AbsorbPointer(
+                    absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
+                    child: TableCalendar(
+                      locale: 'en_US',
+                      rowHeight: height,
+                      calendarFormat: isCallendarExpanded ? CalendarFormat.week : CalendarFormat.month,
+                  
+                  
+                      headerStyle: HeaderStyle(
+                        formatButtonVisible: false,
+                        titleCentered: true,
+                      ),
+                  
+                      focusedDay: dayNow,
+                      firstDay: DateTime.utc(2000, 1, 1),
+                      lastDay: DateTime.utc(2030, 1, 30),
+                      selectedDayPredicate: (day) => isSameDay(day, dayNow),
+
+                      calendarStyle: CalendarStyle(
+                        selectedDecoration: BoxDecoration(
+                          color: Color(0xFF548856), // couleur sélection
+                          shape: BoxShape.circle,
+                        ),
+
+                        todayDecoration: BoxDecoration(
+                          color: Color.fromARGB(139, 89, 138, 90), // couleur du jour actuel
+                          shape: BoxShape.circle,
+                        ),
+
+                        selectedTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      calendarBuilders: CalendarBuilders(
+                        defaultBuilder: (context, day, focusedDay) {
+                  
+                          if (_markedDays.isNotEmpty) {
+                            final isMarked = _markedDays.any((d) => isSameDay(d, day));
+                  
+                            if (isMarked) {
+                              return Container(
+                                margin: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    // style: BorderStyle
+                                    color: const Color(0xFF479652),
+                                  )
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${day.day}',
+                                    style: TextStyle(
+                                      fontSize: 14, 
+                                      fontWeight: FontWeight.bold, 
+                                      letterSpacing: 2, 
+                                      color: Color(0xFF479652)
+                                    )                              
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                  
+                          return null;
+                        },
+                      ),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        if (isLoaded || isLoadedDel) return;
+                        
+                        setState(() {
+                          dayNow = selectedDay;
+                  
+                          _selectedAppointment = widget.patienInfo.where((item) {
+                            final date = DateTime.parse(item['date']);
+                            return isSameDay(date, dayNow);
+                          }).toList();
+                  
+                          print(_selectedAppointment);
+                  
+                          if (_markedDays.isNotEmpty) {
+                            final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
+                            if (isdayMarked) {
+                              isdaySelectedMarked = true;
+                              _reasonController = TextEditingController(text: dayNoWrk
+                                .where(
+                                  (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
+                                ).toList()[0]['reason']
+                                .toString());
+                            } else {
+                              isdaySelectedMarked = false;
+                              _reasonController = TextEditingController();
+                            }
+                          }
+                        });
+                      },
+                      eventLoader: _getEventsForDay,
+                    ),
                   ),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    if (isLoaded || isLoadedDel) return;
-      
-                    setState(() {
-                      dayNow = selectedDay;
-                      if (_markedDays.isNotEmpty) {
-                        final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
-                        if (isdayMarked) {
-                          isdaySelectedMarked = true;
-                          _reasonController = TextEditingController(text: dayNoWrk
-                            .where(
-                              (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
-                            ).toList()[0]['reason']
-                            .toString());
-                        } else {
-                          isdaySelectedMarked = false;
-                          _reasonController = TextEditingController();
-                        }
-                      }
-                    });
-                  },
-                  eventLoader: _getEventsForDay,
-                ),
+                  IconButton(
+                    onPressed: (){
+                      setState(() {
+                        isCallendarExpanded = !isCallendarExpanded;
+                      });
+                    }, 
+                    icon: HugeIcon(icon: isCallendarExpanded ? HugeIcons.strokeRoundedArrowDown01 : HugeIcons.strokeRoundedArrowUp01, size: 30,)
+                  )
+                ],
               ),
             ),
 
@@ -229,10 +285,28 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
             if(_getEventsForDay(dayNow).isEmpty)
                 EmptyStateWidget(txtBold: 'Aucun rendez-vous', txt: 'Vous pouvez prendre rendez-vous se jour ci !',),
           
-            if(_getEventsForDay(dayNow).isNotEmpty)
-              ..._getEventsForDay(dayNow).map(
-                (event) => CardEventCallendar(name: event, heurRdv: '08:00', w: 250)
-              ),
+            if(_selectedAppointment.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _selectedAppointment.length,
+
+                itemBuilder: (context, index) {
+                  final patient = _selectedAppointment[index]['patient'];
+                  final info = _selectedAppointment[index]['information'];
+                  return CardEventCallendar(
+                    name: '${patient['lastname']} ${patient['firstname']}',
+                    speciality: info['symptome'],
+                    heurRdv: '09:00',
+                    w: 290,
+                  );
+
+                },
+              )
+
+              // ..._getEventsForDay(dayNow).map(
+              //   (event) => CardEventCallendar(name: event, heurRdv: '08:00', w: 250)
+              // ),
               
           ],
         );
