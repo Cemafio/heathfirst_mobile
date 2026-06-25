@@ -8,10 +8,11 @@ import 'package:hugeicons/hugeicons.dart';
 
 class CardEventCallendar extends ConsumerStatefulWidget {
   final String name;
+  final double? w;
   final String? speciality;
   final String? role;
   final String heurRdv;
-  const CardEventCallendar({super.key, required this.name, required this.heurRdv, this.speciality, this.role});
+  const CardEventCallendar({super.key, required this.name, this.w, required this.heurRdv, this.speciality, this.role});
 
   @override
   ConsumerState<CardEventCallendar> createState() => _CardEventCallendarState();
@@ -24,10 +25,11 @@ class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
       width: double.infinity,
 
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 50,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Container(
                 //   width: 20,
@@ -53,22 +55,23 @@ class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
                 //   )
                 // ),
                 Container(
-                  width: 40,
-                  height: 19,
+                  width: 60,
+                  height: 22,
                   alignment: Alignment.center,
+                  margin: EdgeInsets.only(left: 15, right: 10),
 
                   decoration: BoxDecoration(
                     // color: Color.fromARGB(125, 91, 217, 101),
                     borderRadius: BorderRadius.circular(6),
-                    // border: Border.all(
-                    //   color: Colors.black54
-                    // )
+                    border: Border.all(
+                      color: Colors.black54
+                    )
                   ),
                   child: Center(
                     child: Text(
                       widget.heurRdv, 
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.black54
                       )
@@ -76,10 +79,10 @@ class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
                   ),
                 ),
 
-                // const SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Container(
-                  width: 3,
-                  height: 45,
+                  width: 2,
+                  height: 50,
 
                   decoration: BoxDecoration(
                     color: Colors.black54
@@ -88,14 +91,15 @@ class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
               ],
             ),
           ),
+          // const SizedBox(width: 30,),
           Container(
             padding: const EdgeInsets.all(15),
-            width: MediaQuery.of(context).size.width * 0.79,
+            width: widget.w??300,
 
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 241, 241, 241),
+              color: const Color.fromARGB(255, 255, 255, 255),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.black26)
+              // border: Border.all(color: Colors.black26)
             ),
 
             child: Row(

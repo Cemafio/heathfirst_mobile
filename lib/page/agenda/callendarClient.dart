@@ -148,7 +148,6 @@ class _CallendarClientState extends ConsumerState<CallendarClient> {
                           setState(() {
                             dayNow = selectedDay;
                             
-                            print(dayNow);
                     
                             _selectedAppointment = _appointment[0].where(
                               (item)=> item['date'].toString().split(' ')[0] == dayNow.toString().split(' ')[0]
@@ -173,21 +172,9 @@ class _CallendarClientState extends ConsumerState<CallendarClient> {
 
 
 
-              const SizedBox(height: 10),
               if(_selectedAppointment.isNotEmpty)...[
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Programe le ${dayNow.day} ${DateFormat('MMM', 'fr_FR').format((dayNow))}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
-                    ],
-                  ),
-                
-                ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),

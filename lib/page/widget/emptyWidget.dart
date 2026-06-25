@@ -26,11 +26,11 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget> with TickerProvider
 
     return Column(
       children: [
-        SizedBox(height: 70,),
+        SizedBox(height: 10,),
         Center(
           child: Lottie.asset(
-            width: 200,
-            height: 200,
+            width: 160,
+            height: 160,
             "assets/animations/${widget.lottiName ?? 'empty_doc'}.json",
             controller: _controller,
             onLoaded: (composition) {

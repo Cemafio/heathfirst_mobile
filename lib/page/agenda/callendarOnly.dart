@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarBottomForm.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
+import 'package:heathfirst_mobile/page/widget/card_event_callendar.dart';
+import 'package:heathfirst_mobile/page/widget/emptyWidget.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/days_no_work_provider.dart';
 import 'package:heathfirst_mobile/provider/rdvProvider.dart';
@@ -161,120 +163,76 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
                 color: const Color.fromARGB(0, 255, 255, 255)
               ),
             
-              child:  
-                Stack(
-                  children: [
-                    AbsorbPointer(
-                      absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
-                      child: TableCalendar(
-                        locale: 'en_US',
-                        rowHeight: height,
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                        ),
-                        focusedDay: dayNow,
-                        firstDay: DateTime.utc(2000, 1, 1),
-                        lastDay: DateTime.utc(2030, 1, 30),
-                        selectedDayPredicate: (day) => isSameDay(day, dayNow),
-                        calendarBuilders: CalendarBuilders(
-                          defaultBuilder: (context, day, focusedDay) {
-                            if (_markedDays.isNotEmpty) {
-                              final isMarked = _markedDays.any((d) => isSameDay(d, day));
-                              if (isMarked) {
-                                return Container(
-                                  margin: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                        onDaySelected: (selectedDay, focusedDay) {
-                          if (isLoaded || isLoadedDel) return;
-            
-                          setState(() {
-                            dayNow = selectedDay;
-                            if (_markedDays.isNotEmpty) {
-                              final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
-                              if (isdayMarked) {
-                                // print('${dayNoWrk[2]['date'].split('T')[0]} et selected day= ${selectedDay.toString().split(' ')[0]}');
-                                isdaySelectedMarked = true;
-                                _reasonController = TextEditingController(text: dayNoWrk
-                                  .where(
-                                    (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
-                                  ).toList()[0]['reason']
-                                  .toString());
-                              } else {
-                                isdaySelectedMarked = false;
-                                _reasonController = TextEditingController();
-                              }
-                            }
-                          });
-                        },
-                        eventLoader: _getEventsForDay,
-                      ),
-                    ),
-                ],
-                )
-              ),
-
-              const SizedBox(height: 10,),
-              Container(
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
-
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 241, 241, 241),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.black26)
+              child: AbsorbPointer(
+                absorbing: (isLoaded || isLoadedDel), // true = interactions bloquées
+                child: TableCalendar(
+                  locale: 'en_US',
+                  rowHeight: height,
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,
                   ),
-                child: Column(
-                  children: [
-                    if(_getEventsForDay(dayNow).isEmpty)
-                      const Text("Aucun planing trouver", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black54),),
-                    
-                    if(_getEventsForDay(dayNow).isNotEmpty)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Programe du ${dayNow.day} ${months[dayNow.month]}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.black45),)
-                        ],
-                      ),
-                  
-                  if(_getEventsForDay(dayNow).isNotEmpty)
-                    const SizedBox(height: 20,),
-                    ..._getEventsForDay(dayNow).map(
-                      (event) => Row(
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.adjust_rounded,color: Color.fromRGBO(0, 0, 0, 1), size: 15,),
-                              const SizedBox(width: 10,),
-                              Text(
-                                event,
-                              style: const TextStyle(
-                                fontSize: 15
-                              ),),
-                            ],
-                          )
-                        ],
-                      )
-                    ),
-                ],
-              ) ,
+                  focusedDay: dayNow,
+                  firstDay: DateTime.utc(2000, 1, 1),
+                  lastDay: DateTime.utc(2030, 1, 30),
+                  selectedDayPredicate: (day) => isSameDay(day, dayNow),
+                  calendarBuilders: CalendarBuilders(
+                    defaultBuilder: (context, day, focusedDay) {
+                      if (_markedDays.isNotEmpty) {
+                        final isMarked = _markedDays.any((d) => isSameDay(d, day));
+                        if (isMarked) {
+                          return Container(
+                            margin: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color.fromARGB(255, 71, 150, 82).withOpacity(0.5),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${day.day}',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    if (isLoaded || isLoadedDel) return;
+      
+                    setState(() {
+                      dayNow = selectedDay;
+                      if (_markedDays.isNotEmpty) {
+                        final isdayMarked = _markedDays.any((d) => isSameDay(d, selectedDay));
+                        if (isdayMarked) {
+                          isdaySelectedMarked = true;
+                          _reasonController = TextEditingController(text: dayNoWrk
+                            .where(
+                              (dnw)=>dnw['date'].split('T')[0]== selectedDay.toString().split(' ')[0]
+                            ).toList()[0]['reason']
+                            .toString());
+                        } else {
+                          isdaySelectedMarked = false;
+                          _reasonController = TextEditingController();
+                        }
+                      }
+                    });
+                  },
+                  eventLoader: _getEventsForDay,
+                ),
+              ),
             ),
-            const SizedBox(height: 10,),
+
+            const SizedBox(height: 30,),
+            if(_getEventsForDay(dayNow).isEmpty)
+                EmptyStateWidget(txtBold: 'Aucun rendez-vous', txt: 'Vous pouvez prendre rendez-vous se jour ci !',),
+          
+            if(_getEventsForDay(dayNow).isNotEmpty)
+              ..._getEventsForDay(dayNow).map(
+                (event) => CardEventCallendar(name: event, heurRdv: '08:00', w: 250)
+              ),
               
           ],
         );
