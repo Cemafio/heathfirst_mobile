@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:heathfirst_mobile/model/patientModel.dart';
 import 'package:heathfirst_mobile/model/userModelDto.dart';
+import 'package:heathfirst_mobile/service/data.dart';
 import 'package:http/http.dart' as http;
 import 'package:heathfirst_mobile/model/user_model.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
@@ -31,5 +33,14 @@ final user_data = FutureProvider<UserModel>((ref) async {
 final userDataStatic = StateProvider<UserModelDto>(
   (ref) {
     return UserModelDto();
+  }
+);
+
+final allPatients = FutureProvider<List<Patient>>(
+  (ref) async {
+    print('-----=[Patient async]=------');
+    final _baseUrl = ref.read(baseUrl);
+    final _token = ref.read(accessTokenProvider);
+    return await getAllPatient(baseUrl: _baseUrl, token: _token);
   }
 );

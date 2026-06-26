@@ -20,15 +20,19 @@ import 'package:intl/date_symbol_data_local.dart';
     @override
     Widget build(BuildContext context) {
       return ScreenUtilInit(
-        designSize: const Size(375, 812), // Taille de design (taille de référence)
-        minTextAdapt: true, // Adapter la taille du texte
+        minTextAdapt: true, 
         builder: (BuildContext context, Widget? child) => MaterialApp(
+
           title: "Salma",
           debugShowCheckedModeBanner: false,
+
           theme: ThemeData(
+            primaryColor: Color(0xFF548856),
+            // scaffoldBackgroundColor: ,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
             useMaterial3: true,
           ),
+
           home: const LoginMobile(),
         ),
       );

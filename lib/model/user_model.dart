@@ -20,15 +20,4 @@ class UserModel {
       profil: json['photo_profil'] 
     );
   }
-
-  // UserModel copyWith({String? firstname, String? lastname,String? email,String? roles, String? adress}) {
-  //   return UserModel(
-  //     id: id,
-  //     firstname: firstname ?? this.firstname,
-  //     lastname: lastname ?? this.lastname,
-  //     email: email ?? this.email,
-  //     roles: roles ?? this.roles,
-  //     adress: adress ?? this.adress
-  //   );
-  // }
 }

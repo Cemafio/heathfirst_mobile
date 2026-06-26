@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:heathfirst_mobile/model/patientModel.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,10 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> sendEmailReminder(List<dynamic> tabEmail, String type, String baseUrl) async {
   final url = Uri.parse("$baseUrl/api/sendEmail"); 
-  // Sur Android Emulator → backend local = 10.0.2.2
 
   final body = jsonEncode({
-    // "email": emailReceiver,
     "type": type,
     "list_email_rappel": tabEmail
   });
@@ -63,9 +62,11 @@ Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
       'Authorization': 'Bearer $token', 
     },
   );
+
   if (response.statusCode == 401) {
     throw Exception("unauthorized");
   }
+
   if(response.statusCode == 200){
     print('Info user recuperer avec succée ..... (>_<)');
     final data = jsonDecode(response.body);
@@ -174,8 +175,6 @@ Future<List<dynamic>> getDayNoWork({required int id, required String baseUrl, re
   }
 }
 Future<void> deleteDaysNoWork (int idDoc, DateTime date, String baseUrl, String token) async {
-  // final pers = await SharedPreferences.getInstance();
-  // final token = pers.getString('token');
   final url = Uri.parse('$baseUrl/api/unavailable_days/delete');
   final response = await http.delete(
     url,
@@ -201,8 +200,6 @@ Future<void> deleteDaysNoWork (int idDoc, DateTime date, String baseUrl, String 
   }
 }
 Future<void> responseAppointment(int appointment, String status, int idPatient, int idDoc, String baseUrl, String token) async {
-  // final pers = await SharedPreferences.getInstance();
-  // final token = pers.getString('token');
   final url = Uri.parse('$baseUrl/api/${(status == 'accepted')? 'accept_appointment': 'refused_appointment'}');
   final response = await http.patch(
     url,
@@ -537,4 +534,40 @@ Future<List<dynamic>> recherche(
   } else {
     throw Exception("❌ Erreur ${response.statusCode} ${response.body}");
   }
+}
+
+Future<List<Patient>> getAllPatient({
+  required String baseUrl,
+  required String token,
+}) async {
+  final url = Uri.parse("$baseUrl/api/patients");
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+      // 'Content-Type': 'application/json',
+    },
+  );
+
+  if (response.statusCode == 401) {
+    throw Exception("unauthorized");
+  }
+  print(jsonDecode(response.body));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+    final List<dynamic> patients = responseData['member'] ?? [];
+
+    final List<Patient> dataPatient = patients
+        .map((e) => Patient.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    print("✅ ${dataPatient.length} patients obtenus");
+
+    return dataPatient;
+  }
+
+  throw Exception("❌ Erreur ${response.statusCode} ${response.body}");
 }

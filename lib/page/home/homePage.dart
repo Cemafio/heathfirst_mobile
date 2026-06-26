@@ -129,8 +129,9 @@ class _HomepageState extends ConsumerState<HomePage> {
             },
             child: const Icon(
               Icons.auto_awesome_mosaic_outlined,
-            )),
+            )
           ),
+        ),
         actions: [
           GestureDetector(
             onTap:(){
