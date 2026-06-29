@@ -11,6 +11,9 @@ import 'package:heathfirst_mobile/model/userModelDto.dart';
 import 'package:heathfirst_mobile/page/home/homePage.dart';
 import 'package:heathfirst_mobile/page/singIn/incription_doc.dart';
 import 'package:heathfirst_mobile/page/singIn/inscription_patient.dart';
+import 'package:heathfirst_mobile/page/widget/MyTextFieldWidget.dart';
+import 'package:heathfirst_mobile/page/widget/logo.dart';
+import 'package:heathfirst_mobile/page/widget/simple_btn.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
 import 'package:heathfirst_mobile/provider/userProvider.dart';
 import 'package:heathfirst_mobile/service/data.dart';
@@ -33,6 +36,7 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
   Widget? error;
   Widget? loader;
   Icon? icon;
+  bool obscuredText = false;
   late Map<String, dynamic> _infoUser;
 
   Future<void> authentification(String email, String pass) async{
@@ -80,10 +84,6 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
           date_naissance: userData['Date_naissance']['date'],
           phone: userData['phone']
         );
-
-        print("✅ Authentification réussie !");
-        print(ref.read(userDataStatic));
-
 
         setState(() {
           isLoading = false;
@@ -231,6 +231,28 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
         ]),
       )
     );
+  
+  void tryConnect () async {
+    setState(() {
+      error = Text('');
+      icon = null;
+    });   
+    
+    final isValide = _formKey.currentState!.validate();
+    if (isValide) {
+      // Save data in texFormField
+      _formKey.currentState!.save();
+      
+      // Call function future
+      try {
+        await authentification(_email, _pass);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -240,169 +262,86 @@ class _LoginMobileState extends ConsumerState<LoginMobile> {
   Widget build(BuildContext context) {
   return Scaffold(
     body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.end,
 
       children: [
-        const Text('Salma', style: TextStyle(
-          color: Color(0xFF548856),
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          letterSpacing: 1.9
-      )),
-
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 50.w
+        LogoSalma(logo: 'salma_logo 2.png',),
+        
+        const SizedBox(height: 10,),
+        const Text(
+          'Salma', 
+          style: TextStyle(
+            color: Color(0xFF548856),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            letterSpacing: 1.9
+          )
         ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Identifiant',
-                  prefixIcon: Icon(Icons.person,),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value){
-                  if( value == null || value.isEmpty){
-                    return 'Veuillez entrer votre email';
-                  }
-                  return null;
-                },
-                onSaved: (newValue) => _email = newValue!,
-              ),
-              const  SizedBox(height: 40,),
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: 'Motde passe',
-                  prefixIcon: Icon(Icons.password,),
-                  
-                ),
-                keyboardType: TextInputType.visiblePassword,
-                validator: (value){
-                  if( value == null || value.isEmpty){
-                    return 'Veuillez entrer votre Mot de passe';
-                  }
-                  return null;
-                },
-                onSaved: (newValue) => _pass = newValue! ,
-              ),
 
-              const SizedBox(height:  30),
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    if(icon != null) icon!,
-                    const SizedBox(width: 10,),
-                    if(icon != null) error!
-                    
-                  ]
-                ),
-              ),
-
-              const SizedBox(height: 30),
-              Material(
-                color: Colors.transparent,
-                child: Center (
-                  child: InkWell(
-                  onTap: isLoading? null : () async {
-                    // Action
+        const SizedBox(height: 30,),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 50.w
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Mytextfieldwidget(
+                  label: 'Email', 
+                  actionSaved: (newValue, label){
                     setState(() {
-                      error = Text('');
-                      icon = null;
-                    });    
-                    final isValide = _formKey.currentState!.validate();
-                    if (isValide) {
-                      // Save data in texFormField
-                      _formKey.currentState!.save();
-                      
-                      // Call function future
-                      try {
-                        await authentification(_email, _pass);
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Erreur : ${e.toString()}')),
-                        );
-                      }
-                    }
+                      _email = newValue;
+                    });
+                  }
+                ),
+                Mytextfieldwidget(
+                  label: 'Mot de passe', 
+                  actionSaved: (newValue, label){
+                    setState(() {
+                      _pass = newValue;
+                    });
                   },
+                  obscuredText: obscuredText,
+                  changeObscureText: (){
+                    setState(() {
+                      obscuredText = !obscuredText;
+                    });
+                  },
+                ),
 
-                  // borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    height: 60,
-                    width: 250,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    margin:const EdgeInsets.only(bottom: 30),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFF548856), width: 2),
-                      borderRadius: BorderRadius.circular(10),
-                      color: isLoading ? Colors.grey[300] : Colors.transparent,
-                    ),
-                    child: Stack(
-                      // mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
+                const SizedBox(height:  30),
+                SizedBox(
+                  width: double.infinity,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      if(icon != null) icon!,
+                      const SizedBox(width: 10,),
+                      if(icon != null) error!
                       
-                      if(!isLoading)
-                        const Center(
-                          child: Text(
-                            "Se connecté",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF548856),
-                            ),
-                          ),
-                        ),
-                      if(isLoading)
-                        const Center(
-                          child: SizedBox(
-                            height: 15,
-                            width: 15,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3.0,
-                            ),
-                          ),
-                        )
-                    ]),
+                    ]
                   ),
                 ),
-              ),
-        )]),
-        ),
-      ),
 
-        SizedBox(
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  // print('Pop up'); 
- 
-                  PopUp ();
-                },
-                child: Text("Pas encore isncrit? S'isncrire",
-                  style: TextStyle(
-                  fontSize: 13,
-                  color:Colors.blue 
-                ),),
+                SimpelBtn(
+                  w: 250,
+                  h: 50,
+                  t: 'Se connecté',
+                  txc: Colors.white,
+                  c: Color(0xFF46904D),
+                  r: 20,
+                  circlColor: Colors.white,
+                  isLoaded: isLoading,
+                  action: tryConnect
+                ),
 
-              ),
-
-              SizedBox(height: 10,),
-
-              // Text('Mots de passe oublié', style: TextStyle(
-              //   fontSize: 13,
-              //   color: Colors.red
-              // )),
-            ],
+                const SizedBox(height: 90),
+              ]
+            ),
           ),
-        )
-        
+        ),
       ],
     ),
   );

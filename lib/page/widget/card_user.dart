@@ -107,7 +107,7 @@ class _CardUserWidgetState extends ConsumerState<CardUserWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _userDataStatic.lastname.toString().uperFirstChart(),
+                  widget.lastName.toString().uperFirstChart(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold

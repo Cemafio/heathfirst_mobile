@@ -28,6 +28,7 @@ Future<void> sendEmailReminder(List<dynamic> tabEmail, String type, String baseU
     print("❌ Erreur : ${response.body}");
   }
 }
+
 Future<List<dynamic>> rdvUserData({required String token, required String baseUrl}) async{
   final url = Uri.parse('$baseUrl/api/get_appointment'); // L'URL de votre API
   final response = await http.get(
@@ -76,25 +77,26 @@ Future<Map<String, dynamic>> userInfo(String baseUrl, String token)  async{
   }
 }
 Future<Map<String, dynamic>> getProfilUser({required int id,required String baseUrl, required String token}) async {
-    final url = Uri.parse("$baseUrl/api/get_user_id/$id");
+  final url = Uri.parse("$baseUrl/api/get_user_id/$id");
 
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token', 
-        },
-      );
-      if (response.statusCode == 401) {
-        throw Exception("unauthorized");
-      }
-      if(response.statusCode == 200){
-        print('Info user id recuperer avec succée ..... (>_<)');
-        final data = jsonDecode(response.body);
-        return data;
-      }else{
-        throw Exception('Erreur lors du chargement des info user id (O_o)');
-      }
-  }
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', 
+      },
+    );
+    if (response.statusCode == 401) {
+      throw Exception("unauthorized");
+    }
+    if(response.statusCode == 200){
+      print('Info user id recuperer avec succée ..... (>_<)');
+      final data = jsonDecode(response.body);
+      return data;
+    }else{
+      throw Exception('Erreur lors du chargement des info user id (O_o)');
+    }
+}
+
 // ----------Requette pour recuperer les list des docteurs--------
 Future<List<dynamic>> fetchDataDoc({required String token, required String urlBase}) async {
   final url = Uri.parse('$urlBase/api/users');
@@ -118,6 +120,7 @@ Future<List<dynamic>> fetchDataDoc({required String token, required String urlBa
     throw Exception('Erreur lors du chargement des list doc (O_o)');
   }
 }
+
 //----------------------------------------------------------------- 
 Future<bool> addDayNoWork(DateTime date,String reason,{required String token, required String baseUrl}) async {
   final url = Uri.parse("$baseUrl/api/unavailabledays/add");

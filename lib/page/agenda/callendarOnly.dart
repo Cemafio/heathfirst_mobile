@@ -297,7 +297,7 @@ class _CallendaronlyState extends ConsumerState<Callendaronly> {
                   return CardEventCallendar(
                     name: '${patient['lastname']} ${patient['firstname']}',
                     speciality: info['symptome'],
-                    heurRdv: '09:00',
+                    heurRdv: info['hour'],
                     w: 290,
                   );
 

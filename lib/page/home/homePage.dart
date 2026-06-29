@@ -35,6 +35,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomepageState extends ConsumerState<HomePage> {
   late Future<List<dynamic>> _listDoc;
   late Future<List<dynamic>> _listDemd;
+  bool _dialogShown = false;
 
   void loadRdvUserData() async{
     final token = ref.read(accessTokenProvider);
@@ -47,12 +48,13 @@ class _HomepageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     loadRdvUserData();
-
-    print(ref.watch(user_data));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      startSessionWatcher(context);
-    });
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _navigation(Widget materialPage) async {
     final opened = await Navigator.push(
       context,
@@ -65,48 +67,11 @@ class _HomepageState extends ConsumerState<HomePage> {
       });
     }
   }
+
   // -------------------Verrif SESSION---------------------
-  void startSessionWatcher(BuildContext context) {
-    Timer.periodic(const Duration(minutes: 5), (timer) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("token");
-
-      if (token != null && JwtDecoder.isExpired(token)) {
-        timer.cancel(); // stop timer
-
-        // Supprimer token
-        await prefs.remove("token");
-
-        print("⚠ Token expiré automatiquement");
-
-        // Afficher popup
-        if (context.mounted) {
-          showDialog(
-            context: context,
-            barrierDismissible: false, // l'utilisateur ne peut pas fermer sans cliquer sur OK
-            builder: (context) => AlertDialog(
-              title: const Text("Session Expirée"),
-              content: const Text(
-                "Votre session a expiré pour des raisons de sécurité.\n\nVeuillez vous reconnecter."
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // fermer popup
-
-                    // 👉 Redirection vers la page Login
-                    // Navigator.pushReplacementNamed(context, "/login");
-                    _navigation(LoginMobile());
-                  },
-                  child: const Text("OK"),
-                )
-              ],
-            ),
-          );
-        }
-      }
-    });
-  }
+  // void sessionWatcher(BuildContext context) {
+    
+  // }
 
   @override
     Widget build(BuildContext context) {
@@ -118,8 +83,43 @@ class _HomepageState extends ConsumerState<HomePage> {
         profil.toString().trim().isNotEmpty &&
         profil.toString() != 'null';
 
+    ref.listen<bool>(
+      sessionExpiredProvider,
+      (previous, expired) {
+        if (!expired) return;
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text("Session expirée"),
+            content: const Text(
+              "Veuillez vous reconnecter.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LoginMobile(),
+                    ),
+                    (_) => false,
+                  );
+
+                  ref.read(sessionExpiredProvider.notifier).state = false;
+                },
+                child: const Text("OK"),
+              )
+            ],
+          ),
+        );
+      },
+    );
+
     return Scaffold(
-      // backgroundColor: Color.fromARGB(255, 237, 237, 237),
       appBar: AppBar(
         leading: 
           Builder(
@@ -132,6 +132,7 @@ class _HomepageState extends ConsumerState<HomePage> {
             )
           ),
         ),
+        
         actions: [
           GestureDetector(
             onTap:(){
@@ -160,6 +161,7 @@ class _HomepageState extends ConsumerState<HomePage> {
           const SizedBox(width: 15),
         ],
       ),
+
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(

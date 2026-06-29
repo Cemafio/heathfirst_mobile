@@ -5,6 +5,7 @@ class SimpelBtn extends StatefulWidget {
   final double? h;
   final String? t;
   final Color? c;
+  final Color? circlColor;
   final Color? txc;
   final Color? st;
   final void Function() action;
@@ -14,7 +15,7 @@ class SimpelBtn extends StatefulWidget {
   final Icon? iconBtn;
   final bool? isLoaded;
 
-  const SimpelBtn({super.key, this.w, this.h, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action, this.isLoaded, this.iconBtn});
+  const SimpelBtn({super.key, this.w, this.h, this.circlColor, this.t, this.c, this.txc, this.st,this.r, this.bold, this.sizetx, required this.action, this.isLoaded, this.iconBtn});
 
   @override
   State<SimpelBtn> createState() => _SimpelBtnState();
@@ -77,7 +78,7 @@ class _SimpelBtnState extends State<SimpelBtn> {
                 width: 20,
                 child: Center(
                   child: CircularProgressIndicator(
-                    color: Color(0xFF548856),
+                    color: widget.circlColor ??Color(0xFF548856),
                     strokeWidth: 2,
                   ),
                 ),

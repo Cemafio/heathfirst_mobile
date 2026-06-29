@@ -220,7 +220,7 @@ class _ListDocSectionState extends ConsumerState<ListDocSection> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${doc["last_name"]} ${doc["first_name"]}',
+                                  'Doc. ${doc["last_name"]} ${doc["first_name"]}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,

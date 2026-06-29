@@ -21,8 +21,9 @@ class CardEventCallendar extends ConsumerStatefulWidget {
 class _CardEventCallendarState extends ConsumerState<CardEventCallendar> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      margin: EdgeInsets.only(top: 10),
 
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -28,7 +28,7 @@ class _MytextfieldwidgetState extends State<Mytextfieldwidget> {
                 ? TextInputType.emailAddress
                 : TextInputType.text,
             
-              obscureText: widget.label == 'Password' && widget.obscuredText == true,
+              obscureText: widget.label == 'Mot de passe' && widget.obscuredText == true,
               
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -51,7 +51,7 @@ class _MytextfieldwidgetState extends State<Mytextfieldwidget> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(widget.radius ?? 30),
+                  borderRadius: BorderRadius.circular(widget.radius ?? 20),
                   borderSide: BorderSide(
                     color: Colors.white,
                     width: 1,
@@ -60,7 +60,7 @@ class _MytextfieldwidgetState extends State<Mytextfieldwidget> {
               ),
               
             ),
-            if(widget.label == 'Password')
+            if(widget.label == 'Mot de passe')
             Positioned(
               top: 5,
               right: 0,
@@ -74,7 +74,7 @@ class _MytextfieldwidgetState extends State<Mytextfieldwidget> {
                       icon: (widget.obscuredText == true)
                         ? HugeIcons.strokeRoundedViewOff
                         :HugeIcons.strokeRoundedView, 
-                      color: Colors.white
+                      color: Color(0xFF46904D)
                     )
                   ),
                 ),

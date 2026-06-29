@@ -1,5 +1,6 @@
   import 'package:flutter/material.dart';
   import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:heathfirst_mobile/page/first_page/first_page.dart';
   import 'package:heathfirst_mobile/page/login/login.dart';
   import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -33,7 +34,7 @@ import 'package:intl/date_symbol_data_local.dart';
             useMaterial3: true,
           ),
 
-          home: const LoginMobile(),
+          home: FirstPage(),
         ),
       );
     }

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heathfirst_mobile/page/agenda/callendarDocRdvVide.dart';
 import 'package:heathfirst_mobile/page/agenda/callendarOnly.dart';
 import 'package:heathfirst_mobile/page/login/login.dart';
 import 'package:heathfirst_mobile/provider/app_provider.dart';
@@ -40,7 +39,7 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Container(
+        child: SizedBox(
           // padding: EdgeInsets.all(20),
           width: MediaQuery.of(context).size.width,
           // margin: EdgeInsets.only(top: 10),
@@ -56,13 +55,12 @@ class _CalendarSectionState extends ConsumerState<CalendarSection> {
                 ),
 
                 data: (rdv){
-                  if (rdv.isEmpty) {
-                    return CallendardocrdvVide( heigh: 60, page: 'agenda');
-                  }
+
                   final List rdvAccepted = rdv
                     .where((r) => r['status'] =='accepted')
                     .toList();
-                  print("Ici => ${rdvAccepted[0]['patient']}");
+
+                  // print("Ici => ${rdvAccepted[0]['patient']}");
                   Map<DateTime, List<String>> data = {};
 
                   for (var item in rdvAccepted) {
